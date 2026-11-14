@@ -32,7 +32,7 @@ once("econVaultSync(); econStoreNavSync();\n  box._codisSig", "econVaultSync();\
 once("function econOpenStore(){ econStorePart = 'boxes'; CodisCrumb.mark('store:open');   /* CODIS-V48: يُفتح المتجر دائماً على البكجات */",
      "function econOpenStore(){ econStorePart = econStoreDefaultKey(); econStoreScrollPos = {}; econStoreAnchor = {}; CodisCrumb.mark('store:open');   /* CODIS-V49: يُفتح المتجر دائماً على أول قسم (الكروت) وبمواضع تمرير جديدة */")
 once("    try{ econVaultSync(); econStoreNavSync(); }catch(e){}\n    return;",
-     "    try{ econVaultSync(); econStoreNavSync(); const st = document.getElementById('eco-store-stage'); if(st) st.scrollTop = 0; econStoreRailFit(); }catch(e){}\n    return;")
+     "    try{ econVaultSync(); econStoreNavSync(); const st = document.getElementById('eco-store-stage'); if(st) st.scrollTop = 0; econStoreRailFit(); econStoreWarm(); }catch(e){}\n    return;")
 once("function econGoBoxes(){ econCloseOwn(); econStoreSetPart('boxes', { quiet:true }); }   /* CODIS-V48: يعمل من أي قسم */", "")
 
 # ---- 4) رجوع/Esc: الورقتان أولاً ----

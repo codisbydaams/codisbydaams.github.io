@@ -4,17 +4,18 @@
 
 html[data-view="store"] .main:has(#page-settings.is-eco-store){ overflow:hidden; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; }
 html[data-view="store"] #page-settings.is-store-layer.is-eco-store{ display:flex !important; flex-direction:column; height:100vh; height:100dvh; min-height:0; overflow:hidden; padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); }
-html[data-view="store"] #page-settings.is-eco-store > #settings-page-eco-store{ display:flex !important; flex-direction:column; flex:1 1 auto; min-height:0; }
-/* ترويسة مضغوطة: كل بكسل رأسي يخدم المحتوى */
-#settings-page-eco-store .settings-back-btn{ min-height:36px; margin:-4px 0 0; }
-#settings-page-eco-store .settings-section-head{ margin-bottom:8px; }
-#settings-page-eco-store .settings-section-head::before{ display:none; }
-#settings-page-eco-store .settings-section-title{ font-size:22px; }
+html[data-view="store"] #page-settings.is-eco-store > #settings-page-eco-store{ display:grid !important; grid-template-columns:minmax(0, 1fr) auto minmax(0, 1fr); grid-template-rows:auto minmax(0, 1fr); align-items:center; flex:1 1 auto; min-height:0; }
+/* ترويسة: «رجوع» في الطرف، وعنوان «المتجر» في المنتصف تماماً بحجم أكبر، بلا خط تحته */
+#settings-page-eco-store .settings-back-btn{ grid-column:1; grid-row:1; justify-self:start; min-height:44px; margin:0; }
+#settings-page-eco-store .settings-section-head{ grid-column:2; grid-row:1; justify-self:center; margin:0; padding:0; border:0; }
+#settings-page-eco-store .settings-section-head::before, #settings-page-eco-store .settings-section-head::after{ display:none; }
+#settings-page-eco-store .settings-section-title{ justify-content:center; font-size:27px; font-weight:800; line-height:1.2; letter-spacing:0; }
+#settings-page-eco-store .vault-wrap{ grid-column:3; grid-row:1; }
+html[data-view="store"] #settings-page-eco-store > #eco-store-body{ grid-column:1 / -1; grid-row:2; align-self:stretch; min-width:0; }
 html[data-view="store"] #eco-store-body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:10px; }
 /* المسرح: المُمرِّر الوحيد لمحتوى القسم */
-#eco-store-body .st-stage{ min-height:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding-bottom:18px; scrollbar-width:thin; scrollbar-color:rgb(var(--ink-rgb) / .22) transparent; }
-#eco-store-body .st-stage::-webkit-scrollbar{ width:4px; }
-#eco-store-body .st-stage::-webkit-scrollbar-thumb{ border-radius:4px; background:rgb(var(--ink-rgb) / .22); }
+#eco-store-body .st-stage{ min-height:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding-bottom:18px; scrollbar-width:none; }
+#eco-store-body .st-stage::-webkit-scrollbar{ display:none; }
 
 /* ===== المباعة والمستخدمة: ورقة مستقلة ===== */
 #eco-store-body .hx-sheet{ padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 40px); }
@@ -40,45 +41,63 @@ html[data-view="store"] #eco-store-body{ flex:1 1 auto; min-height:0; display:fl
 /* الصندوق المجاني بعرض المحتوى الأضيق: الزر تحت النص بدل أن يعصر السطور */
 @media (max-width:379px){ #eco-store-body .st-stage .fb-card{ flex-wrap:wrap; gap:8px 12px; } #eco-store-body .st-stage .fb-art{ width:52px; height:48px; } #eco-store-body .st-stage .fb-cta{ flex:1 1 100%; text-align:center; } }
 
-/* ===== شريط الأقسام: لوح جانبي ملتصق بحافة الشاشة اليمنى ومتصل ببطاقة الرصيد، مقسوم إلى خانات متساوية بأيقونة في منتصف كل خانة ===== */
-#eco-store-body{ --padR:max(var(--pad-x, 16px), env(safe-area-inset-right, 0px)); --padB:calc(env(safe-area-inset-bottom, 0px) + 10px); }
+/* ===== حرف L مقلوب: شريط الرصيد (أفقي، من حافة لحافة) + شريط الأقسام (عمودي على اليمين) سطح واحد متصل بلا حدود ولا خطوط؛ التقسيم بالمسافات فقط ===== */
+#eco-store-body{ --padR:max(var(--pad-x, 16px), env(safe-area-inset-right, 0px)); --padL:max(var(--pad-x, 16px), env(safe-area-inset-left, 0px)); --padB:calc(env(safe-area-inset-bottom, 0px) + 10px); --rail-w:66px; --L-r:20px; }
+html[data-theme="dark"] #eco-store-body{ --L-bg:#121923; --L-hi:rgb(255 255 255 / .05); --L-hi-on:.3; }
+html[data-theme="paper"] #eco-store-body{ --L-bg:#F5ECD8; --L-hi:rgba(110,80,40,.065); --L-hi-on:.16; }
 html[data-view="store"] #eco-store-body{ gap:0; }
-/* الرصيد يمتد إلى الحافة اليمنى بزوايا يمنى قائمة ليتّصل به الشريط تحته */
-#eco-store-body > .eco-balance{ flex:0 0 auto; margin-right:calc(-1 * var(--padR)); padding-inline-start:calc(14px + var(--padR)); border-right-width:0; border-radius:18px 0 0 18px; }
-#eco-store-body .st-shell{ --rail-w:68px; flex:1 1 0; min-height:0; margin-right:calc(-1 * var(--padR)); margin-bottom:calc(-1 * var(--padB)); display:grid; grid-template-columns:var(--rail-w) minmax(0, 1fr); grid-template-rows:minmax(0, 1fr); gap:0 12px; align-items:stretch; }
-#eco-store-body .st-stage{ padding:12px 2px calc(env(safe-area-inset-bottom, 0px) + 22px); }
-#eco-store-body .st-rail{ --ra-boxes:232,184,96; --ra-cosmetics:170,140,255; --ra-cards:80,208,220; position:relative; z-index:6; min-height:0; display:grid; grid-auto-rows:minmax(86px, 1fr); gap:0; padding:0 0 env(safe-area-inset-bottom, 0px); border-radius:0; border-left:1px solid var(--rail-line); }
+#eco-store-body > .eco-balance{ flex:0 0 auto; margin:6px calc(-1 * var(--padL)) 0 calc(-1 * var(--padR)); padding-inline-start:calc(var(--padR) + 2px); border:0; border-radius:0; background:var(--L-bg); box-shadow:none; }
+#eco-store-body > .eco-balance .eco-hist-btn{ inset-inline-end:calc(var(--padL) - 2px); }
+#eco-store-body .st-shell{ flex:1 1 0; min-height:0; margin:0 calc(-1 * var(--padL)) calc(-1 * var(--padB)) calc(-1 * var(--padR)); display:grid; grid-template-columns:var(--rail-w) minmax(0, 1fr); grid-template-rows:minmax(0, 1fr); gap:0; align-items:stretch; }
+#eco-store-body .st-stage{ padding:14px 12px calc(env(safe-area-inset-bottom, 0px) + 22px) calc(var(--padL) + 2px); }
+#eco-store-body .st-rail{ --ra-boxes:232,184,96; --ra-cosmetics:170,140,255; --ra-cards:80,208,220; position:relative; z-index:6; min-height:0; display:grid; grid-auto-rows:minmax(86px, 1fr); gap:8px; padding:8px 0 calc(env(safe-area-inset-bottom, 0px) + 8px); background:var(--L-bg); border:0; border-radius:0; }
+/* ركن داخلي مقوّس يصل الشريط الأفقي بالعمودي */
+#eco-store-body .st-rail::before{ content:''; position:absolute; top:0; left:calc(-1 * var(--L-r)); width:var(--L-r); height:var(--L-r); pointer-events:none; background:radial-gradient(circle at 0 100%, transparent calc(var(--L-r) - .6px), var(--L-bg) var(--L-r)); }
 #eco-store-body .st-rail.is-scroll{ overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
 #eco-store-body .st-rail.is-scroll::-webkit-scrollbar{ display:none; }
-#eco-store-body .st-rail-b{ --ra:var(--ra-boxes); position:relative; display:grid; place-items:center; width:100%; height:100%; min-height:0; padding:0; border:0; border-radius:0; background:none; color:var(--text-2); font:inherit; cursor:pointer;
-  -webkit-tap-highlight-color:transparent; transition:background-color var(--dur-fast, .16s) var(--ease, ease), color var(--dur-fast, .16s) var(--ease, ease); }
-#eco-store-body .st-rail-b + .st-rail-b{ border-top:1px solid var(--rail-line); }
+#eco-store-body .st-rail-b{ --ra:var(--ra-boxes); position:relative; isolation:isolate; display:grid; place-items:center; width:100%; height:100%; min-height:0; padding:0; border:0; border-radius:0; background:none; color:var(--text-2); font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .18s var(--ease, ease); }
 #eco-store-body .st-rail-b[data-part="cosmetics"]{ --ra:var(--ra-cosmetics); }
 #eco-store-body .st-rail-b[data-part="cards"]{ --ra:var(--ra-cards); }
-#eco-store-body .st-rail-b svg{ width:30px; height:30px; transition:transform .2s var(--ease-spring, ease); }
-#eco-store-body .st-rail-b:active svg{ transform:scale(.9); }
-#eco-store-body .st-rail-b:focus-visible{ outline:2px solid rgb(var(--ra)); outline-offset:-3px; }
+/* لوح الخانة: يفصل الخانات بالمسافة فقط */
+#eco-store-body .st-rail-b::after{ content:''; position:absolute; inset:0 6px; z-index:-1; border-radius:18px; background:var(--L-hi); transition:background-color .2s var(--ease, ease), box-shadow .2s var(--ease, ease); }
+#eco-store-body .st-rail-b svg{ position:relative; display:block; width:32px; height:32px; shape-rendering:geometricPrecision; transition:transform .22s var(--ease-spring, ease), color .18s; }
+#eco-store-body .st-rail-b:active svg{ transform:scale(.88); }
+#eco-store-body .st-rail-b:focus-visible{ outline:2px solid rgb(var(--ra)); outline-offset:-4px; border-radius:18px; }
 #eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); }
-#eco-store-body .st-rail-b.is-on svg{ stroke-width:2.1; }
-/* مؤشر الحالة النشطة بالشكل لا باللون وحده: شريط في الحافة المواجهة للمحتوى */
-#eco-store-body .st-rail-b.is-on::after{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; border-radius:0 3px 3px 0; background:rgb(var(--ra)); }
-#eco-store-body .st-rail-n{ position:absolute; top:8px; right:9px; min-width:16px; height:16px; padding:0 4px; display:grid; place-items:center; border-radius:8px; font-size:10px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; pointer-events:none; }
+#eco-store-body .st-rail-b.is-on::after{ background:rgba(var(--ra), var(--L-hi-on)); box-shadow:inset 3px 0 0 rgb(var(--ra)); }
+#eco-store-body .st-rail-b.is-pop svg{ animation:railPop .5s var(--ease-spring, cubic-bezier(.2,.9,.3,1.3)); }
+#eco-store-body .st-rail-b.is-pop::after{ animation:railWave .6s ease-out; }
+@keyframes railPop{ 0%{ transform:scale(.7) rotate(-14deg); } 55%{ transform:scale(1.16) rotate(4deg); } 100%{ transform:none; } }
+@keyframes railWave{ 0%{ box-shadow:inset 3px 0 0 rgb(var(--ra)), 0 0 0 0 rgba(var(--ra), .5); } 100%{ box-shadow:inset 3px 0 0 rgb(var(--ra)), 0 0 0 12px rgba(var(--ra), 0); } }
+#eco-store-body .st-rail-n{ position:absolute; top:10px; right:12px; min-width:17px; height:17px; padding:0 4px; display:grid; place-items:center; border-radius:9px; font-size:10px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; pointer-events:none; z-index:1; }
 @media (hover:hover) and (pointer:fine){
-  #eco-store-body .st-rail-b::before{ content:attr(data-tip); position:absolute; top:50%; right:calc(100% + 12px); transform:translate(6px, -50%); padding:5px 10px; border-radius:9px; font-size:12px; font-weight:700; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s, transform .15s; z-index:7; }
+  #eco-store-body .st-rail-b:not(.is-on):hover::after{ background:rgba(var(--ra), .12); }
+  #eco-store-body .st-rail-b:hover svg{ transform:translateY(-2px); }
+  #eco-store-body .st-rail-b::before{ content:attr(data-tip); position:absolute; top:50%; right:calc(100% + 10px); transform:translate(6px, -50%); padding:5px 10px; border-radius:9px; font-size:12px; font-weight:700; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s, transform .15s; z-index:7; }
   #eco-store-body .st-rail-b:hover::before, #eco-store-body .st-rail-b:focus-visible::before{ opacity:1; transform:translate(0, -50%); }
 }
-/* داكن: امتداد زجاج بطاقة الرصيد (يبدأ بلمسة ذهبية من حافتها السفلى) */
-html[data-theme="dark"] #eco-store-body .st-rail{ --rail-line:rgb(255 255 255 / .08); background:linear-gradient(180deg, rgb(var(--gold-rgb) / .12), rgb(20 26 36 / .96) 38%, rgb(9 12 18 / .98)); border-left-color:rgb(var(--gold-rgb) / .24); box-shadow:inset 0 1px 0 rgb(var(--gold-rgb) / .2); }
-html[data-theme="dark"] #eco-store-body .st-rail-b.is-on{ background:linear-gradient(270deg, rgba(var(--ra), .3), rgba(var(--ra), .05)); }
-html[data-theme="dark"] #eco-store-body .st-rail-b.is-on::after{ box-shadow:0 0 10px rgba(var(--ra), .8); }
-@media (hover:hover){ html[data-theme="dark"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgb(255 255 255 / .05); color:var(--text); } }
-html[data-theme="dark"] #eco-store-body .st-rail-n{ color:#fff; background:rgb(0 0 0 / .55); border:1px solid rgb(255 255 255 / .16); }
-html[data-theme="dark"] #eco-store-body .st-rail-b::before{ color:var(--text); background:rgb(18 24 34 / .96); border:1px solid rgb(255 255 255 / .12); }
-/* ورقي: كرتون مضغوط بلون الرصيد، والقسم النشط ختم مزدوج الحلقة في منتصف الخانة */
-html[data-theme="paper"] #eco-store-body .st-rail{ --ra-boxes:150,98,30; --ra-cosmetics:112,78,160; --ra-cards:22,104,118; --rail-line:rgba(110,80,40,.22); background:linear-gradient(180deg, #F1E4C6, #F6EEDC 40%, #EADDBF); border-left-color:rgba(110,80,40,.4); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 3px 0 0 rgba(255,250,236,.5); }
-html[data-theme="paper"] #eco-store-body .st-rail-b{ color:rgba(74,52,30,.76); }
-html[data-theme="paper"] #eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); background:radial-gradient(circle at 50% 50%, rgba(var(--ra), .13) 0 25px, transparent 26px), radial-gradient(circle at 50% 50%, transparent 0 25px, rgb(var(--ra)) 25.5px 27px, transparent 27.5px), radial-gradient(circle at 50% 50%, transparent 0 21.5px, rgba(var(--ra), .45) 22px 23px, transparent 23.5px), rgba(var(--ra), .06); }
-html[data-theme="paper"] #eco-store-body .st-rail-b.is-on::after{ display:none; }
-@media (hover:hover){ html[data-theme="paper"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgba(110,80,40,.08); color:rgb(74,52,30); } }
-html[data-theme="paper"] #eco-store-body .st-rail-n{ color:#FBF4E3; background:rgba(74,52,30,.85); }
+html[data-theme="dark"] #eco-store-body .st-rail-b.is-on svg{ filter:drop-shadow(0 0 8px rgba(var(--ra), .55)); }
+html[data-theme="dark"] #eco-store-body .st-rail-n{ color:#fff; background:rgb(0 0 0 / .6); }
+html[data-theme="dark"] #eco-store-body .st-rail-b::before{ color:var(--text); background:rgb(18 24 34 / .98); border:1px solid rgb(255 255 255 / .12); }
+html[data-theme="paper"] #eco-store-body .st-rail{ --ra-boxes:150,98,30; --ra-cosmetics:112,78,160; --ra-cards:22,104,118; }
+html[data-theme="paper"] #eco-store-body .st-rail-b{ color:rgba(74,52,30,.82); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on::after{ background:radial-gradient(circle at 50% 50%, transparent 0 19px, rgba(var(--ra), .5) 19.5px 20.5px, transparent 21px), radial-gradient(circle at 50% 50%, rgba(var(--ra), .13) 0 24px, transparent 24.5px), radial-gradient(circle at 50% 50%, transparent 0 24px, rgb(var(--ra)) 24.5px 26px, transparent 26.5px), rgba(var(--ra), .07); box-shadow:none; }
+html[data-theme="paper"] #eco-store-body .st-rail-n{ color:#FBF4E3; background:rgba(74,52,30,.88); }
 html[data-theme="paper"] #eco-store-body .st-rail-b::before{ color:#3C2A16; background:#F9F1DE; border:1px solid rgba(110,80,40,.4); box-shadow:0 6px 12px -6px rgba(70,45,20,.55); }
+@media (prefers-reduced-motion:reduce){ #eco-store-body .st-rail-b.is-pop svg, #eco-store-body .st-rail-b.is-pop::after{ animation:none; } #eco-store-body .st-rail-b svg{ transition:none; } }
+
+/* ===== قسم الكروت: أربعة كروت في كل سطر على كل الأجهزة (نفس النسب حرفياً)، والنص يتقلّص مع العرض ===== */
+#pane-cards{ --tile-name:10px; --tile-sub:8.5px; --tile-btn-h:28px; --tile-gap:6px; --tile-row-gap:12px; }
+#pane-cards .store-row{ grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--tile-row-gap) var(--tile-gap); }
+#pane-cards .st-tile{ gap:4px; }
+#pane-cards .st-tile .shop-name{ -webkit-line-clamp:2; line-height:1.3; }
+#pane-cards .st-tile .btn{ padding:0 3px; font-size:10.5px; gap:2px; }
+#pane-cards .st-tile .btn .eco-coin{ font-size:11px; gap:2px; }
+#pane-cards .st-tile .btn svg{ width:11px; height:11px; }
+#pane-cards .st-tags, #pane-cards .st-tag{ max-width:100%; }
+#pane-cards .st-tag{ font-size:8.5px; padding:0 4px; overflow:hidden; text-overflow:ellipsis; }
+
+/* إظهار تدريجي للصفوف البعيدة في أول إطار (econStoreWarm) */
+#eco-store-body .st-stage.st-warm1 .st-pane.is-on [role="list"] > :nth-child(n+5){ content-visibility:hidden; }
+#eco-store-body .st-stage.st-warm2 .st-pane.is-on [role="list"] > :nth-child(n+13){ content-visibility:hidden; }

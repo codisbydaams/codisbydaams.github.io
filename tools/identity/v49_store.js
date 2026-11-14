@@ -108,7 +108,7 @@ function econStoreDefaultKey(){ const L = econStoreSections(); return L.length ?
 function econStoreNavHtml(){
   const cur = (econStorePartOf(econStorePart) || {}).key;
   return '<nav class="st-rail" aria-label="أقسام المتجر">' + econStoreSections().map(d=>{ const on = d.key === cur; let c = 0; try{ c = d.count ? d.count() : 0; }catch(e){}
-    return '<button type="button" class="st-rail-b' + (on ? ' is-on' : '') + '" data-part="' + d.key + '" data-to="' + d.domId + '" data-tip="' + d.name + '" aria-label="' + d.name + (c ? ' — ' + econFmt(c) : '') + '" aria-controls="pane-' + d.key + '"' + (on ? ' aria-current="true"' : '') + ' onclick="econStoreSetPart(\'' + d.key + '\')">' + codisIcon(d.icon) + (c ? '<span class="st-rail-n" aria-hidden="true">' + econFmt(c) + '</span>' : '') + '</button>'; }).join('') + '</nav>';
+    return '<button type="button" class="st-rail-b' + (on ? ' is-on' : '') + '" data-part="' + d.key + '" data-to="' + d.domId + '" data-tip="' + d.name + '" aria-label="' + d.name + (c ? ' — ' + econFmt(c) : '') + '" aria-controls="pane-' + d.key + '"' + (on ? ' aria-current="true"' : '') + ' onclick="econStoreSetPart(\'' + d.key + '\')">' + codisIcon(d.icon, { size:'hero' }) + (c ? '<span class="st-rail-n" aria-hidden="true">' + econFmt(c) + '</span>' : '') + '</button>'; }).join('') + '</nav>';
 }
 function econStoreStageHtml(){
   const cur = (econStorePartOf(econStorePart) || {}).key;
@@ -135,7 +135,7 @@ function econStoreNavSync(){
   const d = econStorePartOf(econStorePart); if(!d) return; econStorePart = d.key;
   const stage = box.querySelector('.st-stage'); if(stage && stage.getAttribute('data-part') !== d.key) stage.setAttribute('data-part', d.key);
   Array.prototype.forEach.call(box.querySelectorAll('.st-pane'), p=>{ const on = p.getAttribute('data-part') === d.key; if(p.classList.contains('is-on') !== on) p.classList.toggle('is-on', on); });
-  Array.prototype.forEach.call(box.querySelectorAll('.st-rail-b'), b=>{ const on = b.getAttribute('data-part') === d.key; if(b.classList.contains('is-on') === on) return; b.classList.toggle('is-on', on); if(on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
+  Array.prototype.forEach.call(box.querySelectorAll('.st-rail-b'), b=>{ const on = b.getAttribute('data-part') === d.key; if(b.classList.contains('is-on') === on) return; b.classList.toggle('is-on', on); if(on){ b.setAttribute('aria-current', 'true'); if(!econCalm()){ b.classList.add('is-pop'); setTimeout(()=>b.classList.remove('is-pop'), 700); } } else b.removeAttribute('aria-current'); });
 }
 function econStoreBindOnce(){
   if(econStoreBound) return; const box = document.getElementById('eco-store-body'); if(!box) return; econStoreBound = true;
@@ -154,10 +154,18 @@ function econStoreRestorePos(key){
   if(!px) return;
   [60, 160, 320, 600, 1000].forEach(ms=>setTimeout(()=>{ const s2 = document.getElementById('eco-store-stage'); if(tok !== econStoreRestoreTok || econStoreTouched || !s2 || econStorePart !== key) return; const w = target(); if(Math.abs(s2.scrollTop - w) > 1) s2.scrollTop = w; }, ms));
 }
+/* إظهار تدريجي لأول مرة: الكروت بأربعة أعمدة تعني ضعف البلاطات المرئية؛ تُرسم الصفوف الأولى في الإطار الأول ثم الباقي على إطارين تاليين فلا يتجمّد أول إطار (الأداء فقط، بلا تغيير مرئي بعد ~50ms) */
+let econStoreWarmTok = 0;
+function econStoreWarm(){
+  const st = document.getElementById('eco-store-stage'); if(!st || st.scrollTop > 0 || !window.requestAnimationFrame) return;
+  const tok = ++econStoreWarmTok; st.classList.remove('st-warm2'); st.classList.add('st-warm1');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ if(tok !== econStoreWarmTok) return; st.classList.remove('st-warm1'); st.classList.add('st-warm2');
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ if(tok === econStoreWarmTok) st.classList.remove('st-warm2'); })); }));
+}
 function econStoreAfterRender(closedKeep){
   econStoreNavSync();
   econStoreRestorePos(econStorePart);
-  econStoreRailFit(); econStoreBindOnce();
+  econStoreRailFit(); econStoreBindOnce(); econStoreWarm();
   if(econClosedOpen){ econClosedPaint(); const cs = document.getElementById('eco-closed-sheet'); if(cs && closedKeep) cs.scrollTop = closedKeep; }
 }
 /* opts: quiet (بلا صوت) · top (ابدأ من أعلى القسم) · force */
