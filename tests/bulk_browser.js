@@ -1,6 +1,7 @@
 /* CODIS-BULK-V3 — ten-box opening test (evaluate in the page, fresh guest origin). Real economy engine.
    The stage timeline is driven with CodisBulkCinema._seek (deterministic, test-only); a real-time run is also checked at the end. */
 (async function(){ try{
+  window.CODIS_B3D_OFF = true;   /* يختبر مشهد 2D القديم؛ مشهد 3D له tests/box3d_e2e.mjs */
   const out = [], T = (n, ok, i)=>out.push({ name:n, ok:!!ok, info:i === undefined ? '' : i });
   const sleep = ms=>new Promise(r=>setTimeout(r, ms));
   codisConfirm = async()=>true; CodisOutcomeUI.show = ()=>{}; CodisOutcomeUI.enqueue = ()=>{};

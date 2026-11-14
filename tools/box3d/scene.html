@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"><title>b3d scene</title><link rel="stylesheet" href="../identity/v51.css"><style>html,body{margin:0;background:#111;height:100%}</style></head>
+<body><script src="dist/b3d.min.js"></script><script>
+var q=new URLSearchParams(location.search), log=[];
+window.SC=CodisB3D.playSingle({n:+(q.get('n')||1),g:+(q.get('g')||1),theme:q.get('theme')||'paper',calm:q.get('calm')==='1',low:q.get('low')==='1',manual:true,preserve:true,host:document.body,
+ reward:{title:q.get('title')||'ليلة سينما مع الأصدقاء',sub:'Strong',tag:'من بكج الذهب',rgb:[255,196,96],font:'sans-serif'},
+ hooks:{sfx:function(a,b){log.push(a)},haptic:function(){},onReveal:function(){log.push('REVEAL')},onDispose:function(w){log.push('DISPOSE:'+w)}}});
+window.LOG=log; if(q.get('t')) SC.seek(+q.get('t')); document.title='ready';
+</script></body></html>

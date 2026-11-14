@@ -1,3 +1,4 @@
+window.CODIS_B3D_OFF = true;   /* يختبر مشهد 2D القديم؛ مشهد 3D له tests/box3d_e2e.mjs */
 /* CODIS-AUDIO-V2 runtime test (evaluate in the page). Offline rendering of every identity + settings + gating + live trace.
    Live-play checks need a running AudioContext (a real tap/click first); they are reported as "unverified" otherwise. */
 (async function(){ try{

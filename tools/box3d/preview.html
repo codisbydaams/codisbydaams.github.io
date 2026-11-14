@@ -1,0 +1,8 @@
+<!doctype html><html><head><meta charset="utf-8"><title>b3d preview</title>
+<style>html,body{margin:0;background:#111;height:100%}#h{position:fixed;inset:0}canvas{display:block}</style></head>
+<body><div id="h"></div><script src="dist/b3d.min.js"></script>
+<script>
+var q=new URLSearchParams(location.search);
+window.P=CodisB3D.preview(document.getElementById('h'),{n:+(q.get('n')||1),open:+(q.get('open')||0),seam:+(q.get('seam')||0),light:+(q.get('light')||0),theme:q.get('theme')||'paper',w:innerWidth,h:innerHeight,cam:q.get('cam')?q.get('cam').split(',').map(Number):null,fov:+(q.get('fov')||34)});
+document.title='ready';
+</script></body></html>

@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>b3d bulk</title><link rel="stylesheet" href="../identity/v51.css"><style>html,body{margin:0;background:#111;height:100%}</style></head>
+<body><script src="dist/b3d.min.js"></script><script>
+var q=new URLSearchParams(location.search), log=[];
+var gs=(q.get('gs')||'1,1,2,1,3,2,1,4,2,5').split(',').map(Number);
+var names=['قهوة مع الأصدقاء','ساعة سينما','وجبة بيتزا','نصف ساعة ألعاب','يوم راحة','عشاء خارج','تجاوز عادة','كيس فضة','مظهر ذهبي','رحلة صيد'];
+var items=gs.map(function(g,i){return {i:i,lv:g,g:g,reward:{title:names[i%names.length],sub:'مستوى '+g,tag:'من البكج رقم '+(i+1),rgb:[[236,240,248],[120,205,235],[96,150,255],[178,120,255],[255,196,96]][g-1],font:'sans-serif'}}});
+window.SC=CodisB3D.playBulk({n:+(q.get('n')||3),theme:q.get('theme')||'paper',calm:q.get('calm')==='1',low:q.get('low')==='1',manual:true,preserve:true,host:document.body,items:items,
+ hooks:{sfx:function(a){log.push(a)},haptic:function(){},onReveal:function(){log.push('REVEAL')},onDispose:function(w){log.push('DISPOSE:'+w)}}});
+window.LOG=log; document.title='ready';
+</script></body></html>

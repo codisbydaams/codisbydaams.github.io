@@ -1,0 +1,14 @@
+/* CODIS-V51 · طبقة المشهد السينمائي ثلاثي الأبعاد لفتح الصناديق (ملء الشاشة). محصورة بـ .b3d-root فقط */
+.b3d-root{position:fixed;inset:0;z-index:2147483000;background:#000;overflow:hidden;touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;contain:strict;cursor:default}
+.b3d-root>canvas{position:absolute;left:0;top:0;display:block;outline:none}
+.b3d-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 54%,rgba(8,5,2,.40) 100%)}
+.b3d-flash{position:absolute;inset:0;background:#fff4d8;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.b3d-black{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none}
+/* بطاقات الجوائز الفعلية داخل المشهد: DOM حقيقي بتحويل منظوري */
+.b3d-cards{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.b3d-cw{position:absolute;inset:0}
+.b3d-card{position:absolute;left:0;top:0;width:300px;height:375px;transform-origin:0 0;display:none;--detail-w:300px;--rwc-wmax:300px;will-change:transform}
+.b3d-front,.b3d-back{position:absolute;inset:0;width:300px;height:375px}
+.b3d-front .bx-stage{display:block;width:300px;margin:0;padding:0}
+.b3d-front .store-detail-art,.b3d-front .bx-pass-art{margin:0;padding:0;width:300px;background:none}
+.b3d-front .bx-reveal{animation:none!important;opacity:1!important;transform:none!important}
