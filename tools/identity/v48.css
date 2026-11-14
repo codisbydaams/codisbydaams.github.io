@@ -1,0 +1,87 @@
+/* CODIS-V48 (3.35.0) — (1) منصّات البكجات للمظهر الورقي: «معرض مقتنيات» من ورق فاخر منقوش (مستقل تماماً عن الداكن في v47.css) · (2) متجر بقسم واحد ظاهر + شريط أيقونات عمودي.
+   عرض فقط. المظهران يُختاران بـ html[data-theme] (يتبدّل فوراً بلا إعادة تحميل). النطاق: #eco-store-body .bx-card .bx-art وحاوية .st-shell — لا يمسّ «بحوزتك» ولا .bx-modal.
+   الورقي: ::before = منصة (قرص ورق/معدن بسماكة وظل تماس، طبقات تدرّج بلا box-shadow لأن WebKit يرسم مستطيلاً حول الظلال الصلبة على العناصر البيضوية) · ::after = إطار منقوش بركنيات معدنية. بلا أي حركة. */
+
+/* ================= المظهر الورقي: بكجات ================= */
+html[data-theme="paper"] #eco-store-body .bx-card{
+  --pp-ink:74,52,30;
+  /* برونزي: رمل دافئ + نحاس + حلقات نقش متحدة المركز عند القاعدة */
+  --pp-m:168,104,50; --pp-ga:250,240,219; --pp-gb:226,204,166; --pp-pl1:204,142,82; --pp-pl2:122,74,38; --pp-side:92,54,26; --pp-rule:138,90,48; --pp-orn:18px;
+  --pp-motif:repeating-radial-gradient(circle at 50% 118%, rgba(150,92,44,.15) 0 1px, transparent 1px 6px);
+  --pp-ring2:linear-gradient(transparent, transparent);
+}
+/* فضي: ورق رمادي بارد + شبكة نقش معينية دقيقة + فولاذ مصقول */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="b"]{
+  --pp-m:104,122,144; --pp-ga:245,246,244; --pp-gb:213,219,223; --pp-pl1:226,233,240; --pp-pl2:124,138,154; --pp-side:84,96,110; --pp-rule:100,116,136; --pp-orn:26px;
+  --pp-motif:repeating-linear-gradient(45deg, rgba(104,124,148,.11) 0 1px, transparent 1px 6px), repeating-linear-gradient(-45deg, rgba(104,124,148,.11) 0 1px, transparent 1px 6px);
+}
+/* كريستالي: ورق مثلّج مزرقّ + أوجه بلورية مروحية + قرص زجاجي شفاف */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="a"]{
+  --pp-m:66,130,178; --pp-ga:240,247,250; --pp-gb:198,217,230; --pp-pl1:232,244,252; --pp-pl2:112,166,204; --pp-side:74,118,150; --pp-rule:78,134,172; --pp-orn:22px;
+  --pp-motif:repeating-conic-gradient(from 0deg at 50% 112%, rgba(76,150,204,.12) 0 4deg, transparent 4deg 10deg), radial-gradient(40% 30% at 50% 30%, rgba(255,255,255,.7), transparent 100%);
+}
+/* ذهبي: رق شامبانيا + أشعة شمسية محفورة + قرص ذهبي */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="s"]{
+  --pp-m:192,142,44; --pp-ga:253,243,212; --pp-gb:230,200,132; --pp-pl1:240,206,124; --pp-pl2:158,110,36; --pp-side:112,76,22; --pp-rule:172,124,38; --pp-orn:30px;
+  --pp-motif:repeating-conic-gradient(from 0deg at 50% 50%, rgba(196,146,44,.14) 0 3deg, transparent 3deg 9deg);
+}
+/* خرافي: رق وردي-ليلكي بغسلات ألوان مائية (بنفسجي/فيروزي) + أشعة وخمس نجيمات ذهبية + حلقة مزدوجة وإطار مزدوج */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="ss"]{
+  --pp-m:176,124,40; --pp-ga:251,241,238; --pp-gb:224,206,222; --pp-pl1:242,210,126; --pp-pl2:126,84,152; --pp-side:84,52,108; --pp-rule:170,122,44; --pp-orn:34px;
+  --pp-motif:radial-gradient(1.2px 1.2px at 17% 20%, rgba(176,124,40,.9), transparent 100%), radial-gradient(1px 1px at 82% 15%, rgba(176,124,40,.85), transparent 100%), radial-gradient(1.2px 1.2px at 91% 48%, rgba(176,124,40,.8), transparent 100%), radial-gradient(1px 1px at 9% 57%, rgba(176,124,40,.8), transparent 100%), radial-gradient(1px 1px at 64% 9%, rgba(176,124,40,.85), transparent 100%),
+    radial-gradient(52% 40% at 16% 14%, rgba(150,106,196,.3), transparent 72%), radial-gradient(50% 38% at 88% 32%, rgba(80,184,172,.24), transparent 72%), repeating-conic-gradient(from 8deg at 50% 50%, rgba(176,124,40,.12) 0 2.5deg, transparent 2.5deg 8deg);
+  --pp-ring2:radial-gradient(ellipse 30% 21% at 50% 46%, transparent 91%, rgba(var(--pp-m),.55) 95%, transparent 100%);
+}
+
+/* الأرضية: ورق مضلّع (خطوط + حبيبات) + نقش المستوى + ضوء علوي دافئ + سطح الطاولة تحت خط الأفق */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art{
+  border:1px solid rgba(var(--pp-m),.6);
+  background:radial-gradient(120% 100% at 50% 44%, transparent 58%, rgba(var(--pp-ink),.17) 100%),
+    radial-gradient(rgba(var(--pp-ink),.075) .55px, transparent .7px) 0 0 / 3px 3px,
+    repeating-linear-gradient(0deg, rgba(var(--pp-ink),.03) 0 1px, transparent 1px 3px),
+    var(--pp-motif),
+    radial-gradient(62% 52% at 50% 36%, rgba(255,251,238,.88), transparent 76%),
+    linear-gradient(180deg, transparent 0 67%, rgba(var(--pp-ink),.2) 67% 67.7%, rgba(var(--pp-m),.17) 67.7% 100%),
+    linear-gradient(180deg, rgb(var(--pp-ga)), rgb(var(--pp-gb)));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(var(--pp-ink),.22), inset 0 -22px 24px -20px rgba(var(--pp-ink),.4),
+    0 1px 0 rgba(255,255,255,.7), 0 9px 16px -12px rgba(var(--pp-ink),.62);
+}
+/* المنصة: قرص بسماكة — ظل أرضي · جدار جانبي · سطح بحافة ورقية فاتحة · حلقة منقوشة (ومزدوجة للخرافي) · ظل تماس */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art::before{
+  left:6%; bottom:10%; width:88%; height:26%; border-radius:50%; transform:none; z-index:0; box-shadow:none;
+  background:radial-gradient(ellipse 26% 17% at 50% 46%, rgba(52,30,12,.52), transparent 100%),
+    radial-gradient(ellipse 36% 25% at 50% 46%, transparent 91%, rgba(var(--pp-rule),.62) 95%, transparent 100%),
+    var(--pp-ring2),
+    radial-gradient(ellipse 45.5% 32% at 50% 45%, rgb(var(--pp-pl1)) 0, rgb(var(--pp-pl2)) 90%, rgba(255,250,236,.9) 96%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 52%, rgb(var(--pp-side)) 96%, transparent 100%),
+    radial-gradient(ellipse 50% 32% at 50% 63%, rgba(var(--pp-ink),.42), transparent 100%);
+}
+/* الإطار المنقوش: خط حبر غائر + إضاءة داخلية بيضاء + ركنيات معدنية + زخرفة علوية بطول يزيد مع قيمة المستوى */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art::after{
+  left:6px; top:6px; width:auto; height:auto; right:6px; bottom:6px; transform:none; clip-path:none; animation:none; opacity:1; -webkit-mask-image:none; mask-image:none;
+  border:1px solid rgba(var(--pp-rule),.52); border-radius:5px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+  background-origin:border-box; background-repeat:no-repeat;
+  background-image:linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))),
+    linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))),
+    linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m)));
+  background-position:0 0, 0 0, 100% 0, 100% 0, 0 100%, 0 100%, 100% 100%, 100% 100%, 50% -1px;
+  background-size:11px 2px, 2px 11px, 11px 2px, 2px 11px, 11px 2px, 2px 11px, 11px 2px, 2px 11px, var(--pp-orn) 3px;
+}
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art .bx-info{ color:rgba(var(--pp-ink),.62); background:rgba(255,250,236,.7); border-color:rgba(var(--pp-rule),.4); }
+html[data-theme="paper"] #eco-store-body .bx-card .bx-lv i{ background:rgba(var(--pp-ink),.17); }
+html[data-theme="paper"] #eco-store-body .bx-card .bx-lv i.on{ background:rgb(var(--pp-m)); box-shadow:0 0 0 1px rgba(var(--pp-ink),.18); }
+@media (hover:hover) and (pointer:fine){ html[data-theme="paper"] #eco-store-body .bx-card:hover .bx-art{ border-color:rgba(var(--pp-m),.95); } }
+
+/* ================= المتجر: قسم واحد ظاهر + شريط أيقونات جانبي ================= */
+#eco-store-body .st-stage{ min-width:0; }
+/* العرض: الجزء النشط فقط (الباقي يبقى في DOM بلا حجز مساحة — تعتمد عليه دوال الملاءمة والفتح بالمعرّف) */
+#eco-store-body .st-pane{ display:none; }
+#eco-store-body .st-pane.is-on{ display:flex; flex-direction:column; gap:var(--sp-lg); }
+#eco-store-body .st-pane.is-part-in{ animation:stPartIn .3s var(--ease, ease) both; }
+@keyframes stPartIn{ from{ opacity:0; transform:translateX(14px); } to{ opacity:1; transform:none; } }
+/* بكجان بالصف ضمن عرض المحتوى المتبقي (حجم أكبر للصندوق وأزرار مريحة) */
+#eco-store-body .st-stage .bx-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+
+@media (prefers-reduced-motion:reduce){ #eco-store-body .st-pane.is-part-in{ animation:none; } #eco-store-body .st-rail-b, #eco-store-body .st-rail-b svg{ transition:none; } }
+/* الصندوق أبعد قليلاً عن الإطار العلوي بعد توسّع البلاطة إلى عمودين (الكريستالي أطول المجسّمات) */
+#eco-store-body .st-stage .bx-card .bxa{ width:72%; margin-top:1%; }

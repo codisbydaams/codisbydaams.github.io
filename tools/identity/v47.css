@@ -1,0 +1,82 @@
+/* CODIS-V47 (3.34.0؛ محصور بالمظهر الداكن منذ V48 — الورقي له تصميم مستقل في v48.css) — منصّات عرض البكجات: كل بكج يقف على منصة داخل غرفة عرض صغيرة (جدار خلفي · أرضية بخط أفق · إضاءة · منصة بسماكة وظل تماس).
+   عرض فقط. النطاق: html[data-theme="dark"] #eco-store-body .bx-card .bx-art (بطاقات قسم البكجات حصراً) — لا يمسّ «بحوزتك» (.bx-own-tile) ولا .bx-modal .bx-stage ولا صور الصناديق.
+   البنية موحّدة لكل المستويات (نفس الطبقات والمقاييس)؛ الشخصية تأتي من المتغيّرات --bxs-* (لون/خامة/ضوء) لا من نسخ القاعدة.
+   الطبقات: .bx-art = الجدار + الأرضية + الخامة + الهالة + الڤينيت · ::before = المنصة (قرص بسماكة + حلقة منقوشة + ظل تماس؛ كلها طبقات تدرّج بلا box-shadow لأن WebKit يرسم مستطيلاً حول الظلال الصلبة على العناصر البيضوية) · ::after = مخروط الضوء العلوي (هو الوحيد المتحرّك: opacity فقط). */
+
+/* ---- الهوية الأساسية = البرونزي (tone="c" بلا سمة) + مقاييس مشتركة ---- */
+html[data-theme="dark"] #eco-store-body .bx-card{
+  --bxs-acc:214,150,84; --bxs-hi:255,214,160; --bxs-side:62,38,20; --bxs-pd1:112,74,40; --bxs-pd2:38,23,14; --bxs-wt:44,30,22; --bxs-wb:16,11,9; --bxs-bo:.5;
+  --bxs-fx:radial-gradient(115% 96% at 50% 46%, transparent 52%, rgba(0,0,0,.5) 100%);
+  --bxs-floor:linear-gradient(180deg, transparent 0 66%, rgba(var(--bxs-hi),.12) 66% 66.9%, rgba(0,0,0,.26) 66.9%, rgba(0,0,0,.52) 100%);
+  --bxs-wall:linear-gradient(180deg, rgb(var(--bxs-wt)), rgb(var(--bxs-wb)));
+  /* برونزي: جلد/نحاس دافئ — مصباح جانبي من أعلى اليسار + نسيج مائل ناعم جداً */
+  --bxs-tex:repeating-linear-gradient(135deg, rgba(255,214,160,.035) 0 1px, transparent 1px 6px);
+  --bxs-halo:radial-gradient(70% 55% at 24% 0%, rgba(255,186,112,.2), transparent 70%), radial-gradient(52% 40% at 50% 50%, rgba(var(--bxs-acc),.16), transparent 72%);
+  --bxs-beam:rgba(255,190,120,.2);
+}
+/* فضي: فولاذ بارد مصقول — خطوط تخديش رأسية + شريط انعكاس قطري + مخروط أبيض مزرقّ حاد */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="b"]{
+  --bxs-acc:176,202,232; --bxs-hi:232,242,255; --bxs-side:30,40,54; --bxs-pd1:108,126,148; --bxs-pd2:28,36,48; --bxs-wt:30,41,56; --bxs-wb:10,15,22; --bxs-bo:.6;
+  --bxs-tex:repeating-linear-gradient(90deg, rgba(220,232,255,.03) 0 1px, transparent 1px 3px);
+  --bxs-halo:linear-gradient(112deg, transparent 34%, rgba(225,238,255,.08) 44% 50%, transparent 60%), radial-gradient(54% 42% at 50% 48%, rgba(var(--bxs-acc),.18), transparent 72%);
+  --bxs-beam:rgba(214,232,255,.26);
+}
+/* كريستالي: ياقوتي عميق — أوجه بلورية مشعّة من القاعدة + ضوء بنفسجي ثانوي + تنفّس ضوئي هادئ */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="a"]{
+  --bxs-acc:92,190,255; --bxs-hi:190,232,255; --bxs-side:12,28,66; --bxs-pd1:34,86,170; --bxs-pd2:9,20,48; --bxs-wt:14,32,72; --bxs-wb:5,10,26; --bxs-bo:.72;
+  --bxs-tex:repeating-conic-gradient(from 12deg at 50% 100%, rgba(130,210,255,.055) 0 6deg, transparent 6deg 15deg);
+  --bxs-halo:radial-gradient(48% 38% at 80% 78%, rgba(150,120,255,.22), transparent 70%), radial-gradient(60% 46% at 50% 48%, rgba(var(--bxs-acc),.26), transparent 72%);
+  --bxs-beam:rgba(130,214,255,.3);
+}
+/* ذهبي: قاعة نبيذية داكنة بهالة ذهبية — أشعة شمسية رقيقة تنفرج من خلف الصندوق + لمعة أرضية */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="s"]{
+  --bxs-acc:255,196,92; --bxs-hi:255,230,168; --bxs-side:70,38,10; --bxs-pd1:176,120,40; --bxs-pd2:50,26,10; --bxs-wt:46,15,20; --bxs-wb:16,6,9; --bxs-bo:.8;
+  --bxs-tex:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,205,110,.07) 0 4deg, transparent 4deg 12deg);
+  --bxs-halo:radial-gradient(62% 48% at 50% 48%, rgba(var(--bxs-acc),.32), transparent 72%), radial-gradient(40% 14% at 50% 86%, rgba(255,210,120,.3), transparent 80%);
+  --bxs-beam:rgba(255,214,130,.34);
+}
+/* خرافي: ليل نيلي بأورورا (بنفسجي + فيروزي) وهالة ذهبية مركزية وخمس نجيمات فقط */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="ss"]{
+  --bxs-acc:255,214,130; --bxs-hi:255,240,200; --bxs-side:44,28,70; --bxs-pd1:150,110,200; --bxs-pd2:32,18,58; --bxs-wt:24,14,58; --bxs-wb:7,4,18; --bxs-bo:.9;
+  --bxs-tex:repeating-conic-gradient(from 8deg at 50% 50%, rgba(255,226,160,.06) 0 3deg, transparent 3deg 10deg);
+  --bxs-halo:radial-gradient(1.2px 1.2px at 17% 21%, rgba(255,255,255,.85), transparent 100%), radial-gradient(1px 1px at 81% 15%, rgba(255,246,214,.8), transparent 100%), radial-gradient(1.2px 1.2px at 90% 47%, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 10% 58%, rgba(255,240,200,.7), transparent 100%), radial-gradient(1px 1px at 63% 9%, rgba(255,255,255,.75), transparent 100%),
+    radial-gradient(54% 40% at 18% 12%, rgba(150,96,255,.36), transparent 72%), radial-gradient(50% 38% at 86% 34%, rgba(60,224,204,.24), transparent 72%), radial-gradient(60% 46% at 50% 48%, rgba(var(--bxs-acc),.3), transparent 72%);
+  --bxs-beam:rgba(255,226,160,.36);
+}
+
+/* ---- الجدار + الأرضية + الخامة + الهالة (مرتبة من الأعلى للأسفل) ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art{
+  border:1px solid rgba(var(--bxs-acc),.34);
+  background:var(--bxs-fx), var(--bxs-tex), var(--bxs-halo), var(--bxs-floor), var(--bxs-wall);
+  box-shadow:inset 0 1px 0 rgba(var(--bxs-hi),.16), inset 0 0 0 1px rgba(0,0,0,.34), inset 0 -22px 26px -18px rgba(0,0,0,.62),
+    0 10px 22px -14px rgb(var(--lo-rgb) / .9), 0 0 calc(var(--bx-glow) * 34px) rgba(var(--bxs-acc), calc(var(--bx-glow) * .4));
+}
+/* ---- المنصة: قرص بسماكة (حافة مضيئة + جدار جانبي + ظل أرضي) · حلقة منقوشة · ظل تماس تحت الصندوق ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art::before{
+  left:6%; bottom:10%; width:88%; height:26%; border-radius:50%; transform:none; z-index:0; box-shadow:none;
+  background:radial-gradient(ellipse 26% 17% at 50% 46%, rgba(0,0,0,.62), transparent 100%),
+    radial-gradient(ellipse 36% 25% at 50% 46%, transparent 92%, rgba(var(--bxs-acc),.42) 95%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 45%, rgb(var(--bxs-pd1)) 0, rgb(var(--bxs-pd2)) 90%, rgba(var(--bxs-hi),.55) 96%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 52%, rgb(var(--bxs-side)) 96%, transparent 100%),
+    radial-gradient(ellipse 50% 32% at 50% 63%, rgba(0,0,0,.55), transparent 100%),
+    radial-gradient(ellipse 60% 44% at 50% 46%, rgba(var(--bxs-acc), calc(var(--bx-glow) * .5)), transparent 100%);
+}
+/* ---- مخروط الضوء العلوي: حواف ناعمة (conic) بدل المضلع الحاد القديم ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art::after{
+  left:0; top:0; width:100%; height:100%; transform:none; clip-path:none; opacity:var(--bxs-bo); animation:none;
+  background:conic-gradient(from 180deg at 50% -10%, var(--bxs-beam) 0deg, transparent 15deg, transparent 345deg, var(--bxs-beam) 360deg);
+  -webkit-mask-image:linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 46%, transparent 82%); mask-image:linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 46%, transparent 82%);
+}
+/* حركة هادئة (opacity فقط): الكريستالي والذهبي والخرافي — البرونزي والفضي ثابتان */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="a"] .bx-art::after{ animation:bxsBreath 5.6s ease-in-out infinite; }
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="s"] .bx-art::after{ animation:bxsBreath 6.4s ease-in-out infinite; }
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="ss"] .bx-art::after{ animation:bxsBreath 5s ease-in-out infinite; }
+@keyframes bxsBreath{ 0%, 100%{ opacity:calc(var(--bxs-bo) * .55); } 50%{ opacity:var(--bxs-bo); } }
+/* المؤشرات الخمسة بلون المستوى نفسه (كانت بلون --sec-rgb الباهت) */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-lv i.on{ background:rgb(var(--bxs-acc)); box-shadow:0 0 6px rgba(var(--bxs-acc),.6); }
+@media (hover:hover) and (pointer:fine){
+  html[data-theme="dark"] #eco-store-body .bx-card:hover .bx-art{ border-color:rgba(var(--bxs-acc),.64); }
+  html[data-theme="dark"] #eco-store-body .bx-card:hover .bx-art::after{ opacity:1; }
+}
+html[data-theme="dark"] #eco-store-body .bx-card:has(.bx-open:active) .bx-art::after{ opacity:1; }
+@media (prefers-reduced-motion:reduce){ html[data-theme="dark"] #eco-store-body .bx-card .bx-art::after{ animation:none !important; } }

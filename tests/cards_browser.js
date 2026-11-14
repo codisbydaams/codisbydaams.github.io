@@ -2,8 +2,8 @@
 (async function(){ try{
   const out = [], T = (n, ok, i)=>out.push({ name:n, ok:!!ok, info:i === undefined ? '' : i }), sleep = ms=>new Promise(r=>setTimeout(r, ms));
   data.wallet.balance = 5000; saveData(); econOpenStore(); await sleep(900);
-  [...document.querySelectorAll('#eco-store-body button')].filter(b=>/الكروت/.test(b.textContent))[0].click(); await sleep(900);
-  const frames = [...document.querySelectorAll('#eco-store-body .rwc')], geo = frames.map(f=>{ const a = f.querySelector('.rwc-art'), b = f.getBoundingClientRect(); if(!a) return null; const r = a.getBoundingClientRect(); return { ratio:b.width / b.height, l:r.left - b.left, t:r.top - b.top, w:b.width, aw:r.width }; }).filter(Boolean);
+  document.querySelector('#eco-store-body .st-rail-b[data-part="cards"]').click(); await sleep(900);   /* V48: شريط الأيقونات */
+  const frames = [...document.querySelectorAll('#eco-store-body .rwc')].filter(f=>f.offsetParent), geo   /* V48: الأقسام غير النشطة مخفية */ = frames.map(f=>{ const a = f.querySelector('.rwc-art'), b = f.getBoundingClientRect(); if(!a) return null; const r = a.getBoundingClientRect(); return { ratio:b.width / b.height, l:r.left - b.left, t:r.top - b.top, w:b.width, aw:r.width }; }).filter(Boolean);
   T('store frames are real 4:5', geo.length > 0 && geo.every(g=>Math.abs(g.ratio - 0.8) < 0.01), geo.length + ' frames');
   const full = geo.filter(g=>Math.abs(g.aw / g.w - 1) < 0.06);   /* 4:5 artwork (daily/weekly/special): must fill the frame */
   T('4:5 artwork fills its frame (padding <= 1.5px each side = the 1px border)', full.length > 0 && full.every(g=>g.l <= 1.5 && g.t <= 1.5), full.length + ' checked, max pad ' + Math.max.apply(null, full.map(g=>Math.max(g.l, g.t))).toFixed(1));

@@ -29,7 +29,7 @@
 <meta name="theme-color" content="#E9E0CD">
 <meta name="color-scheme" content="light">
 <!-- CODIS accounts (Supabase). Fill ONLY the public values: Project URL + anon/publishable key. NEVER put service_role / secret keys here. -->
-<!-- CODIS-BUTTER --><!-- CODIS-CRUMBS --><!-- CODIS-RAYS --><meta name="codis-version" content="3.33.0">
+<!-- CODIS-BUTTER --><!-- CODIS-CRUMBS --><!-- CODIS-RAYS --><meta name="codis-version" content="3.36.0">
 <meta name="codis-supabase-url" content="https://hkrqiqzkkjmokjabovpq.supabase.co">
 <meta name="codis-supabase-key" content="sb_publishable_G123qtyvcj8rlVtJHgHIDw_5Y2DKazO">
 <title>CODIS</title>
@@ -4429,16 +4429,6 @@ html[dir="ltr"] #settings-page-eco-store .vault{ left:auto; right:62px; }
 #settings-page-eco-store .vault-txt, #settings-page-eco-store .vault-chev{ display:none; }
 #settings-page-eco-store .vault-n{ position:absolute; top:-3px; right:-6px; min-width:20px; height:20px; padding:0 6px; font-size:11px; }
 
-/* — شريط الأقسام: لاصق أعلى المتجر للانتقال السريع — */
-.st-nav{ position:sticky; top:0; z-index:6; display:flex; gap:6px; margin:-10px calc(var(--pad-x, 16px) * -1) -8px; padding:8px var(--pad-x, 16px);
-  background:linear-gradient(180deg, rgb(244 240 231 / .96) 70%, rgb(52 42 32 / .03)); }   /* near-opaque already: no blur needed while the grid scrolls under it */
-/* (The 48px ::before "cover" that sat inside the unclosed rule never matched anything; once the rule was closed it
-   rendered over the balance card, so it is gone — the bar looks exactly as it always has.) */
-.st-nav button{ flex:1 1 0; min-width:0; min-height:36px; padding:0 10px; border-radius:var(--r-full); border:1px solid var(--st-hair); background:rgb(var(--lite-rgb) / .315); color:var(--text-2);
-  font:inherit; font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
-.st-nav button b{ font-weight:800; font-size:11px; margin-inline-start:5px; color:var(--text-3, var(--text-2)); }
-.st-nav button.is-on{ color:var(--text); border-color:rgb(var(--aqua-rgb) / .42); background:rgb(var(--aqua-rgb) / .12); }
-.st-nav button:active{ transform:scale(var(--press)); }
 
 /* — رأس القسم الكبير (البكجات · بطاقات العطلة · الكروت): سطر واحد بخط فاصل ملوّن — */
 #eco-store-body .st-part{ --pt-rgb:27,95,106; display:grid; gap:12px; min-width:0; align-content:start; scroll-margin-top:56px; }
@@ -4808,7 +4798,6 @@ html[data-view="store"] #page-settings.is-store-layer{ position:relative; inset:
 html[data-view="store"] .topbar-fade, html[data-view="store"] .topbar-mark, html[data-view="store"] .notif-bell,
 html[data-view="store"] .store-btn, html[data-view="store"] .coin-chip{ opacity:0; visibility:hidden; pointer-events:none; }
 /* أقسام المتجر خارج الشاشة لا تُحسب ولا تُرسم حتى تقترب (قياس: تخطيط المتجر 52–104ms → ~6ms). auto تحفظ الارتفاع الحقيقي بعد أول ظهور */
-#eco-store-body > #eco-cosmetics, #eco-store-body > #eco-cards{ content-visibility:auto; contain-intrinsic-size:auto 1200px; }
 
 /* CODIS-RULES · هوية الأهمية للعادات: عادية = هادئة ومستقرة · مهمة = دافئة · حرجة = تركيز وإلحاح. التمييز بالشكل (سماكة الشريط/الإطار) والأيقونة والنص قبل اللون */
 #page-habits .hb-pill .ico{ --ctx-ico-n:var(--ico-xs); margin-inline-end:4px; vertical-align:-2px; }
@@ -9593,16 +9582,6 @@ html[dir="ltr"] #settings-page-eco-store .vault{ left:auto; right:62px; }
 #settings-page-eco-store .vault-txt, #settings-page-eco-store .vault-chev{ display:none; }
 #settings-page-eco-store .vault-n{ position:absolute; top:-3px; right:-6px; min-width:20px; height:20px; padding:0 6px; font-size:11px; }
 
-/* — شريط الأقسام: لاصق أعلى المتجر للانتقال السريع — */
-.st-nav{ position:sticky; top:0; z-index:6; display:flex; gap:6px; margin:-10px calc(var(--pad-x, 16px) * -1) -8px; padding:8px var(--pad-x, 16px);
-  background:linear-gradient(180deg, rgb(7 10 15 / .96) 70%, rgb(7 10 15 / 0)); }   /* near-opaque already: no blur needed while the grid scrolls under it */
-/* (The 48px ::before "cover" that sat inside the unclosed rule never matched anything; once the rule was closed it
-   rendered over the balance card, so it is gone — the bar looks exactly as it always has.) */
-.st-nav button{ flex:1 1 0; min-width:0; min-height:36px; padding:0 10px; border-radius:var(--r-full); border:1px solid var(--st-hair); background:rgb(var(--hi-rgb) / .035); color:var(--text-2);
-  font:inherit; font-size:13px; font-weight:700; white-space:nowrap; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease), border-color var(--dur-fast) var(--ease); }
-.st-nav button b{ font-weight:800; font-size:11px; margin-inline-start:5px; color:var(--text-3, var(--text-2)); }
-.st-nav button.is-on{ color:var(--text); border-color:rgb(var(--aqua-rgb) / .42); background:rgb(var(--aqua-rgb) / .12); }
-.st-nav button:active{ transform:scale(var(--press)); }
 
 /* — رأس القسم الكبير (البكجات · بطاقات العطلة · الكروت): سطر واحد بخط فاصل ملوّن — */
 #eco-store-body .st-part{ --pt-rgb:99,199,216; display:grid; gap:12px; min-width:0; align-content:start; scroll-margin-top:56px; }
@@ -9967,7 +9946,6 @@ html[data-view="store"] #page-settings.is-store-layer{ position:relative; inset:
 html[data-view="store"] .topbar-fade, html[data-view="store"] .topbar-mark, html[data-view="store"] .notif-bell,
 html[data-view="store"] .store-btn, html[data-view="store"] .coin-chip{ opacity:0; visibility:hidden; pointer-events:none; }
 /* أقسام المتجر خارج الشاشة لا تُحسب ولا تُرسم حتى تقترب (قياس: تخطيط المتجر 52–104ms → ~6ms). auto تحفظ الارتفاع الحقيقي بعد أول ظهور */
-#eco-store-body > #eco-cosmetics, #eco-store-body > #eco-cards{ content-visibility:auto; contain-intrinsic-size:auto 1200px; }
 
 /* CODIS-RULES · هوية الأهمية للعادات: عادية = هادئة ومستقرة · مهمة = دافئة · حرجة = تركيز وإلحاح. التمييز بالشكل (سماكة الشريط/الإطار) والأيقونة والنص قبل اللون */
 #page-habits .hb-pill .ico{ --ctx-ico-n:var(--ico-xs); margin-inline-end:4px; vertical-align:-2px; }
@@ -11904,6 +11882,265 @@ html.fz-calm .fin-card, html.fz-calm .fin-card-sheen{ animation:none; }
 .fin-card-holder{ display:flex; align-items:baseline; gap:8px; min-width:0; } .fin-card-holder small{ font-size:7.5px; letter-spacing:.26em; color:var(--fin-card-brass); opacity:.75; flex:none; }
 .fin-card-holder b{ font-size:13.5px; font-weight:700; letter-spacing:.03em; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--fin-card-ink); text-shadow:0 1px 0 rgb(0 0 0 / .55), 0 -1px 0 rgb(255 240 200 / .22); }
 </style>
+<style id="codis-v47-css">
+/* CODIS-V47 (3.34.0؛ محصور بالمظهر الداكن منذ V48 — الورقي له تصميم مستقل في v48.css) — منصّات عرض البكجات: كل بكج يقف على منصة داخل غرفة عرض صغيرة (جدار خلفي · أرضية بخط أفق · إضاءة · منصة بسماكة وظل تماس).
+   عرض فقط. النطاق: html[data-theme="dark"] #eco-store-body .bx-card .bx-art (بطاقات قسم البكجات حصراً) — لا يمسّ «بحوزتك» (.bx-own-tile) ولا .bx-modal .bx-stage ولا صور الصناديق.
+   البنية موحّدة لكل المستويات (نفس الطبقات والمقاييس)؛ الشخصية تأتي من المتغيّرات --bxs-* (لون/خامة/ضوء) لا من نسخ القاعدة.
+   الطبقات: .bx-art = الجدار + الأرضية + الخامة + الهالة + الڤينيت · ::before = المنصة (قرص بسماكة + حلقة منقوشة + ظل تماس؛ كلها طبقات تدرّج بلا box-shadow لأن WebKit يرسم مستطيلاً حول الظلال الصلبة على العناصر البيضوية) · ::after = مخروط الضوء العلوي (هو الوحيد المتحرّك: opacity فقط). */
+
+/* ---- الهوية الأساسية = البرونزي (tone="c" بلا سمة) + مقاييس مشتركة ---- */
+html[data-theme="dark"] #eco-store-body .bx-card{
+  --bxs-acc:214,150,84; --bxs-hi:255,214,160; --bxs-side:62,38,20; --bxs-pd1:112,74,40; --bxs-pd2:38,23,14; --bxs-wt:44,30,22; --bxs-wb:16,11,9; --bxs-bo:.5;
+  --bxs-fx:radial-gradient(115% 96% at 50% 46%, transparent 52%, rgba(0,0,0,.5) 100%);
+  --bxs-floor:linear-gradient(180deg, transparent 0 66%, rgba(var(--bxs-hi),.12) 66% 66.9%, rgba(0,0,0,.26) 66.9%, rgba(0,0,0,.52) 100%);
+  --bxs-wall:linear-gradient(180deg, rgb(var(--bxs-wt)), rgb(var(--bxs-wb)));
+  /* برونزي: جلد/نحاس دافئ — مصباح جانبي من أعلى اليسار + نسيج مائل ناعم جداً */
+  --bxs-tex:repeating-linear-gradient(135deg, rgba(255,214,160,.035) 0 1px, transparent 1px 6px);
+  --bxs-halo:radial-gradient(70% 55% at 24% 0%, rgba(255,186,112,.2), transparent 70%), radial-gradient(52% 40% at 50% 50%, rgba(var(--bxs-acc),.16), transparent 72%);
+  --bxs-beam:rgba(255,190,120,.2);
+}
+/* فضي: فولاذ بارد مصقول — خطوط تخديش رأسية + شريط انعكاس قطري + مخروط أبيض مزرقّ حاد */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="b"]{
+  --bxs-acc:176,202,232; --bxs-hi:232,242,255; --bxs-side:30,40,54; --bxs-pd1:108,126,148; --bxs-pd2:28,36,48; --bxs-wt:30,41,56; --bxs-wb:10,15,22; --bxs-bo:.6;
+  --bxs-tex:repeating-linear-gradient(90deg, rgba(220,232,255,.03) 0 1px, transparent 1px 3px);
+  --bxs-halo:linear-gradient(112deg, transparent 34%, rgba(225,238,255,.08) 44% 50%, transparent 60%), radial-gradient(54% 42% at 50% 48%, rgba(var(--bxs-acc),.18), transparent 72%);
+  --bxs-beam:rgba(214,232,255,.26);
+}
+/* كريستالي: ياقوتي عميق — أوجه بلورية مشعّة من القاعدة + ضوء بنفسجي ثانوي + تنفّس ضوئي هادئ */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="a"]{
+  --bxs-acc:92,190,255; --bxs-hi:190,232,255; --bxs-side:12,28,66; --bxs-pd1:34,86,170; --bxs-pd2:9,20,48; --bxs-wt:14,32,72; --bxs-wb:5,10,26; --bxs-bo:.72;
+  --bxs-tex:repeating-conic-gradient(from 12deg at 50% 100%, rgba(130,210,255,.055) 0 6deg, transparent 6deg 15deg);
+  --bxs-halo:radial-gradient(48% 38% at 80% 78%, rgba(150,120,255,.22), transparent 70%), radial-gradient(60% 46% at 50% 48%, rgba(var(--bxs-acc),.26), transparent 72%);
+  --bxs-beam:rgba(130,214,255,.3);
+}
+/* ذهبي: قاعة نبيذية داكنة بهالة ذهبية — أشعة شمسية رقيقة تنفرج من خلف الصندوق + لمعة أرضية */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="s"]{
+  --bxs-acc:255,196,92; --bxs-hi:255,230,168; --bxs-side:70,38,10; --bxs-pd1:176,120,40; --bxs-pd2:50,26,10; --bxs-wt:46,15,20; --bxs-wb:16,6,9; --bxs-bo:.8;
+  --bxs-tex:repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,205,110,.07) 0 4deg, transparent 4deg 12deg);
+  --bxs-halo:radial-gradient(62% 48% at 50% 48%, rgba(var(--bxs-acc),.32), transparent 72%), radial-gradient(40% 14% at 50% 86%, rgba(255,210,120,.3), transparent 80%);
+  --bxs-beam:rgba(255,214,130,.34);
+}
+/* خرافي: ليل نيلي بأورورا (بنفسجي + فيروزي) وهالة ذهبية مركزية وخمس نجيمات فقط */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="ss"]{
+  --bxs-acc:255,214,130; --bxs-hi:255,240,200; --bxs-side:44,28,70; --bxs-pd1:150,110,200; --bxs-pd2:32,18,58; --bxs-wt:24,14,58; --bxs-wb:7,4,18; --bxs-bo:.9;
+  --bxs-tex:repeating-conic-gradient(from 8deg at 50% 50%, rgba(255,226,160,.06) 0 3deg, transparent 3deg 10deg);
+  --bxs-halo:radial-gradient(1.2px 1.2px at 17% 21%, rgba(255,255,255,.85), transparent 100%), radial-gradient(1px 1px at 81% 15%, rgba(255,246,214,.8), transparent 100%), radial-gradient(1.2px 1.2px at 90% 47%, rgba(255,255,255,.7), transparent 100%), radial-gradient(1px 1px at 10% 58%, rgba(255,240,200,.7), transparent 100%), radial-gradient(1px 1px at 63% 9%, rgba(255,255,255,.75), transparent 100%),
+    radial-gradient(54% 40% at 18% 12%, rgba(150,96,255,.36), transparent 72%), radial-gradient(50% 38% at 86% 34%, rgba(60,224,204,.24), transparent 72%), radial-gradient(60% 46% at 50% 48%, rgba(var(--bxs-acc),.3), transparent 72%);
+  --bxs-beam:rgba(255,226,160,.36);
+}
+
+/* ---- الجدار + الأرضية + الخامة + الهالة (مرتبة من الأعلى للأسفل) ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art{
+  border:1px solid rgba(var(--bxs-acc),.34);
+  background:var(--bxs-fx), var(--bxs-tex), var(--bxs-halo), var(--bxs-floor), var(--bxs-wall);
+  box-shadow:inset 0 1px 0 rgba(var(--bxs-hi),.16), inset 0 0 0 1px rgba(0,0,0,.34), inset 0 -22px 26px -18px rgba(0,0,0,.62),
+    0 10px 22px -14px rgb(var(--lo-rgb) / .9), 0 0 calc(var(--bx-glow) * 34px) rgba(var(--bxs-acc), calc(var(--bx-glow) * .4));
+}
+/* ---- المنصة: قرص بسماكة (حافة مضيئة + جدار جانبي + ظل أرضي) · حلقة منقوشة · ظل تماس تحت الصندوق ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art::before{
+  left:6%; bottom:10%; width:88%; height:26%; border-radius:50%; transform:none; z-index:0; box-shadow:none;
+  background:radial-gradient(ellipse 26% 17% at 50% 46%, rgba(0,0,0,.62), transparent 100%),
+    radial-gradient(ellipse 36% 25% at 50% 46%, transparent 92%, rgba(var(--bxs-acc),.42) 95%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 45%, rgb(var(--bxs-pd1)) 0, rgb(var(--bxs-pd2)) 90%, rgba(var(--bxs-hi),.55) 96%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 52%, rgb(var(--bxs-side)) 96%, transparent 100%),
+    radial-gradient(ellipse 50% 32% at 50% 63%, rgba(0,0,0,.55), transparent 100%),
+    radial-gradient(ellipse 60% 44% at 50% 46%, rgba(var(--bxs-acc), calc(var(--bx-glow) * .5)), transparent 100%);
+}
+/* ---- مخروط الضوء العلوي: حواف ناعمة (conic) بدل المضلع الحاد القديم ---- */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-art::after{
+  left:0; top:0; width:100%; height:100%; transform:none; clip-path:none; opacity:var(--bxs-bo); animation:none;
+  background:conic-gradient(from 180deg at 50% -10%, var(--bxs-beam) 0deg, transparent 15deg, transparent 345deg, var(--bxs-beam) 360deg);
+  -webkit-mask-image:linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 46%, transparent 82%); mask-image:linear-gradient(180deg, #000 0, rgba(0,0,0,.5) 46%, transparent 82%);
+}
+/* حركة هادئة (opacity فقط): الكريستالي والذهبي والخرافي — البرونزي والفضي ثابتان */
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="a"] .bx-art::after{ animation:bxsBreath 5.6s ease-in-out infinite; }
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="s"] .bx-art::after{ animation:bxsBreath 6.4s ease-in-out infinite; }
+html[data-theme="dark"] #eco-store-body .bx-card[data-tone="ss"] .bx-art::after{ animation:bxsBreath 5s ease-in-out infinite; }
+@keyframes bxsBreath{ 0%, 100%{ opacity:calc(var(--bxs-bo) * .55); } 50%{ opacity:var(--bxs-bo); } }
+/* المؤشرات الخمسة بلون المستوى نفسه (كانت بلون --sec-rgb الباهت) */
+html[data-theme="dark"] #eco-store-body .bx-card .bx-lv i.on{ background:rgb(var(--bxs-acc)); box-shadow:0 0 6px rgba(var(--bxs-acc),.6); }
+@media (hover:hover) and (pointer:fine){
+  html[data-theme="dark"] #eco-store-body .bx-card:hover .bx-art{ border-color:rgba(var(--bxs-acc),.64); }
+  html[data-theme="dark"] #eco-store-body .bx-card:hover .bx-art::after{ opacity:1; }
+}
+html[data-theme="dark"] #eco-store-body .bx-card:has(.bx-open:active) .bx-art::after{ opacity:1; }
+@media (prefers-reduced-motion:reduce){ html[data-theme="dark"] #eco-store-body .bx-card .bx-art::after{ animation:none !important; } }
+</style>
+<style id="codis-v48-css">
+/* CODIS-V48 (3.35.0) — (1) منصّات البكجات للمظهر الورقي: «معرض مقتنيات» من ورق فاخر منقوش (مستقل تماماً عن الداكن في v47.css) · (2) متجر بقسم واحد ظاهر + شريط أيقونات عمودي.
+   عرض فقط. المظهران يُختاران بـ html[data-theme] (يتبدّل فوراً بلا إعادة تحميل). النطاق: #eco-store-body .bx-card .bx-art وحاوية .st-shell — لا يمسّ «بحوزتك» ولا .bx-modal.
+   الورقي: ::before = منصة (قرص ورق/معدن بسماكة وظل تماس، طبقات تدرّج بلا box-shadow لأن WebKit يرسم مستطيلاً حول الظلال الصلبة على العناصر البيضوية) · ::after = إطار منقوش بركنيات معدنية. بلا أي حركة. */
+
+/* ================= المظهر الورقي: بكجات ================= */
+html[data-theme="paper"] #eco-store-body .bx-card{
+  --pp-ink:74,52,30;
+  /* برونزي: رمل دافئ + نحاس + حلقات نقش متحدة المركز عند القاعدة */
+  --pp-m:168,104,50; --pp-ga:250,240,219; --pp-gb:226,204,166; --pp-pl1:204,142,82; --pp-pl2:122,74,38; --pp-side:92,54,26; --pp-rule:138,90,48; --pp-orn:18px;
+  --pp-motif:repeating-radial-gradient(circle at 50% 118%, rgba(150,92,44,.15) 0 1px, transparent 1px 6px);
+  --pp-ring2:linear-gradient(transparent, transparent);
+}
+/* فضي: ورق رمادي بارد + شبكة نقش معينية دقيقة + فولاذ مصقول */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="b"]{
+  --pp-m:104,122,144; --pp-ga:245,246,244; --pp-gb:213,219,223; --pp-pl1:226,233,240; --pp-pl2:124,138,154; --pp-side:84,96,110; --pp-rule:100,116,136; --pp-orn:26px;
+  --pp-motif:repeating-linear-gradient(45deg, rgba(104,124,148,.11) 0 1px, transparent 1px 6px), repeating-linear-gradient(-45deg, rgba(104,124,148,.11) 0 1px, transparent 1px 6px);
+}
+/* كريستالي: ورق مثلّج مزرقّ + أوجه بلورية مروحية + قرص زجاجي شفاف */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="a"]{
+  --pp-m:66,130,178; --pp-ga:240,247,250; --pp-gb:198,217,230; --pp-pl1:232,244,252; --pp-pl2:112,166,204; --pp-side:74,118,150; --pp-rule:78,134,172; --pp-orn:22px;
+  --pp-motif:repeating-conic-gradient(from 0deg at 50% 112%, rgba(76,150,204,.12) 0 4deg, transparent 4deg 10deg), radial-gradient(40% 30% at 50% 30%, rgba(255,255,255,.7), transparent 100%);
+}
+/* ذهبي: رق شامبانيا + أشعة شمسية محفورة + قرص ذهبي */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="s"]{
+  --pp-m:192,142,44; --pp-ga:253,243,212; --pp-gb:230,200,132; --pp-pl1:240,206,124; --pp-pl2:158,110,36; --pp-side:112,76,22; --pp-rule:172,124,38; --pp-orn:30px;
+  --pp-motif:repeating-conic-gradient(from 0deg at 50% 50%, rgba(196,146,44,.14) 0 3deg, transparent 3deg 9deg);
+}
+/* خرافي: رق وردي-ليلكي بغسلات ألوان مائية (بنفسجي/فيروزي) + أشعة وخمس نجيمات ذهبية + حلقة مزدوجة وإطار مزدوج */
+html[data-theme="paper"] #eco-store-body .bx-card[data-tone="ss"]{
+  --pp-m:176,124,40; --pp-ga:251,241,238; --pp-gb:224,206,222; --pp-pl1:242,210,126; --pp-pl2:126,84,152; --pp-side:84,52,108; --pp-rule:170,122,44; --pp-orn:34px;
+  --pp-motif:radial-gradient(1.2px 1.2px at 17% 20%, rgba(176,124,40,.9), transparent 100%), radial-gradient(1px 1px at 82% 15%, rgba(176,124,40,.85), transparent 100%), radial-gradient(1.2px 1.2px at 91% 48%, rgba(176,124,40,.8), transparent 100%), radial-gradient(1px 1px at 9% 57%, rgba(176,124,40,.8), transparent 100%), radial-gradient(1px 1px at 64% 9%, rgba(176,124,40,.85), transparent 100%),
+    radial-gradient(52% 40% at 16% 14%, rgba(150,106,196,.3), transparent 72%), radial-gradient(50% 38% at 88% 32%, rgba(80,184,172,.24), transparent 72%), repeating-conic-gradient(from 8deg at 50% 50%, rgba(176,124,40,.12) 0 2.5deg, transparent 2.5deg 8deg);
+  --pp-ring2:radial-gradient(ellipse 30% 21% at 50% 46%, transparent 91%, rgba(var(--pp-m),.55) 95%, transparent 100%);
+}
+
+/* الأرضية: ورق مضلّع (خطوط + حبيبات) + نقش المستوى + ضوء علوي دافئ + سطح الطاولة تحت خط الأفق */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art{
+  border:1px solid rgba(var(--pp-m),.6);
+  background:radial-gradient(120% 100% at 50% 44%, transparent 58%, rgba(var(--pp-ink),.17) 100%),
+    radial-gradient(rgba(var(--pp-ink),.075) .55px, transparent .7px) 0 0 / 3px 3px,
+    repeating-linear-gradient(0deg, rgba(var(--pp-ink),.03) 0 1px, transparent 1px 3px),
+    var(--pp-motif),
+    radial-gradient(62% 52% at 50% 36%, rgba(255,251,238,.88), transparent 76%),
+    linear-gradient(180deg, transparent 0 67%, rgba(var(--pp-ink),.2) 67% 67.7%, rgba(var(--pp-m),.17) 67.7% 100%),
+    linear-gradient(180deg, rgb(var(--pp-ga)), rgb(var(--pp-gb)));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(var(--pp-ink),.22), inset 0 -22px 24px -20px rgba(var(--pp-ink),.4),
+    0 1px 0 rgba(255,255,255,.7), 0 9px 16px -12px rgba(var(--pp-ink),.62);
+}
+/* المنصة: قرص بسماكة — ظل أرضي · جدار جانبي · سطح بحافة ورقية فاتحة · حلقة منقوشة (ومزدوجة للخرافي) · ظل تماس */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art::before{
+  left:6%; bottom:10%; width:88%; height:26%; border-radius:50%; transform:none; z-index:0; box-shadow:none;
+  background:radial-gradient(ellipse 26% 17% at 50% 46%, rgba(52,30,12,.52), transparent 100%),
+    radial-gradient(ellipse 36% 25% at 50% 46%, transparent 91%, rgba(var(--pp-rule),.62) 95%, transparent 100%),
+    var(--pp-ring2),
+    radial-gradient(ellipse 45.5% 32% at 50% 45%, rgb(var(--pp-pl1)) 0, rgb(var(--pp-pl2)) 90%, rgba(255,250,236,.9) 96%, transparent 100%),
+    radial-gradient(ellipse 45.5% 32% at 50% 52%, rgb(var(--pp-side)) 96%, transparent 100%),
+    radial-gradient(ellipse 50% 32% at 50% 63%, rgba(var(--pp-ink),.42), transparent 100%);
+}
+/* الإطار المنقوش: خط حبر غائر + إضاءة داخلية بيضاء + ركنيات معدنية + زخرفة علوية بطول يزيد مع قيمة المستوى */
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art::after{
+  left:6px; top:6px; width:auto; height:auto; right:6px; bottom:6px; transform:none; clip-path:none; animation:none; opacity:1; -webkit-mask-image:none; mask-image:none;
+  border:1px solid rgba(var(--pp-rule),.52); border-radius:5px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.55);
+  background-origin:border-box; background-repeat:no-repeat;
+  background-image:linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))),
+    linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))), linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m))),
+    linear-gradient(rgb(var(--pp-m)), rgb(var(--pp-m)));
+  background-position:0 0, 0 0, 100% 0, 100% 0, 0 100%, 0 100%, 100% 100%, 100% 100%, 50% -1px;
+  background-size:11px 2px, 2px 11px, 11px 2px, 2px 11px, 11px 2px, 2px 11px, 11px 2px, 2px 11px, var(--pp-orn) 3px;
+}
+html[data-theme="paper"] #eco-store-body .bx-card .bx-art .bx-info{ color:rgba(var(--pp-ink),.62); background:rgba(255,250,236,.7); border-color:rgba(var(--pp-rule),.4); }
+html[data-theme="paper"] #eco-store-body .bx-card .bx-lv i{ background:rgba(var(--pp-ink),.17); }
+html[data-theme="paper"] #eco-store-body .bx-card .bx-lv i.on{ background:rgb(var(--pp-m)); box-shadow:0 0 0 1px rgba(var(--pp-ink),.18); }
+@media (hover:hover) and (pointer:fine){ html[data-theme="paper"] #eco-store-body .bx-card:hover .bx-art{ border-color:rgba(var(--pp-m),.95); } }
+
+/* ================= المتجر: قسم واحد ظاهر + شريط أيقونات جانبي ================= */
+#eco-store-body .st-stage{ min-width:0; }
+/* العرض: الجزء النشط فقط (الباقي يبقى في DOM بلا حجز مساحة — تعتمد عليه دوال الملاءمة والفتح بالمعرّف) */
+#eco-store-body .st-pane{ display:none; }
+#eco-store-body .st-pane.is-on{ display:flex; flex-direction:column; gap:var(--sp-lg); }
+#eco-store-body .st-pane.is-part-in{ animation:stPartIn .3s var(--ease, ease) both; }
+@keyframes stPartIn{ from{ opacity:0; transform:translateX(14px); } to{ opacity:1; transform:none; } }
+/* بكجان بالصف ضمن عرض المحتوى المتبقي (حجم أكبر للصندوق وأزرار مريحة) */
+#eco-store-body .st-stage .bx-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+
+@media (prefers-reduced-motion:reduce){ #eco-store-body .st-pane.is-part-in{ animation:none; } #eco-store-body .st-rail-b, #eco-store-body .st-rail-b svg{ transition:none; } }
+/* الصندوق أبعد قليلاً عن الإطار العلوي بعد توسّع البلاطة إلى عمودين (الكريستالي أطول المجسّمات) */
+#eco-store-body .st-stage .bx-card .bxa{ width:72%; margin-top:1%; }
+</style>
+<style id="codis-v49-css">
+/* CODIS-V49 (3.36.0) — هيكل متجر بارتفاع ثابت: الترويسة + الرصيد + (شريط أيقونات ممتد بطول المساحة | مسرح محتوى يتمرر وحده). الصفحة الخارجية و.main لا تتحرك.
+   سلسلة الارتفاعات: .main (100dvh، overflow:hidden) ← #page-settings.is-eco-store (flex عمودي، 100dvh) ← #settings-page-eco-store (flex:1) ← #eco-store-body (flex:1) ← .st-shell (flex:1) ← .st-stage (المُمرِّر الوحيد).
+   موضع تمرير كل قسم محفوظ بالجافاسكربت (econStoreScrollPos) لأن display:none يصفّر scrollTop. المباعة والمستخدمة ورقة مستقلة (.own-sheet.hx-sheet) مثل «بحوزتك». */
+
+html[data-view="store"] .main:has(#page-settings.is-eco-store){ overflow:hidden; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; }
+html[data-view="store"] #page-settings.is-store-layer.is-eco-store{ display:flex !important; flex-direction:column; height:100vh; height:100dvh; min-height:0; overflow:hidden; padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); }
+html[data-view="store"] #page-settings.is-eco-store > #settings-page-eco-store{ display:flex !important; flex-direction:column; flex:1 1 auto; min-height:0; }
+/* ترويسة مضغوطة: كل بكسل رأسي يخدم المحتوى */
+#settings-page-eco-store .settings-back-btn{ min-height:36px; margin:-4px 0 0; }
+#settings-page-eco-store .settings-section-head{ margin-bottom:8px; }
+#settings-page-eco-store .settings-section-head::before{ display:none; }
+#settings-page-eco-store .settings-section-title{ font-size:22px; }
+html[data-view="store"] #eco-store-body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:10px; }
+/* المسرح: المُمرِّر الوحيد لمحتوى القسم */
+#eco-store-body .st-stage{ min-height:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding-bottom:18px; scrollbar-width:thin; scrollbar-color:rgb(var(--ink-rgb) / .22) transparent; }
+#eco-store-body .st-stage::-webkit-scrollbar{ width:4px; }
+#eco-store-body .st-stage::-webkit-scrollbar-thumb{ border-radius:4px; background:rgb(var(--ink-rgb) / .22); }
+
+/* ===== المباعة والمستخدمة: ورقة مستقلة ===== */
+#eco-store-body .hx-sheet{ padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 40px); }
+#eco-store-body .hx-head{ position:sticky; top:0; z-index:6; margin:0 calc(var(--pad-x, 16px) * -1) 12px; background:var(--bg, #F3EEE4); border-bottom:1px solid var(--st-hair); }
+#eco-store-body .hx-head .own-sheet-bar{ position:static; margin:0; border-bottom:0; background:none; }
+#eco-store-body .hx-tool{ display:grid; gap:8px; padding:0 var(--pad-x, 16px) 10px; }
+#eco-store-body .hx-tool .eco-ctabs{ margin:0; }
+#eco-store-body .hx-search{ position:relative; display:flex; align-items:center; }
+#eco-store-body .hx-search svg{ position:absolute; inset-inline-start:12px; width:18px; height:18px; color:var(--text-3, var(--text-2)); pointer-events:none; }
+#eco-store-body .hx-q{ width:100%; min-height:42px; padding:0 14px; padding-inline-start:38px; border-radius:13px; border:1px solid var(--st-hair); background:rgb(var(--lite-rgb) / .5); color:var(--text); font:inherit; font-size:16px; }
+#eco-store-body .hx-q:focus-visible{ outline:2px solid var(--aqua); outline-offset:1px; }
+#eco-store-body .hx-chips{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+#eco-store-body .hx-chips::-webkit-scrollbar{ display:none; }
+#eco-store-body .hx-chip{ flex:0 0 auto; min-height:34px; padding:0 12px; border-radius:var(--r-full); border:1px solid var(--st-hair); background:rgb(var(--lite-rgb) / .35); color:var(--text-2); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
+#eco-store-body .hx-chip b{ margin-inline-start:5px; font-size:11px; opacity:.8; }
+#eco-store-body .hx-chip.is-on{ color:var(--text); border-color:var(--aqua); background:var(--aqua-a14, rgb(var(--aqua-rgb) / .12)); }
+#eco-store-body .hx-panel:not([data-sec="all"]) .hx-sec{ display:none; }
+#eco-store-body .hx-panel[data-sec="top"] .hx-sec[data-sec="top"], #eco-store-body .hx-panel[data-sec="log"] .hx-sec[data-sec="log"], #eco-store-body .hx-panel[data-sec="exp"] .hx-sec[data-sec="exp"],
+#eco-store-body .hx-panel[data-sec="tasks"] .hx-sec[data-sec="tasks"], #eco-store-body .hx-panel[data-sec="silver"] .hx-sec[data-sec="silver"]{ display:block; }
+#eco-store-body .hx-nores{ padding:22px 12px; text-align:center; color:var(--text-2); font-size:13.5px; }
+#eco-store-body .hx-nores[hidden], #eco-store-body .hx-panel [hidden]{ display:none !important; }
+#eco-store-body .hx-search .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+/* الصندوق المجاني بعرض المحتوى الأضيق: الزر تحت النص بدل أن يعصر السطور */
+@media (max-width:379px){ #eco-store-body .st-stage .fb-card{ flex-wrap:wrap; gap:8px 12px; } #eco-store-body .st-stage .fb-art{ width:52px; height:48px; } #eco-store-body .st-stage .fb-cta{ flex:1 1 100%; text-align:center; } }
+
+/* ===== شريط الأقسام: لوح جانبي ملتصق بحافة الشاشة اليمنى ومتصل ببطاقة الرصيد، مقسوم إلى خانات متساوية بأيقونة في منتصف كل خانة ===== */
+#eco-store-body{ --padR:max(var(--pad-x, 16px), env(safe-area-inset-right, 0px)); --padB:calc(env(safe-area-inset-bottom, 0px) + 10px); }
+html[data-view="store"] #eco-store-body{ gap:0; }
+/* الرصيد يمتد إلى الحافة اليمنى بزوايا يمنى قائمة ليتّصل به الشريط تحته */
+#eco-store-body > .eco-balance{ flex:0 0 auto; margin-right:calc(-1 * var(--padR)); padding-inline-start:calc(14px + var(--padR)); border-right-width:0; border-radius:18px 0 0 18px; }
+#eco-store-body .st-shell{ --rail-w:68px; flex:1 1 0; min-height:0; margin-right:calc(-1 * var(--padR)); margin-bottom:calc(-1 * var(--padB)); display:grid; grid-template-columns:var(--rail-w) minmax(0, 1fr); grid-template-rows:minmax(0, 1fr); gap:0 12px; align-items:stretch; }
+#eco-store-body .st-stage{ padding:12px 2px calc(env(safe-area-inset-bottom, 0px) + 22px); }
+#eco-store-body .st-rail{ --ra-boxes:232,184,96; --ra-cosmetics:170,140,255; --ra-cards:80,208,220; position:relative; z-index:6; min-height:0; display:grid; grid-auto-rows:minmax(86px, 1fr); gap:0; padding:0 0 env(safe-area-inset-bottom, 0px); border-radius:0; border-left:1px solid var(--rail-line); }
+#eco-store-body .st-rail.is-scroll{ overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+#eco-store-body .st-rail.is-scroll::-webkit-scrollbar{ display:none; }
+#eco-store-body .st-rail-b{ --ra:var(--ra-boxes); position:relative; display:grid; place-items:center; width:100%; height:100%; min-height:0; padding:0; border:0; border-radius:0; background:none; color:var(--text-2); font:inherit; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:background-color var(--dur-fast, .16s) var(--ease, ease), color var(--dur-fast, .16s) var(--ease, ease); }
+#eco-store-body .st-rail-b + .st-rail-b{ border-top:1px solid var(--rail-line); }
+#eco-store-body .st-rail-b[data-part="cosmetics"]{ --ra:var(--ra-cosmetics); }
+#eco-store-body .st-rail-b[data-part="cards"]{ --ra:var(--ra-cards); }
+#eco-store-body .st-rail-b svg{ width:30px; height:30px; transition:transform .2s var(--ease-spring, ease); }
+#eco-store-body .st-rail-b:active svg{ transform:scale(.9); }
+#eco-store-body .st-rail-b:focus-visible{ outline:2px solid rgb(var(--ra)); outline-offset:-3px; }
+#eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); }
+#eco-store-body .st-rail-b.is-on svg{ stroke-width:2.1; }
+/* مؤشر الحالة النشطة بالشكل لا باللون وحده: شريط في الحافة المواجهة للمحتوى */
+#eco-store-body .st-rail-b.is-on::after{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; border-radius:0 3px 3px 0; background:rgb(var(--ra)); }
+#eco-store-body .st-rail-n{ position:absolute; top:8px; right:9px; min-width:16px; height:16px; padding:0 4px; display:grid; place-items:center; border-radius:8px; font-size:10px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; pointer-events:none; }
+@media (hover:hover) and (pointer:fine){
+  #eco-store-body .st-rail-b::before{ content:attr(data-tip); position:absolute; top:50%; right:calc(100% + 12px); transform:translate(6px, -50%); padding:5px 10px; border-radius:9px; font-size:12px; font-weight:700; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s, transform .15s; z-index:7; }
+  #eco-store-body .st-rail-b:hover::before, #eco-store-body .st-rail-b:focus-visible::before{ opacity:1; transform:translate(0, -50%); }
+}
+/* داكن: امتداد زجاج بطاقة الرصيد (يبدأ بلمسة ذهبية من حافتها السفلى) */
+html[data-theme="dark"] #eco-store-body .st-rail{ --rail-line:rgb(255 255 255 / .08); background:linear-gradient(180deg, rgb(var(--gold-rgb) / .12), rgb(20 26 36 / .96) 38%, rgb(9 12 18 / .98)); border-left-color:rgb(var(--gold-rgb) / .24); box-shadow:inset 0 1px 0 rgb(var(--gold-rgb) / .2); }
+html[data-theme="dark"] #eco-store-body .st-rail-b.is-on{ background:linear-gradient(270deg, rgba(var(--ra), .3), rgba(var(--ra), .05)); }
+html[data-theme="dark"] #eco-store-body .st-rail-b.is-on::after{ box-shadow:0 0 10px rgba(var(--ra), .8); }
+@media (hover:hover){ html[data-theme="dark"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgb(255 255 255 / .05); color:var(--text); } }
+html[data-theme="dark"] #eco-store-body .st-rail-n{ color:#fff; background:rgb(0 0 0 / .55); border:1px solid rgb(255 255 255 / .16); }
+html[data-theme="dark"] #eco-store-body .st-rail-b::before{ color:var(--text); background:rgb(18 24 34 / .96); border:1px solid rgb(255 255 255 / .12); }
+/* ورقي: كرتون مضغوط بلون الرصيد، والقسم النشط ختم مزدوج الحلقة في منتصف الخانة */
+html[data-theme="paper"] #eco-store-body .st-rail{ --ra-boxes:150,98,30; --ra-cosmetics:112,78,160; --ra-cards:22,104,118; --rail-line:rgba(110,80,40,.22); background:linear-gradient(180deg, #F1E4C6, #F6EEDC 40%, #EADDBF); border-left-color:rgba(110,80,40,.4); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 3px 0 0 rgba(255,250,236,.5); }
+html[data-theme="paper"] #eco-store-body .st-rail-b{ color:rgba(74,52,30,.76); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); background:radial-gradient(circle at 50% 50%, rgba(var(--ra), .13) 0 25px, transparent 26px), radial-gradient(circle at 50% 50%, transparent 0 25px, rgb(var(--ra)) 25.5px 27px, transparent 27.5px), radial-gradient(circle at 50% 50%, transparent 0 21.5px, rgba(var(--ra), .45) 22px 23px, transparent 23.5px), rgba(var(--ra), .06); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on::after{ display:none; }
+@media (hover:hover){ html[data-theme="paper"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgba(110,80,40,.08); color:rgb(74,52,30); } }
+html[data-theme="paper"] #eco-store-body .st-rail-n{ color:#FBF4E3; background:rgba(74,52,30,.85); }
+html[data-theme="paper"] #eco-store-body .st-rail-b::before{ color:#3C2A16; background:#F9F1DE; border:1px solid rgba(110,80,40,.4); box-shadow:0 6px 12px -6px rgba(70,45,20,.55); }
+</style>
 <script>
 /* CODIS-V33: long-press on content must not open the browser's selection / image menu (inputs and editable text keep theirs) */
 document.addEventListener('contextmenu', function(e){
@@ -13232,6 +13469,12 @@ const CODIS_ICONS = Object.freeze({
     body:'<path d="M17 7L7 17"/><path d="M7 9.4V17h7.6"/>' },
   expense: { id:'icon-expense', meaning:'مصروف', size:'sm',
     body:'<path d="M7 17L17 7"/><path d="M9.4 7H17v7.6"/>' },
+  shop_packs: { id:'icon-shop-packs', meaning:'البكجات: صندوق جوائز مغلق', size:'lg',
+    body:'<path d="M3.2 6.2A2 2 0 0 1 5.2 4.2h13.6a2 2 0 0 1 2 2V9.4H3.2Z"/><path d="M4.4 9.4h15.2v8.6a2 2 0 0 1-2 2H6.4a2 2 0 0 1-2-2Z"/><path d="M12 9.4v2.2"/><circle cx="12" cy="13.6" r="1.5"/>' },
+  shop_skins: { id:'icon-shop-skins', meaning:'المظاهر: تخصيص مظهر البطاقات', size:'lg',
+    body:'<path d="M12 3.3c-4.9 0-8.8 3.6-8.8 8.1 0 4.2 3.4 7.6 7.5 7.6h1c1.2 0 1.9-1 1.5-2-.4-.9.1-1.9 1.1-1.9h1.7c2.3 0 3.8-1.5 3.8-3.7 0-4.2-3.9-8.1-8.8-8.1Z"/><circle cx="7.9" cy="11.3" r="1"/><circle cx="11" cy="7.5" r="1"/><circle cx="15.6" cy="8.3" r="1"/>' },
+  shop_cards: { id:'icon-shop-cards', meaning:'الكروت: بطاقات المكافآت', size:'lg',
+    body:'<path d="M8.4 6.4V5.2a2 2 0 0 1 2-2h7.4a2 2 0 0 1 2 2v9.8a2 2 0 0 1-2 2h-1.2"/><rect x="3.6" y="6.4" width="12.4" height="14.4" rx="2.2"/><path d="M9.8 10.2l.9 1.9 2 .3-1.5 1.4.4 2-1.8-1-1.8 1 .4-2L6.9 12.4l2-.3Z"/>' },
   menu: { id:'icon-menu', meaning:'القائمة الجانبية', size:'md',
     body:'<path d="M4 7h16M4 12h16M4 17h16"/>' },
   deposit: { id:'icon-deposit', meaning:'إيداع: مال يدخل المحفظة', size:'lg',
@@ -23102,6 +23345,7 @@ function econOpenVault(){
   setTimeout(()=>{ const e = document.getElementById('eco-vault'); if(e) e.classList.remove('is-open'); }, calm ? 300 : 900);
   setTimeout(()=>{ econVaultBusy = false; }, calm ? 350 : 1000);
 }
+document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && econClosedOpen && !document.querySelector('.modal-overlay[aria-hidden="false"], [role="dialog"][aria-hidden="false"]:not(#eco-closed-sheet)')) econCloseClosed(); });   /* CODIS-V49 */
 document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && econOwnOpen){ const m = document.querySelector('.modal-overlay[aria-hidden="false"], [role="dialog"][aria-hidden="false"]'); if(!m) econCloseOwn(); } });
 
 /* اسم الندرة بالعربية لكل بطاقة (عرض فقط؛ لا يغيّر معرّفات الندرة ولا قيمها) */
@@ -24768,19 +25012,19 @@ function econStoreReopen(){
   const box = document.getElementById('eco-store-body');
   if(box && box.firstElementChild && box._codisSig && box._codisSig === econStoreSig()){
     box.classList.remove('is-enter'); void box.offsetWidth; box.classList.toggle('is-enter', !econCalm());   /* نفس حركة الدخول */
-    try{ econVaultSync(); econStoreNavSync(); }catch(e){}
+    try{ econVaultSync(); econStoreNavSync(); const st = document.getElementById('eco-store-stage'); if(st) st.scrollTop = 0; econStoreRailFit(); }catch(e){}
     return;
   }
   econRenderStore();
 }
-function econOpenStore(){ CodisCrumb.mark('store:open'); econStoreEnterAt = Date.now(); econOpenLayer('eco-store', econStoreReopen); CodisCrumb.settle(3000); }
+function econOpenStore(){ econStorePart = econStoreDefaultKey(); econStoreScrollPos = {}; econStoreAnchor = {}; CodisCrumb.mark('store:open');   /* CODIS-V49: يُفتح المتجر دائماً على أول قسم (الكروت) وبمواضع تمرير جديدة */ econStoreEnterAt = Date.now(); econOpenLayer('eco-store', econStoreReopen); CodisCrumb.settle(3000); }
 function econOpenLog(){ econOpenLayer('eco-log', econRenderLog); }   // سجل الكوينز: نفس صفحة السجل ودالة رسمها القائمتان، فقط مدخلها صار شارة الرصيد
 function econCloseStore(opts){
   const st = econStoreSaved; if(!st) return;
   const quiet = !!(opts && opts.silent);
   try{ finDrawerClose(true); }catch(e){}   /* CODIS-V45 */
   econRenderTok++;
-  econOwnOpen = false;
+  econOwnOpen = false; econClosedOpen = false;
   if(econDetailId) econCloseDetail();
   if(econPackId) econPackClose();
   econStoreSaved = null;
@@ -24793,7 +25037,7 @@ function econCloseStore(opts){
   codisSyncView();   /* إخفاء أقسام الإعدادات أثناء المتجر قد يقصّر الصفحة ويصفّر التمرير */
   if(!quiet && st.opener && st.opener.focus && document.contains(st.opener)){ try{ st.opener.focus({ preventScroll:true }); }catch(x){} }
 }
-document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && econStoreSaved && !CodisFinUI.isOpen() && !econDetailId && !econPackId && !econBoxState && !econBulkState && !dqState && !CodisMotion.isOpen(document.getElementById('codis-confirm-modal'))) econCloseStore(); });   /* Esc يغلق أعلى نافذة فقط (تفاصيل مكافأة/بكج، فتح بكج، تأكيد) ولا يسحب طبقة المتجر معها */
+document.addEventListener('keydown', ev=>{ if(ev.key === 'Escape' && econStoreSaved && !econClosedOpen && !econOwnOpen && !CodisFinUI.isOpen() && !econDetailId && !econPackId && !econBoxState && !econBulkState && !dqState && !CodisMotion.isOpen(document.getElementById('codis-confirm-modal'))) econCloseStore(); });   /* Esc يغلق أعلى نافذة فقط (تفاصيل مكافأة/بكج، فتح بكج، تأكيد) ولا يسحب طبقة المتجر معها */
 function econOpenPending(){ const p = CodisEconomy.pending()[0]; if(p){ codisSfx('open', { ctx:'outcome' }); CodisOutcomeUI.show(p.id); } }
 
 /* ---- المكافآت ---- */
@@ -27247,7 +27491,7 @@ function econSelPrune(){
   if(!CodisInventory.owned().length){ econSelMode = false; econSelSet = {}; }
 }
 function econSelCount(){ return Object.keys(econSelSet).length; }
-function econGoBoxes(){ econCloseOwn(); const el = document.getElementById('eco-boxes'); if(el) el.scrollIntoView({ block:'start', behavior:window.CODIS_REDUCED_MOTION ? 'auto' : 'smooth' }); }
+
 /* تنقّل داخل ورقة «بحوزتك» (عرض فقط) */
 function econOwnJump(id){
   const s = document.getElementById('eco-own-sheet'), t = document.getElementById(id); if(!s || !t) return;
@@ -27391,83 +27635,215 @@ function econMostUsed(rows){
   });
   return Array.from(m.values()).sort((a, b)=>b.n - a.n || (a.last < b.last ? 1 : a.last > b.last ? -1 : 0));
 }
-function econClosedPanelHtml(){
+/* ===== CODIS-V49: المباعة والمستخدمة — ورقة مستقلة مثل «بحوزتك» (شريط علوي لاصق: تبويبان + بحث + مرشّحات أقسام). عرض فقط: القراءة من econClosedRows/econMostUsed/hcdTaskLogHtml كما كانت ===== */
+let econClosedSec = 'all', econClosedQ = '';
+const ECON_CLOSED_LIMIT = 200;
+function econClosedNorm(t){ return String(t || '').toLowerCase().replace(/[ً-ْـ]/g, '').replace(/[إأآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه'); }
+function econClosedParts(){
   const rows = econClosedRows(), u = econClosedUnread(rows), v = econClosedView;
   const desc = (a, b)=>a.t < b.t ? 1 : a.t > b.t ? -1 : 0, of = st=>rows.filter(r=>r.st === st).sort(desc);
   const sold = of('sold'), used = of('used'), expired = of('expired'), silver = of('silver');
+  const top = v === 'used' ? econMostUsed(rows) : [], tasks = v === 'used' ? hcdTaskLogHtml() : '';
   const ICO = { sold:codisIcon('coin'), used:ICONS.check };
   const tab = (id, label, n)=>'<button type="button" role="tab" id="eco-ctab-' + id + '" aria-controls="eco-cpanel" class="eco-ctab hx-tab' + (v === id ? ' is-on' : '') + '" aria-selected="' + (v === id ? 'true' : 'false') + '" tabindex="' + (v === id ? '0' : '-1') + '" onclick="econClosedSetView(\'' + id + '\')">' +
     '<span class="hx-ti" aria-hidden="true">' + ICO[id] + '</span><span class="hx-tl">' + label + '</span><span class="hx-tc">' + econFmt(n) + '</span>' +
     (u[id] ? '<span class="eco-hist-n eco-ctab-n" aria-label="' + escapeHtml(econFmt(u[id]) + ' غير مقروء') + '">' + econFmt(u[id]) + '</span>' : '') + '</button>';
-  const sec = (title, n, body, cls)=>'<section class="hx-sec' + (cls ? ' ' + cls : '') + '"><h4 class="hx-h"><span>' + title + '</span>' + (n !== null ? '<span class="hx-hn">' + econFmt(n) + '</span>' : '') + '</h4>' + body + '</section>';
-  const listOf = (list, cls)=>'<div class="ios-list eco-log hx-list' + (cls ? ' ' + cls : '') + '">' + list.slice(0, 60).map(r=>r.html).join('') + '</div>' + (list.length > 60 ? '<p class="hx-more">يُعرض آخر 60 من ' + econFmt(list.length) + '</p>' : '');
-  let body = '';
+  const sec = (key, title, n, inner, cls)=>'<section class="hx-sec' + (cls ? ' ' + cls : '') + '" data-sec="' + key + '"><h4 class="hx-h"><span>' + title + '</span>' + (n !== null ? '<span class="hx-hn">' + econFmt(n) + '</span>' : '') + '</h4>' + inner + '</section>';
+  const listOf = (list, cls)=>'<div class="ios-list eco-log hx-list' + (cls ? ' ' + cls : '') + '">' + list.slice(0, ECON_CLOSED_LIMIT).map(r=>r.html).join('') + '</div>' + (list.length > ECON_CLOSED_LIMIT ? '<p class="hx-more">يُعرض آخر ' + econFmt(ECON_CLOSED_LIMIT) + ' من ' + econFmt(list.length) + ' — استعمل البحث للوصول لأي عنصر</p>' : '');
+  let body = '', chips = [];
   if(v === 'sold'){
     const total = sold.reduce((q, r)=>q + (r.coins || 0), 0);
-    body = sold.length ? '<div class="hx-stat"><span>مجموع ما بعته</span><b class="eco-up" dir="ltr">+' + econFmt(total) + '</b></div>' + sec('سجل البيع', sold.length, listOf(sold))
+    body = sold.length ? '<div class="hx-stat"><span>مجموع ما بعته</span><b class="eco-up" dir="ltr">+' + econFmt(total) + '</b></div>' + sec('log', 'سجل البيع', sold.length, listOf(sold))
       : '<div class="hx-empty">ما في مكافآت مباعة بعد — اللي تبيعه من «بحوزتك» يظهر هنا بقيمته وتاريخه.</div>';
   } else {
-    const top = econMostUsed(rows), RANK = ['الأكثر استخداماً', 'ثاني أكثر استخداماً', 'ثالث أكثر استخداماً'];
-    if(top.length) body += sec('الأكثر استخداماً', null, '<ol class="hx-rank">' + top.slice(0, 5).map((e, i)=>'<li class="hx-rk' + (i < 3 ? ' is-top is-' + (i + 1) : '') + '"><span class="hx-rn" aria-hidden="true">' + (i + 1) + '</span>' +
+    const RANK = ['الأكثر استخداماً', 'ثاني أكثر استخداماً', 'ثالث أكثر استخداماً'];
+    if(top.length) body += sec('top', 'الأكثر استخداماً', null, '<ol class="hx-rank">' + top.slice(0, 5).map((e, i)=>'<li class="hx-rk' + (i < 3 ? ' is-top is-' + (i + 1) : '') + '"><span class="hx-rn" aria-hidden="true">' + (i + 1) + '</span>' +
       '<span class="hx-rm"><span class="hx-rname">' + escapeHtml(e.name) + '</span><span class="hx-rsub">' + escapeHtml((i < 3 ? RANK[i] + ' · ' : '') + e.type) + '</span></span><b class="hx-rc"><span dir="ltr">×' + econFmt(e.n) + '</span><small>' + (e.n === 1 ? 'مرة' : 'مرات') + '</small></b></li>').join('') + '</ol>', 'hx-top');
-    body += used.length ? sec('سجل الاستخدام', used.length, listOf(used)) : '<div class="hx-empty">ما في مكافآت مستخدمة بعد — لما تستخدم مكافأة أو بطاقة تظهر هنا.</div>';
-    if(expired.length) body += sec('انتهت صلاحيتها', expired.length, listOf(expired, 'is-expired'), 'hx-exp');
-    body += hcdTaskLogHtml();
-    if(silver.length) body += sec('سجل الفضة', silver.length, listOf(silver));
+    body += used.length ? sec('log', 'سجل الاستخدام', used.length, listOf(used)) : '<div class="hx-empty">ما في مكافآت مستخدمة بعد — لما تستخدم مكافأة أو بطاقة تظهر هنا.</div>';
+    if(expired.length) body += sec('exp', 'انتهت صلاحيتها', expired.length, listOf(expired, 'is-expired'), 'hx-exp');
+    if(tasks) body += '<div class="hx-sec" data-sec="tasks">' + tasks + '</div>';
+    if(silver.length) body += sec('silver', 'سجل الفضة', silver.length, listOf(silver));
+    chips = [['top', 'الأكثر استخداماً', Math.min(top.length, 5)], ['log', 'السجل', used.length], ['exp', 'المنتهية', expired.length], ['tasks', 'المهام', tasks ? 1 : 0], ['silver', 'الفضة', silver.length]].filter(c=>c[2] > 0);
   }
-  return '<div class="settings-card eco-closed hx" id="eco-closed-panel"><div class="eco-ctabs hx-tabs" role="tablist" aria-label="المباعة والمستخدمة">' + tab('sold', 'المباعة', sold.length) + tab('used', 'المستخدمة', used.length) + '</div>' +
-    '<div class="hx-panel" id="eco-cpanel" role="tabpanel" aria-labelledby="eco-ctab-' + v + '">' + body + '</div></div>';
+  if(econClosedSec !== 'all' && !chips.some(c=>c[0] === econClosedSec)) econClosedSec = 'all';
+  const chipHtml = chips.length > 1 ? '<div class="hx-chips" role="group" aria-label="أقسام السجل"><button type="button" class="hx-chip' + (econClosedSec === 'all' ? ' is-on' : '') + '" data-sec="all" onclick="econClosedSetSec(\'all\')">الكل</button>' +
+    chips.map(c=>'<button type="button" class="hx-chip' + (econClosedSec === c[0] ? ' is-on' : '') + '" data-sec="' + c[0] + '" onclick="econClosedSetSec(\'' + c[0] + '\')">' + c[1] + (c[0] === 'tasks' ? '' : '<b>' + econFmt(c[2]) + '</b>') + '</button>').join('') + '</div>' : '';
+  const tools = '<div class="hx-tool"><div class="eco-ctabs hx-tabs" role="tablist" aria-label="المباعة والمستخدمة">' + tab('sold', 'المباعة', sold.length) + tab('used', 'المستخدمة', used.length) + '</div>' +
+    '<label class="hx-search"><span class="sr">بحث في السجل</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>' +
+    '<input type="search" class="hx-q" id="eco-closed-q" placeholder="ابحث بالاسم…" autocomplete="off" enterkeyhint="search" value="' + escapeHtml(econClosedQ) + '" oninput="econClosedFind(this.value)"></label>' + chipHtml + '</div>';
+  return { tools:tools, body:'<div class="hx-panel" id="eco-cpanel" role="tabpanel" aria-labelledby="eco-ctab-' + v + '" data-sec="' + econClosedSec + '">' + body + '<div class="hx-nores" hidden>لا توجد نتائج مطابقة</div></div>' };
 }
-function econToggleClosed(){
-  econClosedOpen = !econClosedOpen;
-  if(econClosedOpen){ const u = econClosedUnread(); econClosedView = (u.sold > 0 && u.used === 0) ? 'sold' : (u.used > 0 ? 'used' : econClosedView); }
-  codisSfx(econClosedOpen ? 'expand' : 'collapse'); econRenderStore();
+function econClosedApplyFilter(){
+  const p = document.getElementById('eco-cpanel'); if(!p) return;
+  const q = econClosedNorm(econClosedQ).trim(), items = p.querySelectorAll('.eco-log-row, .hx-rk');
+  let vis = 0;
+  Array.prototype.forEach.call(items, el=>{ const hide = !!q && econClosedNorm(el.textContent).indexOf(q) === -1; if(el.hidden !== hide) el.hidden = hide;
+    const s = el.closest('.hx-sec'); if(!hide && (econClosedSec === 'all' || (s && s.getAttribute('data-sec') === econClosedSec))) vis++; });
+  const nr = p.querySelector('.hx-nores'); if(nr) nr.hidden = !(q && items.length && !vis);
 }
-function econClosedSetView(v){ if(v !== 'sold' && v !== 'used') return; econClosedView = v; codisSfx('press', { ctx:'tab' }); econRenderStore(); }
-/* شريط أقسام المتجر: انتقال مباشر + تمييز القسم الظاهر (قراءة مواضع فقط، rAF واحد لكل تمرير) */
-const ECON_STORE_PARTS = [['eco-boxes', 'البكجات'], ['eco-cosmetics', 'المظاهر'], ['eco-cards', 'الكروت']];
+function econClosedPaint(){
+  const t = document.getElementById('eco-closed-tools'), b = document.getElementById('eco-closed-body'); if(!t || !b) return;
+  const m = econClosedParts(); t.innerHTML = m.tools; b.innerHTML = m.body; econClosedApplyFilter();
+}
+function econClosedSheetHtml(){
+  return '<div id="eco-closed-sheet" class="own-sheet hx-sheet' + (econClosedOpen ? ' is-open' : '') + '" role="dialog" aria-modal="true" aria-label="المباعة والمستخدمة"><div class="hx-head"><div class="own-sheet-bar"><button type="button" class="own-sheet-close" onclick="econCloseClosed()">' + codisIcon('back') + '<span>رجوع للمتجر</span></button><span class="own-sheet-title">المباعة والمستخدمة</span></div><div id="eco-closed-tools"></div></div><div class="own-sheet-body" id="eco-closed-body"></div></div>';
+}
+function econClosedBadge(){
+  const b = document.querySelector('#eco-store-body .eco-hist-btn'); if(!b) return;
+  const n = econClosedCount(); let e = b.querySelector('.eco-hist-n');
+  if(!n){ if(e) e.remove(); return; }
+  if(!e){ e = document.createElement('span'); e.className = 'eco-hist-n'; e.setAttribute('aria-hidden', 'true'); b.appendChild(e); }
+  e.textContent = econFmt(n);
+}
+function econClosedBtnState(){ const b = document.querySelector('#eco-store-body .eco-hist-btn'); if(b) b.setAttribute('aria-expanded', econClosedOpen ? 'true' : 'false'); }
+function econOpenClosed(){
+  if(econClosedOpen) return;
+  const s = document.getElementById('eco-closed-sheet'); if(!s) return;
+  econClosedOpen = true; econClosedQ = ''; econClosedSec = 'all';
+  const u = econClosedUnread(); econClosedView = (u.sold > 0 && u.used === 0) ? 'sold' : (u.used > 0 ? 'used' : econClosedView);
+  codisSfx('open', { ctx:'store' }); econClosedPaint(); econClosedMarkSeen(econClosedView); econClosedBadge(); econClosedBtnState();
+  s.classList.remove('is-closing'); s.classList.add('is-open'); s.scrollTop = 0;
+  const c = s.querySelector('.own-sheet-close'); if(c){ try{ c.focus({ preventScroll:true }); }catch(x){} }
+}
+function econCloseClosed(){
+  if(!econClosedOpen) return;
+  econClosedOpen = false; codisSfx('close', { ctx:'store' }); econClosedBtnState();
+  const s = document.getElementById('eco-closed-sheet');
+  if(s){ s.classList.remove('is-open'); if(!econCalm()){ s.classList.add('is-closing'); setTimeout(()=>{ s.classList.remove('is-closing'); }, 360); } }
+  const b = document.querySelector('#eco-store-body .eco-hist-btn'); if(b){ try{ b.focus({ preventScroll:true }); }catch(x){} }
+}
+function econToggleClosed(){ if(econClosedOpen) econCloseClosed(); else econOpenClosed(); }
+function econClosedSetView(v){
+  if(v !== 'sold' && v !== 'used') return; econClosedView = v; econClosedSec = 'all'; codisSfx('press', { ctx:'tab' });
+  econClosedPaint(); econClosedMarkSeen(v); econClosedBadge();
+  const s = document.getElementById('eco-closed-sheet'); if(s) s.scrollTop = 0;
+}
+function econClosedSetSec(k){
+  econClosedSec = k; codisSfx('press', { ctx:'tab' });
+  const p = document.getElementById('eco-cpanel'); if(p) p.setAttribute('data-sec', k);
+  Array.prototype.forEach.call(document.querySelectorAll('#eco-closed-tools .hx-chip'), c=>c.classList.toggle('is-on', c.getAttribute('data-sec') === k));
+  econClosedApplyFilter(); const s = document.getElementById('eco-closed-sheet'); if(s) s.scrollTop = 0;
+}
+function econClosedFind(q){ econClosedQ = String(q || ''); econClosedApplyFilter(); }
+
+/* ===== CODIS-V49: سجل أقسام المتجر المركزي =====
+   قسم جديد = استدعاء econStoreRegister واحد: { key, domId, name, icon, order, html(), count(), enabled() }.
+   الشريط والمسرح (جزء .st-pane لكل قسم) وتحديد النشط وذاكرة التمرير والتبديل كلها تقرأ هذا السجل ولا تعرف أسماء الأقسام. الاختيار حالة واجهة فقط (لا يُحفظ). */
+const ECON_STORE_SECTIONS = [];
+function econStoreRegister(d){
+  const i = ECON_STORE_SECTIONS.findIndex(x=>x.key === d.key);
+  if(i >= 0) ECON_STORE_SECTIONS[i] = d; else ECON_STORE_SECTIONS.push(d);
+  ECON_STORE_SECTIONS.sort((a, b)=>a.order - b.order);
+}
+econStoreRegister({ key:'cards', domId:'eco-cards', name:'الكروت', icon:'shop_cards', order:10, count:()=>econStoreCardRows().length, html:()=>econShopHtml() });
+econStoreRegister({ key:'boxes', domId:'eco-boxes', name:'البكجات', icon:'shop_packs', order:20, count:()=>CodisBoxes.tiers().length, html:()=>codisFreeBoxStoreHtml() + econBoxesHtml() });
+econStoreRegister({ key:'cosmetics', domId:'eco-cosmetics', name:'المظاهر', icon:'shop_skins', order:30, count:()=>CodisCosmetics.defs().length, html:()=>econCosmeticsShopHtml() });
+let econStorePart = 'cards', econStoreScrollPos = {}, econStoreBound = false;
+function econStoreSections(){ return ECON_STORE_SECTIONS.filter(d=>{ try{ return d.enabled ? d.enabled() !== false : true; }catch(e){ return false; } }); }
+function econStorePartOf(x){ const L = econStoreSections(); for(let i = 0; i < L.length; i++){ if(L[i].key === x || L[i].domId === x) return L[i]; } return L[0] || null; }
+function econStoreDefaultKey(){ const L = econStoreSections(); return L.length ? L[0].key : 'cards'; }
 function econStoreNavHtml(){
-  const n = { 'eco-boxes':CodisBoxes.tiers().length, 'eco-cosmetics':CodisCosmetics.defs().length, 'eco-cards':econStoreCardRows().length };
-  return '<nav class="st-nav" aria-label="أقسام المتجر">' + ECON_STORE_PARTS.map(p=>'<button type="button" data-to="' + p[0] + '" onclick="econStoreJump(\'' + p[0] + '\')">' + p[1] + (n[p[0]] ? '<b>' + econFmt(n[p[0]]) + '</b>' : '') + '</button>').join('') + '</nav>';
+  const cur = (econStorePartOf(econStorePart) || {}).key;
+  return '<nav class="st-rail" aria-label="أقسام المتجر">' + econStoreSections().map(d=>{ const on = d.key === cur; let c = 0; try{ c = d.count ? d.count() : 0; }catch(e){}
+    return '<button type="button" class="st-rail-b' + (on ? ' is-on' : '') + '" data-part="' + d.key + '" data-to="' + d.domId + '" data-tip="' + d.name + '" aria-label="' + d.name + (c ? ' — ' + econFmt(c) : '') + '" aria-controls="pane-' + d.key + '"' + (on ? ' aria-current="true"' : '') + ' onclick="econStoreSetPart(\'' + d.key + '\')">' + codisIcon(d.icon) + (c ? '<span class="st-rail-n" aria-hidden="true">' + econFmt(c) + '</span>' : '') + '</button>'; }).join('') + '</nav>';
 }
-function econStoreScroller(){ return document.querySelector('.main') || document.getElementById('page-settings'); }   /* CODIS-MOBILE: المتجر يتمرر مع .main */
-function econStoreJump(id){
-  const t = document.getElementById(id), sc = econStoreScroller(); if(!t || !sc) return;
-  codisSfx('press', { ctx:'tab' });
-  const top = t.getBoundingClientRect().top - sc.getBoundingClientRect().top + sc.scrollTop - 52;
-  try{ sc.scrollTo({ top:Math.max(0, top), behavior:econCalm() ? 'auto' : 'smooth' }); }catch(x){ sc.scrollTop = Math.max(0, top); }
+function econStoreStageHtml(){
+  const cur = (econStorePartOf(econStorePart) || {}).key;
+  return '<div class="st-stage" id="eco-store-stage" data-part="' + cur + '">' + econStoreSections().map(d=>'<div class="st-pane' + (d.key === cur ? ' is-on' : '') + '" id="pane-' + d.key + '" data-part="' + d.key + '">' + d.html() + '</div>').join('') + '</div>';
 }
-let econNavRaf = 0, econNavBound = false;
+/* المسرح هو المُمرِّر الوحيد؛ .main لا يتحرك أثناء المتجر */
+function econStoreScroller(){ return document.getElementById('eco-store-stage') || document.querySelector('.main') || document.getElementById('page-settings'); }
+let econStoreAnchor = {};
+/* مرساة = أول بلاطة ظاهرة + إزاحتها: ارتفاعات البلاطات البعيدة (content-visibility) تتغير بعد إعادة الرسم فلا يصلح الموضع بالبكسل وحده */
+function econStoreScrollSave(){
+  const st = document.getElementById('eco-store-stage'); if(!st || st.offsetParent === null) return;
+  const k = econStorePart, top = st.scrollTop; econStoreScrollPos[k] = top; econStoreAnchor[k] = null; if(!top) return;
+  const pane = document.getElementById('pane-' + k); if(!pane) return;
+  const sy = st.getBoundingClientRect().top, L = pane.querySelectorAll('[role="listitem"]');
+  for(let i = 0; i < L.length; i++){ const r = L[i].getBoundingClientRect(); if(r.height && r.bottom > sy + 1){ econStoreAnchor[k] = { i:i, off:sy - r.top }; break; } }
+}
+function econStoreRailFit(){
+  const r = document.querySelector('#eco-store-body .st-rail'); if(!r) return;
+  r.classList.remove('is-scroll'); if(r.scrollHeight > r.clientHeight + 1) r.classList.add('is-scroll');
+}
+/* يطابق الواجهة مع econStorePart: أصناف/خصائص فقط بلا إعادة بناء */
 function econStoreNavSync(){
-  econNavRaf = 0;
-  const box = document.getElementById('eco-store-body'), sc = econStoreScroller(); if(!box || !sc || !econStoreIsOpen()) return;
-  const lim = sc.getBoundingClientRect().top + 120; let cur = ECON_STORE_PARTS[0][0];
-  ECON_STORE_PARTS.forEach(p=>{ const el = document.getElementById(p[0]); if(el && el.getBoundingClientRect().top <= lim) cur = p[0]; });
-  Array.prototype.forEach.call(box.querySelectorAll('.st-nav button'), b=>{ const on = b.getAttribute('data-to') === cur; if(b.classList.contains('is-on') === on) return; b.classList.toggle('is-on', on); if(on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });   /* CODIS-SMOOTH */
+  const box = document.getElementById('eco-store-body'); if(!box) return;
+  const d = econStorePartOf(econStorePart); if(!d) return; econStorePart = d.key;
+  const stage = box.querySelector('.st-stage'); if(stage && stage.getAttribute('data-part') !== d.key) stage.setAttribute('data-part', d.key);
+  Array.prototype.forEach.call(box.querySelectorAll('.st-pane'), p=>{ const on = p.getAttribute('data-part') === d.key; if(p.classList.contains('is-on') !== on) p.classList.toggle('is-on', on); });
+  Array.prototype.forEach.call(box.querySelectorAll('.st-rail-b'), b=>{ const on = b.getAttribute('data-part') === d.key; if(b.classList.contains('is-on') === on) return; b.classList.toggle('is-on', on); if(on) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current'); });
 }
-function econStoreNavBind(){
-  if(econNavBound) return; const sc = econStoreScroller(); if(!sc) return; econNavBound = true;
-  sc.addEventListener('scroll', ()=>{ if(!econNavRaf) econNavRaf = requestAnimationFrame(econStoreNavSync); }, { passive:true });
+function econStoreBindOnce(){
+  if(econStoreBound) return; const box = document.getElementById('eco-store-body'); if(!box) return; econStoreBound = true;
+  ['touchstart', 'wheel', 'pointerdown', 'keydown'].forEach(t=>box.addEventListener(t, ()=>{ econStoreTouched = true; }, { passive:true, capture:true }));
+  box.addEventListener('scroll', e=>{ const t = e.target; if(t && t.id === 'eco-store-stage') econStoreScrollPos[econStorePart] = t.scrollTop; }, { passive:true, capture:true });
+  window.addEventListener('resize', econStoreRailFit, { passive:true });
 }
+/* استعادة الموضع: الأقسام البعيدة (content-visibility) ترسم بارتفاع مبدئي أصغر ثم تكبر، فيُقصّ الموضع المطلوب؛ نعيد ضبطه بضع مرات قصيرة ما لم يلمس المستخدم المسرح */
+let econStoreRestoreTok = 0, econStoreTouched = false;
+function econStoreRestorePos(key){
+  const st = document.getElementById('eco-store-stage'); if(!st) return;
+  const px = econStoreScrollPos[key] || 0, an = econStoreAnchor[key], tok = ++econStoreRestoreTok; econStoreTouched = false;
+  const target = ()=>{ const s2 = document.getElementById('eco-store-stage'); if(!s2) return px; const pane = document.getElementById('pane-' + key), el = an && pane ? pane.querySelectorAll('[role="listitem"]')[an.i] : null;
+    if(el && el.getBoundingClientRect().height) return Math.max(0, Math.round(el.getBoundingClientRect().top - s2.getBoundingClientRect().top + s2.scrollTop + an.off)); return px; };
+  st.scrollTop = target();
+  if(!px) return;
+  [60, 160, 320, 600, 1000].forEach(ms=>setTimeout(()=>{ const s2 = document.getElementById('eco-store-stage'); if(tok !== econStoreRestoreTok || econStoreTouched || !s2 || econStorePart !== key) return; const w = target(); if(Math.abs(s2.scrollTop - w) > 1) s2.scrollTop = w; }, ms));
+}
+function econStoreAfterRender(closedKeep){
+  econStoreNavSync();
+  econStoreRestorePos(econStorePart);
+  econStoreRailFit(); econStoreBindOnce();
+  if(econClosedOpen){ econClosedPaint(); const cs = document.getElementById('eco-closed-sheet'); if(cs && closedKeep) cs.scrollTop = closedKeep; }
+}
+/* opts: quiet (بلا صوت) · top (ابدأ من أعلى القسم) · force */
+function econStoreSetPart(part, opts){
+  opts = opts || {}; const d = econStorePartOf(part), box = document.getElementById('eco-store-body'); if(!d) return;
+  const same = econStorePart === d.key;
+  if(!opts.quiet) codisSfx('press', { ctx:'tab' });
+  const st = document.getElementById('eco-store-stage');
+  if(same && !opts.force){
+    if((opts.top || !opts.quiet) && st){ econStoreScrollPos[d.key] = 0; econStoreAnchor[d.key] = null; try{ st.scrollTo({ top:0, behavior:econCalm() ? 'auto' : 'smooth' }); }catch(x){ st.scrollTop = 0; } }   /* نقرة ثانية على الأيقونة النشطة = إلى أعلى القسم */
+    return;
+  }
+  econStoreScrollSave(); econStorePart = d.key;
+  if(!box) return;
+  box.classList.remove('is-enter');   /* حركة الدخول الأولى لا تتكرر مع كل تبديل؛ للقسم حركته الخاصة */
+  econStoreNavSync();
+  if(opts.top){ econStoreScrollPos[d.key] = 0; econStoreAnchor[d.key] = null; }
+  econStoreRestorePos(d.key);
+  const pane = document.getElementById('pane-' + d.key);
+  if(pane){
+    Array.prototype.forEach.call(pane.querySelectorAll('.fit-wait'), c=>c.classList.remove('fit-wait'));
+    try{ codisFitLazy(pane); }catch(x){}   /* القسم كان display:none فلم تُقَس بطاقاته: تُلاءم الآن */
+    if(!econCalm()){ pane.classList.remove('is-part-in'); void pane.offsetWidth; pane.classList.add('is-part-in'); }
+  }
+  const rb = box.querySelector('.st-rail-b.is-on'); if(rb && box.querySelector('.st-rail.is-scroll')){ try{ rb.scrollIntoView({ block:'nearest' }); }catch(x){} }
+}
+function econStoreJump(id){ econStoreSetPart(id); }   /* توافق: كان تمريراً إلى الموضع */
+function econGoBoxes(){ econCloseOwn(); econCloseClosed(); econStoreSetPart('boxes', { quiet:true, top:true }); }   /* يعمل من أي قسم */
 let econLastBal = null, econStoreEnterAt = 0;
 function econRenderStore(){
   const box = document.getElementById('eco-store-body'); if(!box) return;
-  const ownKeep = (document.getElementById('eco-own-sheet') || {}).scrollTop || 0;
+  const ownKeep = (document.getElementById('eco-own-sheet') || {}).scrollTop || 0, closedKeep = (document.getElementById('eco-closed-sheet') || {}).scrollTop || 0;
+  econStoreScrollSave();   /* CODIS-V49 */
   if(econClosedOpen) econClosedMarkSeen(econClosedView);   /* CODIS-PERF: العرض المفتوح يُعدّ مقروءاً */
   const nClosed = econClosedCount(), bal = data.wallet.balance, tick = econLastBal !== null && econLastBal !== bal && !econCalm();
   econLastBal = bal;
   const vlt = document.getElementById('eco-vault'), vwrap = document.querySelector('#settings-page-eco-store .vault-wrap');
   if(vlt && vwrap && vlt.parentNode !== vwrap) vwrap.appendChild(vlt);   /* يخرج قبل استبدال المحتوى فيبقى العنصر نفسه بمستمعاته */
   CodisArt.set(box, ()=>'<div class="settings-card eco-balance' + (tick ? ' is-tick' : '') + '"><span class="eco-balance-main"><span class="eco-lab">رصيدك</span>' + econCoin(bal) + econSilverLine() + '</span>' +
-    '<button type="button" class="eco-hist-btn" aria-expanded="' + (econClosedOpen ? 'true' : 'false') + '" aria-controls="eco-closed-panel" title="المباعة والمستخدمة" onclick="econToggleClosed()">' + codisIcon('archive') + '<span class="sr">المباعة والمستخدمة</span>' + (nClosed ? '<span class="eco-hist-n" aria-hidden="true">' + econFmt(nClosed) + '</span>' : '') + '</button></div>' +
-    econStoreNavHtml() + (econClosedOpen ? econClosedPanelHtml() : '') + codisFreeBoxStoreHtml() + econBoxesHtml() + econCosmeticsShopHtml() + econShopHtml() + econOwnSheetHtml(), { thumbs:true });
+    '<button type="button" class="eco-hist-btn" aria-expanded="' + (econClosedOpen ? 'true' : 'false') + '" aria-controls="eco-closed-sheet" title="المباعة والمستخدمة" onclick="econToggleClosed()">' + codisIcon('archive') + '<span class="sr">المباعة والمستخدمة</span>' + (nClosed ? '<span class="eco-hist-n" aria-hidden="true">' + econFmt(nClosed) + '</span>' : '') + '</button></div>' +
+    '<div class="st-shell">' + econStoreNavHtml() + econStoreStageHtml() + '</div>' + econOwnSheetHtml() + econClosedSheetHtml(), { thumbs:true });   /* CODIS-V49 */
   /* حركة الدخول مرة واحدة عند فتح المتجر (لا تتكرر مع كل إعادة رسم بعد شراء/تصفية) */
   const bal0 = box.querySelector('.eco-balance'); if(vlt && bal0) bal0.appendChild(vlt);
   box.classList.toggle('is-enter', !econCalm() && Date.now() - econStoreEnterAt < 700);
   codisFitLazy(box); codisWatchRewardCards(box); codisFreeBoxSchedule();   /* CODIS-V44 */
-  econVaultSync(); econStoreNavBind(); econStoreNavSync();
+  econVaultSync();
   box._codisSig = econStoreSig(); CodisCrumb.mark('store:built', box.getElementsByTagName('*').length); CodisCrumb.settle(2000);
   if(ownKeep){ const os = document.getElementById('eco-own-sheet'); if(os) os.scrollTop = ownKeep; }
+  econStoreAfterRender(closedKeep);   /* CODIS-V49: ذاكرة التمرير + ورقة المباعة + الشريط */
   if(econDetailId) econPaintDetail();
 }
 /* ---- مدخل «بحوزتك» (الصندوق الحديدي): يقرأ العدد من econOwnTotals ويمرّر إلى #eco-own الموجود فعلياً؛ لا مخزون ولا نسخ ولا كتابة بيانات ---- */
@@ -30173,7 +30549,7 @@ function codisBackLayer(){
   const pg = document.getElementById('page-settings');
   if(pg && getComputedStyle(pg).display !== 'none'){
     const sec = Array.prototype.find.call(pg.children, c=>c.classList.contains('settings-page-section') && getComputedStyle(c).display !== 'none');
-    if(econStoreIsOpen()) return { act:econCloseStore, el:sec || null };
+    if(econStoreIsOpen()){ if(econClosedOpen) return { act:econCloseClosed, el:document.getElementById('eco-closed-sheet') }; if(econOwnOpen) return { act:econCloseOwn, el:document.getElementById('eco-own-sheet') }; return { act:econCloseStore, el:sec || null }; }   /* CODIS-V49 */
     const btn = sec && sec.querySelector('.settings-back-btn'); if(btn) return { act:()=>btn.click(), el:sec };
   } else if(econStoreIsOpen()) return { act:econCloseStore, el:null };
   return null;

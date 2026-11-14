@@ -1,0 +1,84 @@
+/* CODIS-V49 (3.36.0) — هيكل متجر بارتفاع ثابت: الترويسة + الرصيد + (شريط أيقونات ممتد بطول المساحة | مسرح محتوى يتمرر وحده). الصفحة الخارجية و.main لا تتحرك.
+   سلسلة الارتفاعات: .main (100dvh، overflow:hidden) ← #page-settings.is-eco-store (flex عمودي، 100dvh) ← #settings-page-eco-store (flex:1) ← #eco-store-body (flex:1) ← .st-shell (flex:1) ← .st-stage (المُمرِّر الوحيد).
+   موضع تمرير كل قسم محفوظ بالجافاسكربت (econStoreScrollPos) لأن display:none يصفّر scrollTop. المباعة والمستخدمة ورقة مستقلة (.own-sheet.hx-sheet) مثل «بحوزتك». */
+
+html[data-view="store"] .main:has(#page-settings.is-eco-store){ overflow:hidden; height:100vh; height:100dvh; max-height:100vh; max-height:100dvh; }
+html[data-view="store"] #page-settings.is-store-layer.is-eco-store{ display:flex !important; flex-direction:column; height:100vh; height:100dvh; min-height:0; overflow:hidden; padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); }
+html[data-view="store"] #page-settings.is-eco-store > #settings-page-eco-store{ display:flex !important; flex-direction:column; flex:1 1 auto; min-height:0; }
+/* ترويسة مضغوطة: كل بكسل رأسي يخدم المحتوى */
+#settings-page-eco-store .settings-back-btn{ min-height:36px; margin:-4px 0 0; }
+#settings-page-eco-store .settings-section-head{ margin-bottom:8px; }
+#settings-page-eco-store .settings-section-head::before{ display:none; }
+#settings-page-eco-store .settings-section-title{ font-size:22px; }
+html[data-view="store"] #eco-store-body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; gap:10px; }
+/* المسرح: المُمرِّر الوحيد لمحتوى القسم */
+#eco-store-body .st-stage{ min-height:0; height:100%; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; padding-bottom:18px; scrollbar-width:thin; scrollbar-color:rgb(var(--ink-rgb) / .22) transparent; }
+#eco-store-body .st-stage::-webkit-scrollbar{ width:4px; }
+#eco-store-body .st-stage::-webkit-scrollbar-thumb{ border-radius:4px; background:rgb(var(--ink-rgb) / .22); }
+
+/* ===== المباعة والمستخدمة: ورقة مستقلة ===== */
+#eco-store-body .hx-sheet{ padding-bottom:calc(env(safe-area-inset-bottom, 0px) + 40px); }
+#eco-store-body .hx-head{ position:sticky; top:0; z-index:6; margin:0 calc(var(--pad-x, 16px) * -1) 12px; background:var(--bg, #F3EEE4); border-bottom:1px solid var(--st-hair); }
+#eco-store-body .hx-head .own-sheet-bar{ position:static; margin:0; border-bottom:0; background:none; }
+#eco-store-body .hx-tool{ display:grid; gap:8px; padding:0 var(--pad-x, 16px) 10px; }
+#eco-store-body .hx-tool .eco-ctabs{ margin:0; }
+#eco-store-body .hx-search{ position:relative; display:flex; align-items:center; }
+#eco-store-body .hx-search svg{ position:absolute; inset-inline-start:12px; width:18px; height:18px; color:var(--text-3, var(--text-2)); pointer-events:none; }
+#eco-store-body .hx-q{ width:100%; min-height:42px; padding:0 14px; padding-inline-start:38px; border-radius:13px; border:1px solid var(--st-hair); background:rgb(var(--lite-rgb) / .5); color:var(--text); font:inherit; font-size:16px; }
+#eco-store-body .hx-q:focus-visible{ outline:2px solid var(--aqua); outline-offset:1px; }
+#eco-store-body .hx-chips{ display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding-bottom:2px; }
+#eco-store-body .hx-chips::-webkit-scrollbar{ display:none; }
+#eco-store-body .hx-chip{ flex:0 0 auto; min-height:34px; padding:0 12px; border-radius:var(--r-full); border:1px solid var(--st-hair); background:rgb(var(--lite-rgb) / .35); color:var(--text-2); font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
+#eco-store-body .hx-chip b{ margin-inline-start:5px; font-size:11px; opacity:.8; }
+#eco-store-body .hx-chip.is-on{ color:var(--text); border-color:var(--aqua); background:var(--aqua-a14, rgb(var(--aqua-rgb) / .12)); }
+#eco-store-body .hx-panel:not([data-sec="all"]) .hx-sec{ display:none; }
+#eco-store-body .hx-panel[data-sec="top"] .hx-sec[data-sec="top"], #eco-store-body .hx-panel[data-sec="log"] .hx-sec[data-sec="log"], #eco-store-body .hx-panel[data-sec="exp"] .hx-sec[data-sec="exp"],
+#eco-store-body .hx-panel[data-sec="tasks"] .hx-sec[data-sec="tasks"], #eco-store-body .hx-panel[data-sec="silver"] .hx-sec[data-sec="silver"]{ display:block; }
+#eco-store-body .hx-nores{ padding:22px 12px; text-align:center; color:var(--text-2); font-size:13.5px; }
+#eco-store-body .hx-nores[hidden], #eco-store-body .hx-panel [hidden]{ display:none !important; }
+#eco-store-body .hx-search .sr{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+/* الصندوق المجاني بعرض المحتوى الأضيق: الزر تحت النص بدل أن يعصر السطور */
+@media (max-width:379px){ #eco-store-body .st-stage .fb-card{ flex-wrap:wrap; gap:8px 12px; } #eco-store-body .st-stage .fb-art{ width:52px; height:48px; } #eco-store-body .st-stage .fb-cta{ flex:1 1 100%; text-align:center; } }
+
+/* ===== شريط الأقسام: لوح جانبي ملتصق بحافة الشاشة اليمنى ومتصل ببطاقة الرصيد، مقسوم إلى خانات متساوية بأيقونة في منتصف كل خانة ===== */
+#eco-store-body{ --padR:max(var(--pad-x, 16px), env(safe-area-inset-right, 0px)); --padB:calc(env(safe-area-inset-bottom, 0px) + 10px); }
+html[data-view="store"] #eco-store-body{ gap:0; }
+/* الرصيد يمتد إلى الحافة اليمنى بزوايا يمنى قائمة ليتّصل به الشريط تحته */
+#eco-store-body > .eco-balance{ flex:0 0 auto; margin-right:calc(-1 * var(--padR)); padding-inline-start:calc(14px + var(--padR)); border-right-width:0; border-radius:18px 0 0 18px; }
+#eco-store-body .st-shell{ --rail-w:68px; flex:1 1 0; min-height:0; margin-right:calc(-1 * var(--padR)); margin-bottom:calc(-1 * var(--padB)); display:grid; grid-template-columns:var(--rail-w) minmax(0, 1fr); grid-template-rows:minmax(0, 1fr); gap:0 12px; align-items:stretch; }
+#eco-store-body .st-stage{ padding:12px 2px calc(env(safe-area-inset-bottom, 0px) + 22px); }
+#eco-store-body .st-rail{ --ra-boxes:232,184,96; --ra-cosmetics:170,140,255; --ra-cards:80,208,220; position:relative; z-index:6; min-height:0; display:grid; grid-auto-rows:minmax(86px, 1fr); gap:0; padding:0 0 env(safe-area-inset-bottom, 0px); border-radius:0; border-left:1px solid var(--rail-line); }
+#eco-store-body .st-rail.is-scroll{ overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+#eco-store-body .st-rail.is-scroll::-webkit-scrollbar{ display:none; }
+#eco-store-body .st-rail-b{ --ra:var(--ra-boxes); position:relative; display:grid; place-items:center; width:100%; height:100%; min-height:0; padding:0; border:0; border-radius:0; background:none; color:var(--text-2); font:inherit; cursor:pointer;
+  -webkit-tap-highlight-color:transparent; transition:background-color var(--dur-fast, .16s) var(--ease, ease), color var(--dur-fast, .16s) var(--ease, ease); }
+#eco-store-body .st-rail-b + .st-rail-b{ border-top:1px solid var(--rail-line); }
+#eco-store-body .st-rail-b[data-part="cosmetics"]{ --ra:var(--ra-cosmetics); }
+#eco-store-body .st-rail-b[data-part="cards"]{ --ra:var(--ra-cards); }
+#eco-store-body .st-rail-b svg{ width:30px; height:30px; transition:transform .2s var(--ease-spring, ease); }
+#eco-store-body .st-rail-b:active svg{ transform:scale(.9); }
+#eco-store-body .st-rail-b:focus-visible{ outline:2px solid rgb(var(--ra)); outline-offset:-3px; }
+#eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); }
+#eco-store-body .st-rail-b.is-on svg{ stroke-width:2.1; }
+/* مؤشر الحالة النشطة بالشكل لا باللون وحده: شريط في الحافة المواجهة للمحتوى */
+#eco-store-body .st-rail-b.is-on::after{ content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; border-radius:0 3px 3px 0; background:rgb(var(--ra)); }
+#eco-store-body .st-rail-n{ position:absolute; top:8px; right:9px; min-width:16px; height:16px; padding:0 4px; display:grid; place-items:center; border-radius:8px; font-size:10px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; pointer-events:none; }
+@media (hover:hover) and (pointer:fine){
+  #eco-store-body .st-rail-b::before{ content:attr(data-tip); position:absolute; top:50%; right:calc(100% + 12px); transform:translate(6px, -50%); padding:5px 10px; border-radius:9px; font-size:12px; font-weight:700; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .15s, transform .15s; z-index:7; }
+  #eco-store-body .st-rail-b:hover::before, #eco-store-body .st-rail-b:focus-visible::before{ opacity:1; transform:translate(0, -50%); }
+}
+/* داكن: امتداد زجاج بطاقة الرصيد (يبدأ بلمسة ذهبية من حافتها السفلى) */
+html[data-theme="dark"] #eco-store-body .st-rail{ --rail-line:rgb(255 255 255 / .08); background:linear-gradient(180deg, rgb(var(--gold-rgb) / .12), rgb(20 26 36 / .96) 38%, rgb(9 12 18 / .98)); border-left-color:rgb(var(--gold-rgb) / .24); box-shadow:inset 0 1px 0 rgb(var(--gold-rgb) / .2); }
+html[data-theme="dark"] #eco-store-body .st-rail-b.is-on{ background:linear-gradient(270deg, rgba(var(--ra), .3), rgba(var(--ra), .05)); }
+html[data-theme="dark"] #eco-store-body .st-rail-b.is-on::after{ box-shadow:0 0 10px rgba(var(--ra), .8); }
+@media (hover:hover){ html[data-theme="dark"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgb(255 255 255 / .05); color:var(--text); } }
+html[data-theme="dark"] #eco-store-body .st-rail-n{ color:#fff; background:rgb(0 0 0 / .55); border:1px solid rgb(255 255 255 / .16); }
+html[data-theme="dark"] #eco-store-body .st-rail-b::before{ color:var(--text); background:rgb(18 24 34 / .96); border:1px solid rgb(255 255 255 / .12); }
+/* ورقي: كرتون مضغوط بلون الرصيد، والقسم النشط ختم مزدوج الحلقة في منتصف الخانة */
+html[data-theme="paper"] #eco-store-body .st-rail{ --ra-boxes:150,98,30; --ra-cosmetics:112,78,160; --ra-cards:22,104,118; --rail-line:rgba(110,80,40,.22); background:linear-gradient(180deg, #F1E4C6, #F6EEDC 40%, #EADDBF); border-left-color:rgba(110,80,40,.4); box-shadow:inset 0 1px 0 rgba(255,255,255,.7), inset 3px 0 0 rgba(255,250,236,.5); }
+html[data-theme="paper"] #eco-store-body .st-rail-b{ color:rgba(74,52,30,.76); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on{ color:rgb(var(--ra)); background:radial-gradient(circle at 50% 50%, rgba(var(--ra), .13) 0 25px, transparent 26px), radial-gradient(circle at 50% 50%, transparent 0 25px, rgb(var(--ra)) 25.5px 27px, transparent 27.5px), radial-gradient(circle at 50% 50%, transparent 0 21.5px, rgba(var(--ra), .45) 22px 23px, transparent 23.5px), rgba(var(--ra), .06); }
+html[data-theme="paper"] #eco-store-body .st-rail-b.is-on::after{ display:none; }
+@media (hover:hover){ html[data-theme="paper"] #eco-store-body .st-rail-b:not(.is-on):hover{ background:rgba(110,80,40,.08); color:rgb(74,52,30); } }
+html[data-theme="paper"] #eco-store-body .st-rail-n{ color:#FBF4E3; background:rgba(74,52,30,.85); }
+html[data-theme="paper"] #eco-store-body .st-rail-b::before{ color:#3C2A16; background:#F9F1DE; border:1px solid rgba(110,80,40,.4); box-shadow:0 6px 12px -6px rgba(70,45,20,.55); }
