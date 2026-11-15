@@ -1,0 +1,29 @@
+/* CODIS-V54: شريط تقدّم الإقلاع — أسمك وأوضح، والحركة transform/opacity فقط (لا إعادة تخطيط مع كل تحديث).
+   الامتلاء طبقة بعرض المسار كاملاً تُزاح أفقياً (translate) بدل scaleX ⇒ الأطراف المستديرة لا تتشوّه.
+   data-mode="busy" = مرحلة لا يمكن قياس نسبتها (انتظار الخطوط/أول دفعة من المستند): لمعة تمر بالمسار بدل رقم مختلَق. */
+#codis-startup .cs-bar{
+  position:relative; isolation:isolate; contain:paint;
+  width:min(224px, calc(58 * var(--vw))); height:6px; margin-top:18px; border-radius:999px; overflow:hidden; direction:rtl;
+  background:rgb(var(--aqua-rgb) / .13);
+  box-shadow:inset 0 0 0 1px rgb(var(--aqua-rgb) / .12), inset 0 1px 1px rgb(0 0 0 / .06);
+}
+#codis-startup .cs-bar i{
+  position:absolute; inset:0; display:block; width:auto; height:auto; border-radius:inherit;
+  background:linear-gradient(270deg, var(--aqua), color-mix(in srgb, var(--aqua) 70%, #fff));
+  box-shadow:inset 0 1px 0 rgb(255 255 255 / .28);
+  transform:translate3d(calc((1 - var(--p, 0)) * 100%), 0, 0); transform-origin:center;
+  transition:transform 340ms cubic-bezier(.22,.8,.24,1);
+}
+#codis-startup .cs-bar[data-state="warn"] i{ background:linear-gradient(270deg, var(--gold), color-mix(in srgb, var(--gold) 70%, #fff)); }
+#codis-startup .cs-bar::after{
+  content:''; position:absolute; top:0; bottom:0; right:0; width:42%; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgb(255 255 255 / .55), transparent);
+  opacity:0; transform:translate3d(110%, 0, 0);
+}
+#codis-startup .cs-bar[data-mode="busy"]::after{ opacity:1; animation:csBarSweep 1150ms cubic-bezier(.45,.05,.35,1) infinite; }
+@keyframes csBarSweep{ from{ transform:translate3d(110%, 0, 0); } to{ transform:translate3d(-250%, 0, 0); } }
+#codis-startup.codis-hidden .cs-bar::after{ animation:none; }
+@media (prefers-reduced-motion: reduce){
+  #codis-startup .cs-bar i{ transition:none; }
+  #codis-startup .cs-bar::after{ animation:none !important; opacity:0 !important; }
+}
