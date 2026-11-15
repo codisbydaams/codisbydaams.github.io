@@ -1,0 +1,32 @@
+/* CODIS-V52 · مشهد فتح الصناديق ثلاثي الأبعاد v2. الطبقة داخل body: على الهاتف تملأ الشاشة، وعلى الحاسوب تبقى داخل إطار الهاتف 430px (body مُحوَّل = حاوية fixed). */
+.b3d-root{position:fixed;inset:0;z-index:2147483000;background:#000;overflow:hidden;touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;contain:strict;cursor:default}
+.b3d-root>canvas{position:absolute;left:0;top:0;display:block;outline:none}
+.b3d-safe{position:absolute;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.b3d-vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 42%,rgba(0,0,0,0) 48%,rgba(6,4,2,.55) 100%)}
+.b3d-flash{position:absolute;inset:0;background:#fff4d8;opacity:0;pointer-events:none;mix-blend-mode:screen}
+.b3d-black{position:absolute;inset:0;background:#000;opacity:1;pointer-events:none}
+/* إطارات خانات ×10 = مواضع بطاقات شبكة النتائج الحقيقية */
+.b3d-slots{position:absolute;inset:0;pointer-events:none}
+.b3d-slot{position:absolute;left:0;top:0;border-radius:9px;opacity:0;transform-origin:0 0;box-shadow:inset 0 0 0 1.5px rgba(255,236,200,.28),inset 0 0 18px rgba(0,0,0,.35);background:rgba(10,7,4,.38);transition:opacity .45s ease,box-shadow .5s ease,background-color .5s ease}
+.b3d-slot b{position:absolute;inset:0;display:grid;place-items:center;font:600 13px/1 system-ui,sans-serif;color:rgba(255,236,200,.35);font-variant-numeric:tabular-nums}
+.b3d-slot.is-in{opacity:1}
+.b3d-slot.is-on{background:rgba(10,7,4,0);box-shadow:0 0 0 1.5px rgba(var(--c),.85),0 0 22px rgba(var(--c),.55);animation:b3dSlot .7s cubic-bezier(.2,.7,.3,1) both}
+.b3d-slot.is-on b{opacity:0}
+.b3d-slot.is-best{box-shadow:0 0 0 2px rgba(var(--c),1),0 0 34px 6px rgba(var(--c),.75);animation:b3dBest 1.1s ease-in-out infinite alternate}
+.b3d-slots.is-done .b3d-slot:not(.is-best){box-shadow:0 0 0 1px rgba(var(--c),.5),0 0 12px rgba(var(--c),.25)}
+@keyframes b3dSlot{0%{box-shadow:0 0 0 1.5px rgba(var(--c),1),0 0 48px 10px rgba(var(--c),.9)}100%{box-shadow:0 0 0 1.5px rgba(var(--c),.85),0 0 22px rgba(var(--c),.55)}}
+@keyframes b3dBest{to{box-shadow:0 0 0 2px rgba(var(--c),1),0 0 46px 12px rgba(var(--c),.9)}}
+/* بطاقات الجوائز الفعلية داخل المشهد: DOM حقيقي بتحويل منظوري، المحتوى مرسوم مكبّراً (b3d-sc) للحدّة */
+.b3d-cards{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.b3d-cw{position:absolute;inset:0}
+.b3d-card{position:absolute;left:0;top:0;width:300px;height:375px;transform-origin:0 0;display:none;overflow:hidden;border-radius:2.5%/2%;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.b3d-sc{position:absolute;left:0;top:0;width:300px;transform-origin:0 0}
+.b3d-front{position:relative;width:300px;--detail-w:300px;--rwc-wmax:300px}
+.b3d-back{position:absolute;left:0;top:0}
+.b3d-glare{position:absolute;inset:0;pointer-events:none;opacity:0;mix-blend-mode:screen;background:linear-gradient(105deg,rgba(255,255,255,0) 35%,rgba(255,250,235,.55) 48%,rgba(255,255,255,.12) 52%,rgba(255,255,255,0) 64%);background-size:300% 100%;background-repeat:no-repeat}
+.b3d-front .bx-stage{display:block;width:300px;margin:0;padding:0}
+.b3d-front .store-detail-art,.b3d-front .bx-pass-art{margin:0;padding:0;width:300px;background:none}
+.b3d-front .bx-reveal{animation:none!important;opacity:1!important;transform:none!important}
+.b3d-front .bx-reveal::before{display:none!important}
+/* نافذة النتيجة حين تهبط عليها بطاقة المشهد: لا حركة دخول للبطاقة نفسها (البطاقة وصلت فعلاً) */
+.bx-modal.is-b3d .bx-stage .bx-reveal:first-child,.bx-modal.is-b3d .bx-stage>.bx-reveal{animation:none}

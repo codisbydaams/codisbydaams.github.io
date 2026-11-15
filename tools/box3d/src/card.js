@@ -36,14 +36,16 @@ export function cardBackCanvas(d, theme) {
   x.lineWidth = 8; x.beginPath(); x.arc(W / 2, H / 2, 102, 0, 6.283); x.stroke();
   return c;
 }
-export function makeCard(d, theme) {
-  const g = new Group(), W = 1, H = 1.25;
+export function makeCard(d, theme, ar) {
+  const g = new Group(), W = 1, H = ar || 1.25;
   const ft = tex(cardFaceCanvas(d, theme), null), bt = tex(cardBackCanvas(d, theme), null);
-  const fm = new MeshStandardMaterial({ map: ft, roughness: .55, metalness: .1, alphaTest: .4, emissive: 0x000000 });
+  const fm = new MeshBasicMaterial({ map: ft, alphaTest: .4, toneMapped: false });   /* وجه غير مُضاء (مثل وجه DOM) فلا يحترق تحت ضوء الصندوق */
   const bm = new MeshStandardMaterial({ map: bt, roughness: .6, metalness: .2, alphaTest: .4 });
-  const f = new Mesh(new PlaneGeometry(W, H), fm); f.position.z = .008; const b = new Mesh(new PlaneGeometry(W, H), bm); b.rotation.y = Math.PI; b.position.z = -.008;
-  const e = new Mesh(new BoxGeometry(W - .06, H - .06, .014), new MeshStandardMaterial({ color: 0x3a2c14, roughness: .6 }));
-  g.add(f, b, e); g.userData = { mats: [fm, bm], texs: [ft, bt], face: f };
+  const f = new Mesh(new PlaneGeometry(W, H), fm); f.position.z = .006; const b = new Mesh(new PlaneGeometry(W, H), bm); b.rotation.y = Math.PI; b.position.z = -.006;
+  /* حافة بسماكة البطاقة بلون الندرة: تبقى ظاهرة حين تكون البطاقة على حدّها فلا تختفي إلى خط */
+  const col = d.rgb || [255, 214, 120], em = new MeshStandardMaterial({ color: (col[0] << 16) | (col[1] << 8) | col[2], roughness: .35, metalness: .6, emissive: (col[0] << 16) | (col[1] << 8) | col[2], emissiveIntensity: .25 });
+  const e = new Mesh(new BoxGeometry(W - .01, H - .01, .012), em);
+  g.add(f, b, e); g.userData = { mats: [fm, bm, em], texs: [ft, bt], face: f, edge: e, ar: H };
   g.traverse(o => { if (o.isMesh) o.castShadow = true; });
   return g;
 }

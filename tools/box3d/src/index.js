@@ -17,16 +17,16 @@ function supported() {
 
 /* معاينة تطويرية: مجسّم واحد بزاوية فتح محددة (للاختبار البصري فقط) */
 function preview(host, o) {
-  const low = !!o.low, q = quality(low); q.preserve = true;
+  const q = quality(o.low ? 'low' : 'hi'); q.preserve = true;
   const st = new Stage({ host, q, theme: o.theme || 'paper', w: o.w || host.clientWidth, h: o.h || host.clientHeight, hooks: {} });
-  const lib = new Lib(), m = instantiate(buildBox(o.n || 1, lib));
+  const lib = new Lib(q.texS), m = instantiate(buildBox(o.n || 1, lib));
   st.scene.add(m.root); m.root.position.y = -m.baseY; st.contact.scale.set(m.dims.w * 1.5, m.dims.d * 1.5, 1);
   m.lidPivot.rotation.x = -(o.open || 0) * Math.PI / 180;
-  m.setSeam(o.seam || 0); st.inner.position.set(0, m.dims.h * .7, 0); st.inner.intensity = o.light || 0;
+  m.setSeam(o.seam || 0); m.setGems(o.gems == null ? 1 : o.gems); st.inner.position.set(0, m.dims.h * .7, 0); st.inner.intensity = o.light || 0;
   const cam = st.camera, c = o.cam || [3.2, 3.0, 5.4]; cam.position.set(c[0], c[1], c[2]); const lk = o.look || [0, m.dims.h * .55, 0]; cam.lookAt(lk[0], lk[1], lk[2]); cam.fov = o.fov || 34; cam.updateProjectionMatrix();
   st.key.target.position.set(0, 0, 0);
   st.tick(.016, 1); st.render();
   return { st, m, lib, dispose() { st.dispose(); lib.disposeAll(); } };
 }
 
-export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '1' };
+export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '2' };

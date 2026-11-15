@@ -12,7 +12,11 @@ export const E = {
   outq: t => 1 - Math.pow(1 - t, 5),
   back: t => { const c1 = 1.2, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
   soft: t => t * t * (3 - 2 * t),
+  outBack: t => { const c1 = 1.4, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); },
+  expo: t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t)),
 };
+/* زنبرك مخمَّد من 0 إلى 1: z نسبة التخميد · w التردد (راد/ث) — يتخطى 1 ثم يستقر */
+export function spring(t, z = .45, w = 14) { if (t <= 0) return 0; const wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z * w / wd) * Math.sin(wd * t)); }
 export function rng(seed) { let s = (seed >>> 0) || 1; return () => { s ^= s << 13; s >>>= 0; s ^= s >>> 17; s ^= s << 5; s >>>= 0; return (s % 100000) / 100000; }; }
 export function noise1(t, k = 0) { return Math.sin(t * 12.9898 + k * 78.233) * .5 + Math.sin(t * 7.13 + k * 3.7) * .3 + Math.sin(t * 23.7 + k * 1.3) * .2; }
 /* مخطط زمني: tw(t0,dur,fn,ease) تُقيَّم بقيم مطلقة (لا تراكم) + cue(t,fn) مرة واحدة */

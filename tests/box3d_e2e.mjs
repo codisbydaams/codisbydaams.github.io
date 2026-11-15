@@ -25,7 +25,7 @@ async function scenario(name, o) {
     try { await p.getByText('المتابعة بدون حساب').first().click({ timeout: 4000 }); } catch (e) {} await p.waitForTimeout(800);
     const pre = JSON.parse(await p.evaluate(`(()=>{ codisConfirm=async()=>true; CodisOutcomeUI.show=()=>{}; CodisOutcomeUI.enqueue=()=>{}; data.wallet.balance=500000; saveData(); const t=CodisBoxes.tier('bx${o.tier}'); return JSON.stringify({bal:data.wallet.balance, price:t.price, boxes:(data.inventory.boxes||[]).length, canv:document.querySelectorAll('canvas.b3d-cv').length, inert:document.querySelectorAll('[inert]').length}); })()`));
     await p.evaluate(o.mode === 'bulk' ? `econBuyBox10('bx${o.tier}')` : `econBuyBox('bx${o.tier}')`); await p.waitForTimeout(900);
-    const live = JSON.parse(await p.evaluate(`JSON.stringify({root:!!document.querySelector('.b3d-root'), active:CodisBox3D.active(), full:(()=>{const r=document.querySelector('.b3d-root'); if(!r) return null; const b=r.getBoundingClientRect(); return b.width===innerWidth&&b.height===innerHeight&&b.top===0&&b.left===0;})(), old:!!document.querySelector('.cb-world,.bkc-stage'), toast:!!document.querySelector('.toast.show,#toast.show')})`));
+    const live = JSON.parse(await p.evaluate(`JSON.stringify({root:!!document.querySelector('.b3d-root'), active:CodisBox3D.active(), full:(()=>{const r=document.querySelector('.b3d-root'); if(!r) return null; const b=r.getBoundingClientRect(), f=document.body.getBoundingClientRect(); /* V52: إطار الهاتف (body) لا النافذة */ return Math.abs(b.width-Math.min(innerWidth,f.width))<1&&Math.abs(b.left-f.left)<1&&b.top===0&&Math.abs(b.height-innerHeight)<1;})(), old:!!document.querySelector('.cb-world,.bkc-stage'), toast:!!document.querySelector('.toast.show,#toast.show')})`));
     const key = o.mode === 'bulk' ? 'bulk' : 'cur';
     let frames = null, total = null;
     if (o.abortAt) {
@@ -49,7 +49,7 @@ async function scenario(name, o) {
     chk.push(['UI restored (inert/overflow)', post.inert === pre.inert && post.ov === '']);
     chk.push(['no leaked canvas', post.canv <= pre.canv, pre.canv + '->' + post.canv]);
     if (!o.abortAt) chk.push(['result shown', post.result && (o.mode !== 'bulk' || post.cells === 10), post.phase + '/' + post.cells]);
-    if (!o.nowebgl && !o.badsrc) chk.push(['3D fullscreen live', live.root && live.full === true, JSON.stringify(live)]);
+    if (!o.nowebgl && !o.badsrc) chk.push(['3D live inside phone frame', live.root && live.full === true, JSON.stringify(live)]);
     if (o.nowebgl || o.badsrc) chk.push(['fell back (no 3D overlay)', !live.root, JSON.stringify(live)]);
     chk.push(['no JS errors', errs.length === 0, errs.slice(0, 2).join(' | ')]);
     const bad = chk.filter(c => !c[1]); res = { ok: !bad.length, info: bad.map(c => c[0] + (c[2] ? ' [' + c[2] + ']' : '')).join('; ') + (frames != null ? ` frames@3s=${frames}` : '') + (total != null ? ` realtime=${(+total).toFixed(1)}s` : '') };

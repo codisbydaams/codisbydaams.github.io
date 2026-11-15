@@ -1,160 +1,178 @@
-/* CODIS-BOX3D — سيناريو الصندوق الواحد (إخراج مستقل): دخول ← تقديم ← ترقّب ← فتح بمفصلات حقيقية ← خروج المكافأة ← لقطة البطل ← تسليم.
-   مستوى الصندوق (n) يحدد المجسّم والخامات والألوان؛ مستوى الكشف (lv→g من قيمة الجائزة الفعلية) يحدد الإخراج: مدد الترقّب، حركة الكاميرا، الإضاءة، الإبطاء، الصدمة. */
-import { Group, Vector3, Quaternion, Euler, Object3D, Color } from 'three';
+/* CODIS-BOX3D v2 — مشهد الصندوق الواحد.
+   الإخراج من مستويين منفصلين:
+   • مستوى الصندوق n (1..5): المجسّم والخامات ووزن الغطاء (تردد الزنبرك) ولون ضوء البداية.
+   • مستوى الكشف lv (1..9، من القيمة الفعلية للجائزة عبر CodisRevealLevels): مدة الترقّب وعدد نبضاته، الإضاءة، الكسوف، الإبطاء، الوميض، الأشعة، القصاصات، دورات البطاقة، والصوت.
+   التسلسل: دخول (سقوط بوزن + ضغط) ← تقديم (دوران المنصة) ← ترقّب (نبضات تتسارع، ضوء الدرزة يتحوّل من لون الصندوق إلى لون الجائزة الحقيقي فقط) ←
+   تحرّر القفل ← الغطاء يدور على مفصلاته بزنبرك مخمَّد يرتطم بحدّه ويرتد ← الكشف ← البطاقة تخرج من داخل التجويف (مقصوصة بحافته) وتدور إلى وضعية البطل
+   (معرّفة بمستطيل شاشة داخل المساحة الآمنة) ← تحليق ← تهبط في بطاقة النتيجة الحقيقية (Runner.handoff). لا خداع: لا لون ولا شدة أعلى من مستوى الجائزة الفعلية. */
+import { Group, Vector3, Quaternion, Euler, Color } from 'three';
 import { Runner } from './runner.js';
 import { buildBox, instantiate, Lib, TINT } from './models.js';
 import { makeCard } from './card.js';
-import { E, clamp, lerp, sstep, noise1, rad } from './util.js';
+import { E, clamp, lerp, noise1, rad, spring } from './util.js';
 
-/* مدد المجموعات (ثانية): enter دخول · pres تقديم · ant ترقّب · open فتح · rise خروج المكافأة · hold لقطة البطل */
-const G = [null,
-  { enter: 1.2, pres: .55, ant: .95, open: .95, rise: 1.15, hold: .75, turns: 1.0 },
-  { enter: 1.35, pres: .85, ant: 1.4, open: 1.05, rise: 1.35, hold: .95, turns: 1.4 },
-  { enter: 1.5, pres: 1.2, ant: 2.1, open: 1.25, rise: 1.7, hold: 1.25, turns: 1.9 },
-  { enter: 1.6, pres: 1.5, ant: 2.9, open: 1.7, rise: 2.2, hold: 1.7, turns: 2.4 },
-  { enter: 1.8, pres: 1.9, ant: 3.8, open: 2.2, rise: 2.8, hold: 2.3, turns: 3.0 }];
-
-export function sceneSeconds(g, calm) { const D = G[g]; return calm ? 3.2 : D.enter + D.pres + D.ant + D.open * .55 + D.rise + D.hold; }
+/* جدول المستويات التسعة */
+const LV = [null];
+for (let l = 1; l <= 9; l++) LV.push({
+  ant: [0, .7, .85, 1.0, 1.2, 1.4, 1.7, 2.0, 2.4, 2.9][l], pulses: [0, 1, 1, 2, 2, 3, 3, 4, 4, 5][l], rise: [0, .85, .9, 1.0, 1.1, 1.2, 1.35, 1.5, 1.65, 1.9][l],
+  spins: [0, .5, .5, 1, 1, 1, 1.5, 2, 2, 3][l], hold: [0, .7, .75, .85, .95, 1.1, 1.3, 1.5, 1.8, 2.2][l], pres: .5 + l * .045,
+  eclipse: l >= 9 ? .78 : l >= 8 ? .62 : l >= 7 ? .45 : 0, slow: l >= 8 ? (l === 9 ? .45 : .6) : 1, flash: l >= 3 ? .06 + l * .045 : 0, rays: l >= 5, shock: l >= 6, confetti: l >= 7,
+  beam: .18 + l * .07, sparks: 10 + l * 9, glow: .35 + l * .09,
+});
+const WEIGHT = [0, .9, 1.0, 1.2, 1.1, 1.3];
+export function sceneSeconds(lv, calm) { const L = LV[clamp(lv | 0, 1, 9)]; return calm ? 2.8 : 1.0 + L.pres + L.ant + .4 + L.rise + L.hold + (L.slow < 1 ? .8 : 0); }
 const sph = (az, el, d, l) => { const a = rad(az), e = rad(el); return [l[0] + d * Math.sin(a) * Math.cos(e), l[1] + d * Math.sin(e), l[2] + d * Math.cos(a) * Math.cos(e)]; };
 
 export function playSingle(o) {
-  const g = clamp(o.g | 0, 1, 5), D = G[g], n = clamp(o.n | 0, 1, 5), calm = !!o.calm, T = TINT[n];
-  const run = new Runner({ host: o.host, theme: o.theme, low: o.low, hooks: o.hooks, preserve: o.preserve });
-  const st = run.stage, tl = run.tl, lib = new Lib();
-  run.extra.push(() => { try { lib.disposeAll(); } catch (e) {} });
+  const lv = clamp(o.lv | 0, 1, 9), L = LV[lv], n = clamp(o.n | 0, 1, 5), calm = !!o.calm, T = TINT[n];
+  const run = new Runner({ host: o.host, theme: o.theme, tier: o.tier, hooks: o.hooks, preserve: o.preserve });
+  const st = run.stage, tl = run.tl, lib = new Lib(run.q.texS);
   const model = instantiate(buildBox(n, lib));
-  const s = clamp(2.5 / Math.max(model.dims.w, model.dims.d, model.top * .95), .55, 1.15);
+  run.extra.push(() => { try { model.dispose(); lib.disposeAll(); } catch (e) {} });
+  const s = clamp(2.4 / Math.max(model.dims.w, model.dims.d, model.top * .95), .55, 1.15);
   const rig = new Group(); rig.add(model.root); model.root.scale.setScalar(s); model.root.position.y = -model.baseY * s; st.scene.add(rig);
-  const H = model.dims.h * s, LID = model.dims.lidH * s, cy = H * .55 + LID * .3, yF = H + LID * .5 + 1.2 * Math.max(.9, s);
-  st.contact.scale.set(model.dims.w * s * 1.55, model.dims.d * s * 1.55, 1);
-  if (n === 5) st.contact.scale.set(3.3, 3.3, 1);
-  st.key.target.position.set(0, H * .5, 0); st.spot.position.set(0, 9, 3); st.spot.target.position.set(0, H, 0);
-  const lc = new Color(`rgb(${T.light[0]},${T.light[1]},${T.light[2]})`); st.inner.color.copy(lc);
-  const rl = o.reward.rgb || [255, 214, 120], rc = (rl[0] << 16) | (rl[1] << 8) | rl[2];
-  const base = { hemi: st.hemi.intensity, key: st.key.intensity, rim: st.rim.intensity, env: st.scene.environmentIntensity };
-  const AMAX = rad(n === 2 ? 100 : n === 5 ? 112 : 108);
-  const S = { angle: 0, rattle: 0, seam: 0, light: 0, shaft: 0, cu: 0, cardOn: false, yaw: 0, hold: 0, dropY: 0, drop: 0, lockOut: 0, halo: 0, rays: 0, rel: false, rr: 0 };
-  const card = makeCard({ title: o.reward.title, sub: o.reward.sub, tag: o.reward.tag, rgb: rl, font: o.reward.font }, st.theme); card.visible = false; st.scene.add(card);
-  /* البطاقة الفعلية للجائزة (DOM حقيقي) تحل محل الرسم البديل إن توفر وجهها */
-  const domCard = o.reward.face ? run.dom.add(o.reward.face) : null; if (domCard) card.userData.face.visible = false, card.children.forEach(c => { c.visible = false; });
-  const rimA = new Vector3(), rimB = new Vector3(), clipObj = { a: rimA, b: rimB }, hw = (model.kind === 'rect' ? model.dims.w : model.dims.ap * 2) * s / 2, zf = (model.kind === 'rect' ? model.dims.d / 2 : model.dims.ap) * s + .03;
+  const H = model.dims.h * s, LID = model.dims.lidH * s, cy = H * .5 + LID * .25;
+  st.contact.scale.set(model.dims.w * s * 1.6, model.dims.d * s * 1.6, 1); if (n === 5) st.contact.scale.set(3.4, 3.4, 1);
+  st.key.target.position.set(0, H * .5, 0); st.spot.position.set(.6, 9, 3.2); st.spot.target.position.set(0, H * .6, 0);
+  const rl = (o.reward.rgb || [255, 214, 120]), r2 = o.reward.rgb2 || rl;
+  const cBox = new Color(`rgb(${T.light[0]},${T.light[1]},${T.light[2]})`), cRew = new Color(`rgb(${rl[0]},${rl[1]},${rl[2]})`), cRew2 = new Color(`rgb(${r2[0]},${r2[1]},${r2[2]})`), cEdge = new Color(`rgb(${T.edge[0]},${T.edge[1]},${T.edge[2]})`);
+  const cMix = new Color(), cSeam = new Color(), rewHex = cRew.getHex();
+  const base = { hemi: st.hemi.intensity, key: st.key.intensity, rim: st.rim.intensity, fill: st.fill.intensity, env: st.scene.environmentIntensity };
+  const AMAX = rad(n === 2 ? 102 : n === 5 ? 112 : 106);
+  const S = { angle: 0, seam: 0, light: 0, charge: 0, jolt: 0, cu: 0, cardOn: false, yaw: 0, hold: 0, drop: 0, squash: 0, lockOut: 0, halo: 0, rays: 0, rel: false, mixC: 0, beam: 0, pool: 0, eclipse: 0 };
+  /* البطاقة: الوجه الحقيقي (DOM) + جسم ثلاثي الأبعاد للحافة والظل */
+  const domCard = o.reward.face ? run.dom.add(o.reward.face) : null, ar = domCard ? domCard.ar : 1.25;
+  const card = makeCard({ title: o.reward.title, sub: o.reward.sub, tag: o.reward.tag, rgb: rl, font: o.reward.font }, st.theme, ar); card.visible = false; st.scene.add(card);
+  if (domCard) { card.userData.face.visible = false; card.children[1].visible = false; }
   run.extra.push(() => { try { card.userData.texs.forEach(t => t.dispose()); card.userData.mats.forEach(m => m.dispose()); } catch (e) {} });
-  const sfx = (a, b) => { try { if (o.hooks.sfx) o.hooks.sfx(a, b); } catch (e) {} };
-  const hap = p => { try { if (o.hooks.haptic) o.hooks.haptic(p); } catch (e) {} };
-  const mouth = () => new Vector3(0, H * .92, .0);
-  const qFace = new Quaternion(), qFlat = new Quaternion().setFromEuler(new Euler(-Math.PI / 2, 0, 0)), qTmp = new Quaternion(), qSpin = new Quaternion(), up = new Vector3(0, 1, 0), tmpO = new Object3D();
+  if (domCard) run.landables.push({ key: '0', obj: card, dom: domCard, ar });
+  const rimA = new Vector3(), rimB = new Vector3(), clipObj = { a: rimA, b: rimB }, hw = (model.kind === 'rect' ? model.dims.w : model.dims.ap * 2) * s / 2, zf = (model.kind === 'rect' ? model.dims.d / 2 : model.dims.ap) * s + .03;
+  const sfx = (a, b) => run.sfx(a, Object.assign({ n, lv }, b || {})), hap = p => run.haptic(p);
 
   /* ---------- مواقيت ---------- */
-  const enter = calm ? .5 : D.enter, tA = enter + (calm ? 0 : D.pres), tL = tA + (calm ? 0 : D.ant), tO = tL, tR = tO + D.open * (calm ? .6 : .55), tH = tR + (calm ? 1.0 : D.rise), tEnd = tH + (calm ? .7 : D.hold);
+  const enter = calm ? .45 : 1.0, tA = enter + (calm ? 0 : L.pres), tL = tA + (calm ? .15 : L.ant), tO = tL + (calm ? .1 : .16), tRv = tO + .12, tR = tO + (calm ? .2 : .26), rise = calm ? .75 : L.rise, tH = tR + rise, tEnd = tH + (calm ? .55 : L.hold);
   run.total = tEnd;
+  const wgt = WEIGHT[n], wn = 10.5 / wgt, zz = .36, wd = wn * Math.sqrt(1 - zz * zz), tStop = tO + Math.PI / wd * .62;
 
   /* ---------- الكاميرا ---------- */
-  const look0 = [0, cy, 0], lookTop = [0, yF * .86, 0];
+  const look0 = [0, cy, 0], lookOpen = [0, H + LID * .2, 0], lookHero = [0, H + 1.05 * Math.max(.9, s), 0];
   const track = run.track, io = E.io;
-  if (calm) {
-    track.key(0, sph(14, 22, 8.2, look0), look0, 34, io).key(tEnd, sph(8, 20, 7.6, look0), look0, 34, io);
-  } else {
-    const lowCrane = g >= 3;
-    track.key(0, sph(lowCrane ? 55 : 38, lowCrane ? 7 : 42, lowCrane ? 11 : 14, look0), look0, lowCrane ? 38 : 42, io);
-    track.key(enter, sph(lowCrane ? 24 : 18, lowCrane ? 16 : 25, 8.4, look0), look0, 34, E.out);
-    track.key(tA, sph(g >= 2 ? -16 : 10, 20, 7.6, look0), look0, 34, io);
-    track.key(tL - .25, sph(g >= 3 ? -3 : 5, 24, g >= 4 ? 6.0 : 6.5, [0, cy + LID * .3, 0]), [0, cy + LID * .3, 0], 33, io);
-    track.key(tO + D.open * .9, sph(0, 17, g >= 4 ? 8.6 : 6.4, [0, cy + .45, 0]), [0, cy + .45, 0], g >= 4 ? 26 : 33, io);
-    track.key(tH, sph(g >= 3 ? 5 : 0, 10, 6.6, lookTop), lookTop, 34, io);
-    track.key(tEnd, sph(g >= 3 ? -4 : 0, 8, 5.4, lookTop), lookTop, 32, E.lin);
+  if (calm) track.key(0, sph(10, 20, 8.6, look0), look0, 34, io).key(tO, sph(4, 22, 8.2, lookOpen), lookOpen, 34, io).key(tEnd, sph(0, 16, 8.4, lookHero), lookHero, 34, io);
+  else {
+    const low = lv >= 6;
+    track.key(0, sph(low ? 42 : 30, low ? 10 : 30, 12.5, look0), look0, 38, io);
+    track.key(enter, sph(low ? 22 : 16, low ? 16 : 22, 9.2, look0), look0, 34, E.out);
+    track.key(tA, sph(-10, 20, 8.6, look0), look0, 34, io);
+    track.key(tL, sph(lv >= 5 ? -2 : 4, 24, lv >= 7 ? 6.4 : 7.0, [0, cy + LID * .3, 0]), [0, cy + LID * .3, 0], lv >= 7 ? 31 : 33, E.in);
+    track.key(tO + .5, sph(0, 20, lv >= 7 ? 8.6 : 7.8, lookOpen), lookOpen, lv >= 7 ? 30 : 33, E.out);
+    track.key(tH, sph(lv >= 5 ? 5 : 0, 14, 8.8, lookHero), lookHero, 34, io);
+    track.key(tEnd, sph(lv >= 5 ? -3 : 0, 12, 8.4, lookHero), lookHero, 33, E.lin);
   }
 
-  /* ---------- دخول: الفلاش الأسود يتلاشى، الصندوق يسقط على المنصّة بضغط ---------- */
-  run.blackEl.style.opacity = '1';
-  tl.tw(0, calm ? .5 : .7, e => { run.blackEl.style.opacity = String(1 - e); }, E.out);
+  /* ---------- دخول ---------- */
+  run.blackEl.style.opacity = '1'; tl.tw(0, calm ? .4 : .5, e => { run.blackEl.style.opacity = String(1 - e); }, E.out);
+  tl.cue(0, () => sfx('chest.touch'));
   if (!calm) {
-    tl.tw(0, .62, e => { S.drop = 1 - e; }, E.in);
-    tl.tw(.62, .34, (e, p) => { S.squash = Math.sin(p * Math.PI) * Math.exp(-2.2 * p); }, E.lin);
-    tl.cue(.6, () => { sfx('box.thud', { n, g: .8 }); run.shake(.05 + g * .01); st.emitSparks(new Vector3(0, .1, 0), 14 + g * 4, { sp: [.8, 2.2], up: .6, spread: Math.max(1.2, model.dims.w * s * .9), life: [.5, 1.1], color: 0xf1dfb0 }); st.burstPaper(new Vector3(0, .1, 0), 4 + g * 2, { sp: [1, 2.4], life: 1.8 }); });
-    tl.tw(enter - .1, D.pres + .1, e => { S.yaw = lerp(-.55, .22, e); }, E.io);
-    tl.tw(.0, enter, e => { if (e < 1) S.yaw = lerp(-.9, -.55, e); }, E.out);
-    tl.tw(tA, .0001, () => {}, E.lin);
+    tl.tw(0, .58, e => { S.drop = 1 - e; }, E.in);
+    tl.tw(.58, .4, (e, p) => { S.squash = Math.sin(p * Math.PI) * Math.exp(-2.4 * p); }, E.lin);
+    tl.cue(.56, () => { sfx('chest.drop', { g: 1 }); run.shake(.05 + wgt * .03); hap([12]); st.emitSparks(new Vector3(0, .05, 0), 22, { sp: [.8, 2.4], up: .4, spread: Math.max(1.2, model.dims.w * s), life: [.4, .9], color: 0xd9c4a0, size: .035, grav: 3 }); });
+    tl.tw(0, enter + L.pres, e => { S.yaw = lerp(-.55, .14, e); }, E.io);
+    tl.cue(enter + .05, () => sfx('chest.shift'));
   }
-  tl.tw(tA, calm ? .001 : D.ant, (e) => { S.rr = e; }, E.lin);
-  /* ---------- ترقّب: درزة تضيء، اهتزاز يتصاعد، غبار/شرر، صوت شحن ---------- */
+  /* ---------- ترقّب ---------- */
   if (!calm) {
-    tl.cue(tA, () => { sfx('box.charge', { lv: g, dur: D.ant, n }); });
-    tl.cue(tA + .3, () => { sfx('box.creak', { n }); hap([8]); });
-    tl.tw(tA, D.ant, e => { S.seam = e * e * .95; S.light = e * e * (.6 + g * .12); S.gems = e; }, E.lin);
-    tl.tw(tA + D.pres * 0, D.ant, e => { S.yaw = lerp(.22, 0, E.io(Math.min(1, e * 2.2))); }, E.lin);
-    const nb = Math.max(4, Math.round(D.ant * 4));
-    for (let i = 0; i < nb; i++) { const t = tA + (i + 1) * D.ant / (nb + 1); tl.cue(t, () => { st.emitSparks(new Vector3((Math.random() - .5) * model.dims.w * s * .8, H * .96, (Math.random() - .5) * model.dims.d * s * .5), 2 + g, { sp: [.3, .9], up: .9, spread: .2, life: [.7, 1.3], color: (T.edge[0] << 16) | (T.edge[1] << 8) | T.edge[2] }); }); }
-    /* كسوف: المستويات العليا تخفت الإضاءة قبيل الفتح فتبقى بقعة ضوء على الصندوق */
-    if (g >= 4) {
-      const k = g === 5 ? .78 : .5;
-      tl.tw(tA + D.ant * .5, D.ant * .45, e => { const m = 1 - k * e; st.hemi.intensity = base.hemi * m; st.key.intensity = base.key * m; st.rim.intensity = base.rim * m; st.scene.environmentIntensity = base.env * (1 - .6 * e); st.spot.intensity = 60 * e * (g === 5 ? 1.3 : .8); }, E.io);
-      tl.tw(tO, .5, e => { const m = 1 - k * (1 - e); st.hemi.intensity = base.hemi * m; st.key.intensity = base.key * m; st.rim.intensity = base.rim * m; st.scene.environmentIntensity = base.env * (1 - .6 * (1 - e)); st.spot.intensity = 60 * (1 - e * .6); }, E.out);
+    tl.cue(tA, () => sfx('chest.charge', { dur: L.ant }));
+    tl.tw(tA, L.ant, e => { S.charge = e; S.seam = .15 + e * e * .8; S.light = e * e * (.4 + lv * .08); S.mixC = E.io(clamp(e * 1.15)); S.yaw = lerp(.14, 0, E.io(Math.min(1, e * 2))); }, E.lin);
+    for (let i = 0; i < L.pulses; i++) {
+      const f = Math.pow((i + 1) / (L.pulses + 1), .75), tp = tA + L.ant * f, k = (i + 1) / L.pulses;
+      tl.cue(tp, () => { S.jolt = 1; S.joltK = .5 + k * .7; sfx('chest.rattle', { i, of: L.pulses }); run.shake(.012 + k * .02 * wgt); hap([6 + i * 2]); st.emitSparks(new Vector3((Math.random() - .5) * hw * 1.6, H + .02, zf - .05), 4 + i * 3 + lv, { sp: [.4, 1.2], up: .9, spread: .3, life: [.4, .9], color: cSeam.clone(), size: .04 }); });
     }
-    if (g >= 4) { tl.tw(tO - .25, .35, e => { tl.speed = 1 - .58 * e; }, E.io); tl.tw(tO + D.open * .55, .7, e => { tl.speed = .42 + .58 * e; }, E.io); }
-  } else {
-    tl.tw(tA, .001, () => { S.light = .5; }, E.lin);
+    if (L.eclipse) {
+      tl.tw(tA + L.ant * .35, L.ant * .6, e => { S.eclipse = e * L.eclipse; }, E.io);
+      tl.tw(tRv, .9, e => { S.eclipse = L.eclipse * (1 - e); }, E.out);
+    }
+    if (L.slow < 1) { tl.tw(tL - .2, .3, e => { tl.speed = lerp(1, L.slow, e); }, E.io); tl.tw(tRv + .25, .7, e => { tl.speed = lerp(L.slow, 1, e); }, E.io); }
+  } else { tl.tw(0, .5, e => { S.light = .4 * e; S.mixC = e; S.seam = .3 * e; }, E.lin); }
+  /* ---------- القفل والغطاء ---------- */
+  tl.cue(tL, () => { S.rel = true; sfx('chest.unlatch'); hap([10]); const lp = new Vector3(0, H - .1 * s, zf + .05); st.emitSparks(lp, 8 + lv, { sp: [1, 2.4], up: .6, spread: .1, life: [.3, .7], color: 0xffe2b0, size: .03 }); });
+  tl.tw(tL, .32, e => { S.lockOut = e; }, E.outBack);
+  tl.tw(tL, tO - tL, e => { S.angle = rad(3) * e; }, E.out);
+  if (calm) tl.tw(tO, .55, e => { S.angle = lerp(rad(3), AMAX, e); }, E.outq);
+  else {
+    tl.tw(tO, 2.4, (e, p) => { const tt = p * 2.4; let x = spring(tt, zz, wn) * (AMAX - rad(3)) + rad(3); if (x > AMAX) x = AMAX - (x - AMAX) * .35; S.angle = x; }, E.lin);
+    tl.cue(tO, () => sfx('chest.lid', { w: wgt }));
+    tl.cue(tStop, () => { sfx('chest.lidstop', { w: wgt }); run.shake(.02 * wgt); });
   }
-  /* ---------- تحرير القفل ثم الفتح بالمفصلات ---------- */
-  const tLock = tL - (calm ? 0 : .4);
-  tl.cue(tLock, () => { S.rel = true; sfx(g >= 3 ? 'box.release' : 'box.unlock', { lv: g, n, g: g === 1 ? .55 : .85 }); hap(g >= 4 ? [14, 30, 20] : [10]); });
-  tl.tw(tLock, calm ? .3 : .38, e => { S.lockOut = e; }, E.out);
-  tl.tw(tLock, calm ? .3 : .4, e => { S.angle = lerp(0, rad(2.6), e); }, E.io);
-  tl.tw(tO, D.open, e => { S.angle = lerp(rad(2.6), AMAX, e); }, g >= 4 ? E.io : E.io);
-  tl.tw(tO + D.open, .9, (e, p) => { S.angle = AMAX + AMAX * .035 * Math.exp(-6.5 * p) * Math.sin(p * 17); }, E.lin);
-  tl.cue(tO + .05, () => {
-    sfx('box.reveal', { lv: g, n }); if (!calm) { run.shake(.02 + g * .018); }
-    const m = mouth(); const col = (T.light[0] << 16) | (T.light[1] << 8) | T.light[2];
-    if (!calm) { st.emitSparks(m, 18 + g * 16, { sp: [1.2, 3.4], up: 2.4 + g * .5, spread: model.dims.w * s * .6, life: [1, 2], color: col }); st.burstPaper(m, 8 + g * 12, { sp: [2, 4.5], colors: g >= 3 ? [0xf0e0b8, 0xd9b36a, rc, 0xffffff] : [0xf0e0b8, 0xd9b36a, 0xc74a36, 0x2f6c9f], life: 2.8 }); }
-    if (g >= 3 && !calm) run.flash(.14 + g * .06, 520 + g * 120);
-    if (g >= 4) hap(g >= 5 ? [18, 40, 28, 40, 40] : [14, 40, 24]);
+  /* ---------- الكشف ---------- */
+  tl.cue(tRv, () => {
+    sfx('chest.reveal'); if (calm) return;
+    run.shake(.02 + lv * .012); hap(lv >= 7 ? [18, 40, 28, 40, 50] : lv >= 4 ? [14, 30, 20] : [12]);
+    const m = new Vector3(0, H * .95, 0);
+    st.emitSparks(m, L.sparks, { sp: [1.4, 3.2 + lv * .25], up: 2.2 + lv * .3, spread: hw * 1.2, life: [.7, 1.4 + lv * .08], color: cRew.clone(), size: .045 + lv * .004 });
+    st.emitSparks(m, Math.round(L.sparks * .5), { sp: [.8, 2], up: 1.6, spread: hw, life: [.5, 1.1], color: cMix.clone(), size: .035 });
+    if (L.flash) run.flash(L.flash, 380 + lv * 70, `rgb(${Math.round(255 * .6 + rl[0] * .4)},${Math.round(255 * .6 + rl[1] * .4)},${Math.round(255 * .6 + rl[2] * .4)})`);
+    if (L.shock) { st.shock.userData.t0 = tl.t; st.shock.userData.on = true; }
+    if (L.confetti) st.burstPaper(m, 10 + (lv - 6) * 12, { sp: [2, 4.5], colors: [rewHex, cRew2.getHex(), 0xf3e2b8], life: 2.8 });
   });
-  tl.tw(tO, D.open * .8, e => { S.light = lerp(S.light, 1.6 + g * .5, e); S.shaft = e; S.seam = Math.max(0, S.seam * (1 - e)); }, E.out);
-  if (g >= 4 && !calm) tl.cue(tO + D.open * .6, () => { st.shock.userData.t0 = tl.t; st.shock.userData.on = true; run.shake(.05); });
-  /* ---------- خروج المكافأة ---------- */
-  const spot = (calm ? 0 : 1);
-  tl.cue(tR - .02, () => { card.visible = true; S.cardOn = true; });
-  tl.tw(tR, tH - tR, e => { S.cu = e; }, E.io);
-  tl.cue(tR + .3, () => { if (g >= 3 && !calm) sfx('reward.achievement'); if (g >= 4) hap([20, 30]); });
-  tl.tw(tR, tH - tR, e => { S.halo = e; }, E.out);
+  tl.tw(tRv - .05, .7, e => { S.light = lerp(S.light, 1.4 + lv * .32, e); S.beam = e; S.pool = e; S.seam = Math.max(0, S.seam * (1 - e)); }, E.out);
+  /* ---------- البطاقة ---------- */
+  tl.cue(tR - .02, () => { card.visible = true; S.cardOn = true; sfx('chest.rise', { dur: rise }); });
+  tl.tw(tR, rise, e => { S.cu = e; }, E.lin);
+  tl.tw(tR, rise, e => { S.halo = e; }, E.out);
+  if (!calm) { const turns = Math.round(L.spins * 2); for (let i = 0; i < turns; i++) { const f = .35 + .55 * Math.pow((i + .5) / turns, 1.3); tl.cue(tR + rise * f, () => sfx('chest.spin', { i, of: turns })); } }
+  tl.cue(tH - .06, () => { sfx('chest.settle'); hap([8]); });
   tl.tw(tH, tEnd - tH, (e, p) => { S.hold = p; }, E.lin);
-  tl.cue(tH + .1, () => { if (!calm) { const m = new Vector3(0, yF, 0); st.emitSparks(m, 10 + g * 12, { sp: [.6, 2], up: .6, spread: 1.4, life: [1.2, 2.4], color: rc }); if (g >= 3) st.burstPaper(m, 10 + g * 6, { sp: [1.2, 3], colors: [rc, 0xffffff, 0xf0e0b8], life: 3 }); } });
+  if (lv >= 6 && !calm) tl.cue(tH + .12, () => { sfx('chest.rare'); const cp = card.position.clone(); st.emitSparks(cp, 18 + lv * 4, { sp: [.5, 1.6], up: .2, spread: .8, life: [.8, 1.6], color: cRew.clone(), size: .04, grav: .3, drag: 2.2 }); });
+  tl.tw(tH, tEnd - tH, e => { S.beam = 1 - e * .6; }, E.lin);
   tl.cue(tEnd, () => { run.handoff(false); });
 
-  /* ---------- حلقة التحديث المستمرة: تُطبّق الحالة S على المشهد ---------- */
-  const mouthPos = new Vector3(), camP = new Vector3();
-  run.post = () => { if (!domCard) return; if (!S.cardOn) { run.dom.hide(domCard); return; } const ry = H - model.baseY * s; rimA.set(-hw, ry, zf); rimB.set(hw, ry, zf); run.dom.place(domCard, card, st.camera, run.W, run.H, S.cu < 1 ? clipObj : null, 1); };
+  /* ---------- وضعية البطل: مستطيل شاشة داخل المساحة الآمنة ---------- */
+  const heroRect = () => { const W = run.W, Hh = run.H, top = run.safe.t + 18, bot = Hh - run.safe.b - 18, usable = bot - top, w = Math.min(W * .62, usable * .5 / ar, 330), h = w * ar, cyy = top + usable * .4; return { x: (W - w) / 2, y: cyy - h / 2, w, h }; };
+  const pA = new Vector3(), qA = new Quaternion(), sA = new Vector3(), pB = new Vector3(), qB = new Quaternion(), sB = new Vector3(), qFlat = new Quaternion().setFromEuler(new Euler(-Math.PI / 2, 0, 0)), qSpin = new Quaternion(), up = new Vector3(0, 1, 0), tmp = new Vector3(), boxC = new Vector3();
+  run.post = () => { if (!domCard) return; if (!S.cardOn) { run.dom.hide(domCard); return; } const ry = H - model.baseY * s; rimA.set(-hw, ry, zf); rimB.set(hw, ry, zf); run.dom.place(domCard, card, st.camera, run.W, run.H, S.cu < .42 ? clipObj : null, 1, S.cardOn ? (S.hold ? .35 + .25 * Math.sin(run.tAbs * 1.3) : .55) : 0); };
   run.onFrame = (dt, t) => {
-    const rr = S.rr; let jx = 0, jz = 0, jr = 0;
-    if (!calm && !S.rel && rr > 0) { const a = rr * rr * (.005 + g * .0025); jx = noise1(t * 21, 1) * a; jz = noise1(t * 19, 2) * a * .6; jr = noise1(t * 17, 3) * a * 1.2; }
+    const ta = run.tAbs || t; let jx = 0, jz = 0, jr = 0;
+    S.jolt = Math.max(0, S.jolt - dt * 4.5);
+    if (!calm && !S.rel && S.charge > 0) { const a = (S.charge * S.charge * .006 + S.jolt * .03 * (S.joltK || 1)) * wgt; jx = noise1(t * 23, 1) * a; jz = noise1(t * 19, 2) * a * .6; jr = noise1(t * 17, 3) * a * 1.3; }
     const sq = S.squash || 0, drop = S.drop;
-    rig.position.set(jx, drop * drop * 3.4, jz); rig.rotation.set(0, S.yaw, jr * .6);
-    rig.scale.set(1 + sq * .06, 1 - sq * .1, 1 + sq * .06);
-    const lidRattle = (!calm && !S.rel && rr > 0) ? noise1(t * 26, 5) * rad(.9) * rr * rr * (.6 + g * .2) : 0;
-    model.lidPivot.rotation.x = -(S.angle + Math.max(0, lidRattle));
-    model.lockPivot.rotation.x = -S.lockOut * 1.25; model.lockPivot.position.z += 0;
-    const fl = 1 + noise1(t * 14, 9) * .08 * S.seam;
-    model.setSeam(clamp(S.seam * fl, 0, 1)); model.setGems(1.1 + (S.gems || 0) * 1.6 + S.light * .35);
-    mouthPos.set(0, H * .8, 0); st.inner.position.copy(mouthPos); st.inner.intensity = S.light * (g >= 3 ? 7 : 5) * s;
-    st.contact.material.opacity = .85 * (1 - clamp(drop * 1.4)); st.contact.position.y = (n === 5 ? -.16 * s + .004 : .004); const cs = 1 + drop * .4; st.contact.scale.z = 1;
-    /* أعمدة الضوء */
-    const pw = model.dims.w * s * .78, ph = 7;
-    [st.pillar, st.pillar2].forEach((p, i) => { p.position.set(0, H + ph * .5 - .1, 0); p.scale.set(pw * (i ? .8 : 1), ph, 1); p.rotation.y = i ? Math.PI / 2 : 0; p.material.opacity = S.shaft * (.10 + g * .035) * (1 - S.hold * .75); p.material.color.setRGB(T.light[0] / 255, T.light[1] / 255, T.light[2] / 255).lerp(new Color(rc), g >= 3 ? .5 : .25); });
-    /* بطاقة المكافأة */
+    rig.position.set(jx, drop * drop * 3.2 + S.jolt * .04 * (S.joltK || 1), jz); rig.rotation.set(0, S.yaw, jr * .6);
+    rig.scale.set(1 + sq * .055, 1 - sq * .09, 1 + sq * .055);
+    const lidKick = (!S.rel && S.jolt > 0) ? rad(2.6) * S.jolt * (S.joltK || 1) : 0;
+    model.lidPivot.rotation.x = -(S.angle + lidKick);
+    model.lockPivot.rotation.x = -S.lockOut * 1.3;
+    cMix.copy(cBox).lerp(cRew, S.mixC); cSeam.copy(cEdge).lerp(cRew, S.mixC);
+    model.setSeamColor(cSeam); model.setSeam(clamp((S.seam + S.jolt * .5) * (1 + noise1(t * 14, 9) * .1), 0, 1)); model.setGems(.9 + S.charge * 1.4 + S.light * .3 + S.jolt);
+    st.inner.color.copy(cMix); st.inner.position.set(0, H * .78, 0); st.inner.intensity = S.light * (lv >= 5 ? 7 : 5) * s;
+    st.contact.material.opacity = .85 * (1 - clamp(drop * 1.4)); st.contact.position.y = (n === 5 ? -.16 * s : 0) + .004;
+    /* كسوف: الإضاءة العامة تخفت ويبقى تركيز على الصندوق */
+    const ec = S.eclipse, mm = 1 - ec; st.hemi.intensity = base.hemi * mm; st.key.intensity = base.key * (1 - ec * .7); st.rim.intensity = base.rim * mm; st.fill.intensity = base.fill * mm; st.scene.environmentIntensity = base.env * (1 - ec * .5); st.spot.intensity = 70 * ec; st.spot.color.copy(cMix);
+    /* عمود الضوء + بركة الأرض */
+    const bm = st.beam.material.uniforms; bm.uColor.value.copy(cMix).lerp(cRew, .6); bm.uI.value = S.beam * L.beam * (1 - S.hold * .35); st.beam.position.set(0, H * .82, 0); st.beam.scale.set(hw * .95, 6.5, (model.kind === 'rect' ? model.dims.d : model.dims.ap * 2) * s * .42);
+    st.pool.material.color.copy(cRew); st.pool.material.opacity = S.pool * (.18 + lv * .03); st.pool.scale.setScalar(hw * 2.4);
     if (S.cardOn) {
-      const u = S.cu, eu = E.io(u), cp = st.camera.position;
-      const px = Math.sin(u * Math.PI) * .1, py = lerp(H * .42, yF, E.out(u)) + (S.hold ? Math.sin(t * 1.7) * .035 : 0), pz = lerp(0, .3, eu);
-      card.position.set(px, py, pz);
-      tmpO.position.copy(card.position); tmpO.lookAt(cp.x, Math.max(cp.y * .6, py), cp.z); qFace.copy(tmpO.quaternion);
-      qTmp.slerpQuaternions(qFlat, qFace, E.io(clamp(u * 1.25))); qSpin.setFromAxisAngle(up, Math.pow(1 - u, 1.6) * D.turns * Math.PI * 2);
-      card.quaternion.copy(qSpin).multiply(qTmp);
-      if (S.hold) { const w = Math.sin(t * 1.1) * .07; qSpin.setFromAxisAngle(up, w); card.quaternion.premultiply(qSpin); }
-      card.scale.setScalar(lerp(.4, (domCard ? 1.55 : 1.12) + S.hold * .08, E.out(u)));
-      const cm = card.userData.mats[0]; cm.emissive.setRGB(rl[0] / 255, rl[1] / 255, rl[2] / 255); cm.emissiveIntensity = .06 + S.halo * .03 * g;
-      st.halo.position.copy(card.position).add(new Vector3(0, 0, -.05)); st.halo.lookAt(cp); st.halo.scale.setScalar((2.2 + g * .8) * S.halo); st.halo.material.opacity = S.halo * (.16 + g * .05); st.halo.material.color.setHex(rc);
-      if (g >= 3 && !calm) { st.raysM.position.copy(card.position); st.raysM.lookAt(cp); st.raysM.rotateZ(t * .25); st.raysM.scale.setScalar((3.2 + g * .9) * S.halo); st.raysM.material.opacity = S.halo * (.06 + g * .035); st.raysM.material.color.setHex(rc); }
+      const u = S.cu, cam = st.camera;
+      /* المرحلة A: من قاع التجويف (مستلقية) إلى فوق الحافة بقليل */
+      const ua = clamp(u / .38), ea = E.out(ua), ub = clamp((u - .3) / .7), eb = E.io(ub);
+      pA.set(0, lerp(H * .32, H + .32, ea), lerp(0, .04, ea)); const sIn = Math.min(hw * 1.15, .95) * lerp(.85, 1, ea);
+      qA.copy(qFlat).slerp(qTmpFace(card, pA, cam), ea * .55); sA.set(sIn, sIn, sIn);
+      /* المرحلة B: وضعية البطل المعرَّفة بمستطيل الشاشة */
+      boxC.set(0, H * .6, 0); const D = Math.max(1.6, tmp.copy(boxC).applyMatrix4(cam.matrixWorldInverse).z * -1 * .58);
+      run.poseForRect(heroRect(), D, ar, pB, qB, sB);
+      const hov = S.hold ? Math.sin(ta * 1.6) * .018 : 0;
+      card.position.copy(pA).lerp(pB, eb); card.position.y += Math.sin(eb * Math.PI) * .22 + hov;
+      card.quaternion.copy(qA).slerp(qB, eb);
+      const spin = calm ? 0 : Math.pow(1 - eb, 1.7) * L.spins * Math.PI * 2 * (ub > 0 ? 1 : 0); qSpin.setFromAxisAngle(up, spin); card.quaternion.multiply(qSpin);
+      if (S.hold) { qSpin.setFromAxisAngle(up, Math.sin(ta * 1.1) * .06); card.quaternion.multiply(qSpin); }
+      card.scale.copy(sA).lerp(sB, eb);
+      st.halo.position.copy(card.position); st.halo.quaternion.copy(cam.quaternion); st.halo.translateZ(-.08); st.halo.scale.setScalar(sB.x * (1.6 + lv * .14) * S.halo); st.halo.material.opacity = S.halo * L.glow * .5; st.halo.material.color.copy(cRew);
+      if (L.rays && !calm) { st.raysM.position.copy(card.position); st.raysM.quaternion.copy(cam.quaternion); st.raysM.translateZ(-.12); st.raysM.rotateZ(ta * .22); st.raysM.scale.setScalar(sB.x * (2.6 + lv * .25) * S.halo); st.raysM.material.opacity = S.halo * (.05 + (lv - 4) * .03); st.raysM.material.color.copy(cRew); }
+      const em = card.userData.mats[2]; em.emissiveIntensity = .2 + S.halo * .5;
     }
-    if (st.shock.userData.on) { const p = clamp((tl.t - st.shock.userData.t0) / 1.1); st.shock.scale.setScalar(.6 + p * 4.2 * Math.max(1, s)); st.shock.material.opacity = (1 - p) * .7; if (p >= 1) st.shock.userData.on = false; }
+    if (st.shock.userData.on) { const p = clamp((tl.t - st.shock.userData.t0) / 1.0); st.shock.scale.setScalar(.6 + p * 4.2 * Math.max(1, s)); st.shock.material.opacity = (1 - p) * .6; st.shock.material.color.copy(cRew); if (p >= 1) st.shock.userData.on = false; }
   };
   if (!o.manual) run.start();
   return { run, abort: () => run.abort(), skip: () => run.skip(), total: tEnd, seek: t => run.seek(t) };
 }
+/* اتجاه يواجه الكاميرا من نقطة (مساعد للمرحلة A) */
+const _q = new Quaternion(), _o = new Group();
+function qTmpFace(card, p, cam) { _o.position.copy(p); _o.lookAt(cam.position.x, Math.max(cam.position.y * .5, p.y), cam.position.z); _q.copy(_o.quaternion); return _q; }
