@@ -58,8 +58,10 @@ export class Runner {
     const raw = this.last ? (ts - this.last) / 1000 : 0, dt = clamp(raw, 0, .05); this.last = ts;
     try {
       if (!this.handed) this.tl.update(dt * this.rate);
-      if (this.onFrame) this.onFrame(dt, this.tl.t);
+      /* CODIS-V53: الكاميرا أولاً — onFrame يضع البطاقات بمستطيلات شاشة (poseForRect) من الكاميرا الحالية؛ بالترتيب القديم كانت تُوضع
+         بكاميرا الإطار السابق فتنزاح البطاقات المستقرة عن خاناتها أثناء حركة الكاميرا (حتى ~80px بالخاتمة) ثم تقفز عند التسليم. */
       this.updateCamera(dt);
+      if (this.onFrame) this.onFrame(dt, this.tl.t);
       if (this.landing) this.landStep(dt);
       this.stage.tick(dt, (this.tAbs = (this.tAbs || 0) + dt));
       this.stage.render(); if (this.post) this.post();
@@ -100,9 +102,9 @@ export class Runner {
     if (!this._tg || now - this._tgAt > 250) { let m = null; try { m = this.hooks.targets(); } catch (e) {} this._tg = {}; this._tgAt = now; if (m) Object.keys(m).forEach(k => { this._tg[k] = { el: m[k], r: this.rectOf(m[k]) }; }); }
     const x = this._tg[key]; return x ? x.r : null;
   }
-  seek(t) { if (this.dead) return; const step = 1 / 30; let k = 0; while (this.tl.t < t - 1e-6 && k++ < 4000) { this.tl.update(step); if (this.onFrame) this.onFrame(step, this.tl.t); this.updateCamera(step); this.stage.tick(step, this.tl.t); } this.stage.render(); if (this.post) this.post(); }
+  seek(t) { if (this.dead) return; const step = 1 / 30; let k = 0; while (this.tl.t < t - 1e-6 && k++ < 4000) { this.tl.update(step); this.updateCamera(step); if (this.onFrame) this.onFrame(step, this.tl.t); this.stage.tick(step, this.tl.t); } this.stage.render(); if (this.post) this.post(); }
   fail(why) { if (this.dead || this.handed) return; this.failed = why; this.handoff(true); }
-  skip() { if (this.dead || this.handed) return; this.silent = true; try { if (this.hooks.stopSfx) this.hooks.stopSfx(); } catch (e) {} try { this.tl.finish(); if (this.onFrame) this.onFrame(0, this.tl.t); } catch (e) {} this.silent = false; this.sfx('chest.skip'); this.handoff(true); }
+  skip() { if (this.dead || this.handed) return; this.silent = true; try { if (this.hooks.stopSfx) this.hooks.stopSfx(); } catch (e) {} try { this.tl.finish(); this.updateCamera(0); if (this.onFrame) this.onFrame(0, this.tl.t); } catch (e) {} this.silent = false; this.sfx('chest.skip'); this.handoff(true); }
   /* التسليم: يرسم الواجهة النهائية تحتنا؛ إن وُجدت بطاقات حقيقية مطابقة تطير إليها، وإلا تلاشٍ */
   handoff(fast) {
     if (this.handed || this.dead) return; this.handed = true;

@@ -1,0 +1,109 @@
+/* CODIS-V53 (3.40.0) · مراجعة نظام الصناديق — عرض وتخطيط فقط (لا يمسّ CodisBoxes ولا المحفظة ولا الاحتمالات).
+   الإطار المرجعي دائماً = نافذة الصندوق داخل إطار CODIS (body بعرض الهاتف)، لا عرض شاشة الجهاز: الارتفاع يُقرأ من حدود النافذة نفسها
+   (max-height) ومن وحدات الحاوية (cqh) داخل المسرح/الشبكة، فيتكيّف المشهد مع المساحة الفعلية على أي قياس واتجاه. */
+
+/* ===================== 1) مسرح الطقس الداكن في المظهر الورقي: نصوص النتيجة بألوان مسرح داكن =====================
+   السبب: .cb-world (خلفية داكنة) يغطي الورقة كلها أثناء الطقس 2D، بينما #econ-box-body يرث رموز الورق (حبر بني على أسود).
+   الرموز تُعاد تعريفها على كتل النص نفسها (العنوان/الوسوم/الملاحظة) لأن --text:var(--sx-text) يُحسب على #econ-box-modal ويُورَّث محسوباً.
+   لا تُطبَّق على .bx-stage (رسم البطاقة نفسها) ولا على .modal-actions (الأزرار الورقية — زر «تمام» الثانوي كريمي بحبر داكن). */
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine #econ-box-body > :not(.bx-stage):not(.modal-actions){
+  --sx-text:#F2E6CE; --sx-text2:#D9C8A6; --sx-text3:#BFAE8E; --sx-gold-text:#F0CD7E;
+  --sx-r-c:#ADA088; --sx-r-b:#5FBBA6; --sx-r-a:#86A8EA; --sx-r-s:#C98EE6; --sx-r-ss:#F2C65C; --sx-r-bronze:#D08A52;
+  --text:var(--sx-text); --text-2:var(--sx-text2); --text-3:var(--sx-text3);
+  --aqua:#6FC7BA; --aqua-rgb:111 199 186; --gold:#E9BC5C; --gold-soft:#F0CD7E; --gold-rgb:233 188 92;
+  --glass-strong:rgb(255 238 205 / .08); --glass-border:rgb(255 238 205 / .26);
+}
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine #econ-box-body :is(h3, .store-detail-note, .rar-badge, .st-tag){ text-shadow:0 1px 2px rgb(0 0 0 / .75), 0 0 14px rgb(0 0 0 / .55); }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge{ background-color:rgb(8 10 14 / .55); }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge.rar-c{ --rar:#DCCDAF; --rar-edge:rgb(220 205 175 / .45); }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge.rar-ss{ --rar:#F2C65C; --rar-edge:#F2C65C; }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge.rar-bronze{ --rar:#E8B07C; --rar-edge:rgba(205,127,50,.65); }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge.rar-silver{ --rar:#E3E8F0; --rar-edge:rgba(206,214,226,.6); }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .rar-badge.rar-gold{ --rar:#FFD978; --rar-edge:#ffd978; }
+html[data-theme="paper"] #econ-box-modal .bx-modal.is-cine .st-tag{ color:color-mix(in srgb, var(--pc, var(--gold-soft)) 55%, #fff); background:rgb(8 10 14 / .55); border-color:rgb(255 238 205 / .32); box-shadow:none; }
+/* شارة SS على ورقة النتيجة الورقية: الذهبي #A06C14 على كريمي = 3.2:1 فقط ⇒ ذهبي داكن من الهوية نفسها (≈6:1) */
+html[data-theme="paper"] .store-detail .rar-badge.rar-ss{ --rar:var(--sx-gold-lo, #74490A); }
+
+/* ===================== 2) الطقس 2D لصندوق واحد: لا تداخل ولا تجاوز =====================
+   السبب: #econ-box-body عمود flex قابل للانكماش ⇒ .bx-stage انكمش أقل من بطاقته فغطّت البطاقةُ العنوان. الأبناء لا تنكمش،
+   والتوسيط «آمن» بهوامش تلقائية (justify-content:center يقصّ الأعلى حين يزيد المحتوى). المجسّم محدود بارتفاع المسرح أيضاً. */
+.bx-modal.is-cine #econ-box-body > *{ flex-shrink:0; }
+.bx-modal.is-cine:not(.is-opening) #econ-box-body{ justify-content:flex-start; }
+.bx-modal.is-cine:not(.is-opening) #econ-box-body > :first-child{ margin-top:auto; }
+.bx-modal.is-cine:not(.is-opening) #econ-box-body > :last-child{ margin-bottom:auto; }
+@supports (height:1cqh){
+  .bx-modal.is-cine > .cb-world{ container-type:size; --cb-w:min(300px, 76%, 62cqh); }
+  .bkc-stage.cb-world{ container-type:size; --cb-w:min(220px, 58%, 64cqh); }
+}
+
+/* ===================== 3) نافذة ×10: عمود مرن محدود بارتفاع النافذة الفعلي =====================
+   المسرح وحده ينكمش (حتى حدّ أدنى)، والعنوان والشريط وأزرار التخطي/الإنهاء ثابتة الحجم فلا تخرج من النافذة. على الشاشات الطويلة لا انكماش ⇒ نفس الشكل السابق. */
+#econ-bulk-modal .bk-modal{ display:flex; flex-direction:column; }
+#econ-bulk-modal .bk-modal > :not(#econ-bulk-body){ flex-shrink:0; }
+#econ-bulk-body{ flex:1 1 auto; min-height:0; display:flex; flex-direction:column; }
+#econ-bulk-body > *{ flex-shrink:0; }
+#econ-bulk-body > .bkc{ flex:1 1 auto; min-height:0; }
+.bkc > :not(.bkc-stage):not(.bkc-layer){ flex-shrink:0; }
+/* (المسرح نفسه: flex-basis قابل للانكماش بدل ارتفاع ثابت بحدّ أدنى 260px — مُصحَّح في مكانه بـpatch_v53؛ وأزرار ×10/الصندوق لم تعد مستثناة من اللصق بقاعدة الأفقي) */
+
+/* ===================== 4) الارتفاع القصير (هاتف أفقي/شاشات قصيرة): تخطيط هندسي بدل التمرير =====================
+   النافذة تأخذ كامل ارتفاعها المسموح، العدّاد واللافتة فوق المسرح نفسه (طبقة)، الشريط صف واحد من عشر خانات،
+   وشبكة النتائج تُحجَّم من ارتفاعها المتاح (cqh) فتظهر الخانات العشر كاملة مع زر الإنهاء. */
+@media (max-height:600px){
+  #econ-bulk-modal .bk-modal{ height:100%; }
+  #econ-bulk-modal .bk-modal::before{ margin-bottom:6px; }
+  #econ-bulk-modal .bk-modal .modal-actions{ margin-top:6px; padding-top:6px; padding-bottom:calc(10px + var(--safe-b)); }
+  #econ-bulk-modal .bk-modal .modal-actions .btn{ min-height:40px; }
+  /* أثناء الفتح */
+  #econ-bulk-modal .bk-modal.is-run .bk-head{ margin:0 0 6px; gap:0; }
+  #econ-bulk-modal .bk-modal.is-run .bk-head h3{ font-size:17px; line-height:1.35; }
+  #econ-bulk-modal .bk-modal.is-run .bk-head .bk-sub{ line-height:1.4; font-size:11.5px; }
+  #econ-bulk-body > .bkc{ display:grid; grid-template-columns:minmax(0, 1fr); grid-template-rows:minmax(0, 1fr) auto; gap:6px; margin:0; }
+  .bkc > .bkc-stage.cb-world{ grid-area:1 / 1; height:auto; min-height:0; }
+  .bkc > .bkc-top{ grid-area:1 / 1; align-self:start; z-index:7; padding:6px 12px 0; pointer-events:none; color:#D9C8A6; text-shadow:0 1px 2px rgb(0 0 0 / .8); }
+  .bkc > .bkc-top .bkc-count b{ color:#F2E6CE; }
+  .bkc > .bkc-top .bkc-tap{ color:#BFAE8E; }
+  .bkc > .bkc-banner{ grid-area:1 / 1; align-self:end; z-index:7; min-height:0; padding:0 10px 8px; pointer-events:none;
+    --text:#F2E6CE; --text-2:#D9C8A6; --gold-soft:#F0CD7E; --gold-rgb:233 188 92; --aqua:#6FC7BA; text-shadow:0 1px 2px rgb(0 0 0 / .85), 0 0 12px rgb(0 0 0 / .6); }
+  .bkc > .bkc-banner b{ font-size:14.5px; color:#F2E6CE; }
+  .bkc > .bkc-banner[data-g="4"] b, .bkc > .bkc-banner[data-g="5"] b{ font-size:15.5px; color:color-mix(in srgb, rgb(var(--k)) 50%, #fff); }
+  .bkc > .bkc-banner .rar-badge{ background-color:rgb(8 10 14 / .6); }
+  .bkc > .bkc-banner .bk-chip.is-special{ color:#ffe9a8; }
+  .bkc > .bkc-tray{ grid-area:2 / 1; grid-template-columns:repeat(10, minmax(0, 1fr)); gap:4px; }
+  .bkc > .bkc-tray .bkc-slot{ border-radius:7px; }
+  /* بعد الانتهاء */
+  #econ-bulk-modal .bk-modal.is-done .bk-head{ display:flex; flex-wrap:wrap; justify-content:center; align-items:center; column-gap:8px; row-gap:1px; margin:0 0 6px; }
+  #econ-bulk-modal .bk-modal.is-done .bk-head .bk-ok{ padding:1px 9px; font-size:11px; }
+  #econ-bulk-modal .bk-modal.is-done .bk-head h3{ font-size:17px; line-height:1.35; }
+  #econ-bulk-modal .bk-modal.is-done .bk-head .bk-sub{ flex:1 1 100%; font-size:11.5px; line-height:1.45; }
+  #econ-bulk-body > .bk-grid{ flex:1 1 0; min-height:0; margin:0; gap:4px 5px; grid-template-rows:repeat(2, minmax(0, 1fr)); align-content:stretch; overflow:visible; }
+  #econ-bulk-body > .bk-grid .bk-cell{ min-height:0; justify-content:center; gap:2px; padding:4px 3px 3px; }
+  #econ-bulk-body > .bk-grid .bk-name{ -webkit-line-clamp:1; font-size:10px; line-height:1.3; flex:none; }
+  @supports (height:1cqh){
+    #econ-bulk-body > .bk-grid{ container-type:size; }
+    /* ارتفاع الصف = (100cqh − فجوة) ÷ 2؛ البطاقة 4:5 = ما يتبقى بعد الحشوة والاسم */
+    #econ-bulk-body > .bk-grid .bk-card .cflip{ width:min(100%, 128px, calc((50cqh - 2px - 7px - 2px - 14px) * .8)); }
+    #econ-bulk-body > .bk-grid .bk-cell[data-kind="pouch"] .pch-art{ width:min(100%, calc((50cqh - 25px) * .8)); margin-inline:auto; }
+  }
+}
+
+/* ===================== 5) نتيجة الصندوق الواحد بالأفقي القصير: عمودان (البطاقة | المعلومات والأزرار) =====================
+   بدل ورقة أطول من الشاشة وزر «تمام» تحت الحافة. نفس العناصر والترتيب، والبطاقة الحقيقية تبقى هدف هبوط المشهد ثلاثي الأبعاد. */
+@media (orientation:landscape) and (max-height:520px){
+  #econ-box-modal .bx-modal .modal-actions{ position:static; margin:10px 0 0; padding:0; background:none; flex-wrap:wrap; }
+  #econ-box-modal .bx-modal .modal-actions .btn{ flex:1 1 100%; min-height:40px; }
+  #econ-box-body:has(> .bx-stage.is-done){ display:grid; grid-template-columns:min(178px, 48vh) minmax(0, 1fr); grid-auto-rows:min-content; align-content:safe center; column-gap:16px; --detail-w:min(178px, 48vh); --rwc-wmax:min(178px, 48vh); }
+  #econ-box-body:has(> .bx-stage.is-done) > .bx-stage{ grid-column:1; grid-row:1 / span 8; align-self:center; width:100%; min-width:0; margin:0; }
+  #econ-box-body:has(> .bx-stage.is-done) > :not(.bx-stage){ grid-column:2; margin-inline:0; }
+  #econ-box-body:has(> .bx-stage.is-done) > :first-child + *{ margin-top:0; }
+  #econ-box-body:has(> .bx-stage.is-done) > h3{ text-align:start; font-size:18px; padding-inline-end:44px; }   /* زر الإغلاق في هذا الركن بالأفقي */
+  #econ-box-body:has(> .bx-stage.is-done) > .store-detail-tags{ justify-content:flex-start; }
+  #econ-box-body:has(> .bx-stage.is-done) > .store-detail-note{ text-align:start; margin:8px 0 0; }
+  .bx-modal.is-cine:not(.is-opening) #econ-box-body:has(> .bx-stage.is-done) > *{ margin-block:0; }
+  .bx-modal.is-cine:not(.is-opening) #econ-box-body:has(> .bx-stage.is-done) > .store-detail-note{ margin-top:8px; }
+  .bx-modal.is-cine:not(.is-opening) #econ-box-body:has(> .bx-stage.is-done) > .modal-actions{ margin-top:10px; }
+}
+
+/* ===================== 6) شارة «الأفضل» لا تُقصّ بعد الانتهاء (الخلية تقصّ أثناء الفتح فقط لحركة الصندوق المصغّر) ===================== */
+#econ-bulk-modal .bk-modal.is-done .bk-cell.is-best{ overflow:visible; }
+#econ-bulk-modal .bk-modal.is-done .bk-best{ top:-6px; }

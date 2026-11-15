@@ -22,7 +22,9 @@ export function playBulk(o) {
   const sfx = (a, b) => run.sfx(a, Object.assign({ n, bulk: true }, b || {})), hap = p => run.haptic(p);
   const key = it => String(it.i);
   /* ---------- مساحة المسرح فوق الشبكة ---------- */
-  const area = () => { let top = run.safe.t + 10, bot = run.H * .6; let gt = Infinity; items.forEach(it => { const r = run.targetRect(key(it)); if (r) gt = Math.min(gt, r.y); }); if (isFinite(gt) && gt > run.H * .35) bot = gt - 12; return { top, bot, h: Math.max(120, bot - top) }; };
+  /* CODIS-V53: على الإطار القصير (هاتف أفقي) تبدأ الشبكة أعلى من 35% من الارتفاع؛ كان المسرح يتراجع إلى 60% من الشاشة فوق الخانات نفسها.
+     الآن يكفي شريط ≥90px فوق الشبكة، والارتفاع المعلن = الشريط الفعلي (لا 120 وهمية تنزل بالصناديق على الصف الأول). */
+  const area = () => { let top = run.safe.t + 10, bot = run.H * .6; let gt = Infinity; items.forEach(it => { const r = run.targetRect(key(it)); if (r) gt = Math.min(gt, r.y); }); if (isFinite(gt) && (gt > run.H * .35 || gt - 12 - top >= 90)) bot = gt - 12; return { top, bot, h: Math.max(90, bot - top) }; };
   let A = area();
   const aspA = run.W / A.h, rows = aspA > 1.7 ? [5, 5] : aspA > 1.1 ? [4, 3, 3] : [3, 4, 3];
   const s0 = clamp(2.4 / Math.max(base.dims.w, base.dims.d, base.top * .95), .55, 1.15), sb = s0 * .62;
@@ -153,8 +155,10 @@ export function playBulk(o) {
         pin.set(b.sl.x, lerp(H * .3, H + .25, ea), b.sl.z + lerp(0, .03, ea)); const sIn = Math.min(hw * 1.15, .8) * lerp(.8, 1, ea);
         /* وضعية التحليق فوق الصندوق: مستطيل حول إسقاط قمّته */
         v3.set(b.sl.x, H + LID + .2, b.sl.z).project(cam); const px = (v3.x * .5 + .5) * run.W, py = (-v3.y * .5 + .5) * run.H;
-        const w = clamp(run.W * (.22 + b.lv * .022), 70, Math.min(run.W * .46, A.h * .55 / b.ar)), h = w * b.ar;
-        const rx = clamp(px - w / 2, 10, run.W - w - 10), ry = clamp(py - h * .85, A.top + 4, A.bot - h - 4);
+        /* CODIS-V53: شريط قصير (<160px) ⇒ بطاقة التحليق تستعير ارتفاعاً فوق الخانات لحظة الكشف (لا بطاقة بعرض 40px)؛ الشاشات الطويلة كما كانت */
+        const hb = A.h < 160 ? Math.max(A.h, Math.min(run.H * .52, run.H - run.safe.b - A.top - 8)) : A.h;
+        const w = clamp(run.W * (.22 + b.lv * .022), 70, Math.min(run.W * .46, hb * .55 / b.ar)), h = w * b.ar;
+        const rx = clamp(px - w / 2, 10, run.W - w - 10), ry = clamp(py - h * .85, A.top + 4, A.top + hb - h - 4);
         const D = Math.max(1.2, tmp.set(b.sl.x, H, b.sl.z).applyMatrix4(cam.matrixWorldInverse).z * -.75);
         run.poseForRect({ x: rx, y: ry, w, h }, D, b.ar, hp, hq, hs);
         c.position.copy(pin).lerp(hp, eb); c.position.y += Math.sin(eb * Math.PI) * .12;
