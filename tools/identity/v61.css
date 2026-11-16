@@ -89,20 +89,20 @@ html[data-theme="paper"] .fb-bn{ background:rgb(0 0 0 / .05); border-color:rgb(0
 #progress-root .pg-list{ display:flex; flex-direction:column; gap:12px; }
 #progress-root .pg-card{ position:relative; display:flex; flex-direction:column; gap:12px; padding:16px; border-radius:18px; background:var(--glass); border:1px solid var(--glass-border); color:var(--text); overflow:hidden; }
 #progress-root .pg-card::before{ content:''; position:absolute; inset-block:0; inset-inline-start:0; width:4px; background:rgb(var(--ink-rgb, 120 120 120) / .25); }
-#progress-root .pg-card.is-done::before{ background:var(--gold); }
+#progress-root .pg-card.is-ready::before{ background:var(--gold); }
 #progress-root .pg-card.is-claimed::before{ background:var(--success); }
 #progress-root .pg-card.is-claimed{ border-color:rgb(var(--success-rgb) / .45); background:linear-gradient(180deg, rgb(var(--success-rgb) / .08), rgb(var(--success-rgb) / 0)), var(--glass); }
 #progress-root .pg-top{ display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:start; }
 #progress-root .pg-ico{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
 #progress-root .is-claimed .pg-ico{ color:var(--success); background:rgb(var(--success-rgb) / .14); }
-#progress-root .is-done .pg-ico{ color:var(--gold); background:rgb(var(--gold-rgb) / .16); }
+#progress-root .is-ready .pg-ico{ color:var(--gold); background:rgb(var(--gold-rgb) / .16); }
 #progress-root .pg-ico svg{ width:22px; height:22px; }
 #progress-root .pg-id{ min-width:0; }
 #progress-root .pg-name{ margin:0; font-size:15.5px; font-weight:900; line-height:1.35; }
 #progress-root .pg-desc{ margin:3px 0 0; font-size:12.5px; line-height:1.55; color:var(--text-2); }
 #progress-root .pg-st{ grid-column:2; justify-self:start; display:inline-flex; align-items:center; gap:4px; margin-top:4px; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:800; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
 #progress-root .pg-st svg{ width:14px; height:14px; }
-#progress-root .pg-st.is-done{ color:var(--gold-text, var(--text)); background:rgb(var(--gold-rgb) / .18); }
+#progress-root .pg-st.is-ready{ color:var(--gold-text, var(--text)); background:rgb(var(--gold-rgb) / .18); }
 #progress-root .pg-st.is-claimed{ color:var(--success-ink, var(--success)); background:rgb(var(--success-rgb) / .16); }
 #progress-root .pg-prog{ display:flex; align-items:center; gap:10px; }
 #progress-root .pg-bar{ flex:1; height:10px; border-radius:999px; background:rgb(var(--ink-rgb, 120 120 120) / .12); overflow:hidden; }
@@ -119,3 +119,35 @@ html[data-theme="paper"] .fb-bn{ background:rgb(0 0 0 / .05); border-color:rgb(0
    تحمل content-visibility:auto ⇒ المتصفح يعيد إدخالها بالتخطيط كل إطار (~90ms/إطار بالمعالج المبطّأ). خانة «متخطّاة» (غير مرسومة أصلاً) تُوقف حركتها مؤقتاً
    وتكمل لحظة اقترابها من الشاشة (contentvisibilityautostatechange) ⇒ لا تغيير مرئي. */
 html.codis-cv #eco-store-body [role="list"] > .is-cv-off, html.codis-cv #eco-store-body [role="list"] > .is-cv-off *{ animation-play-state:paused !important; }
+
+/* ---------- (6) مكافآت التقدم: جاهزة للاستلام · الاستلام · تم الاستلام ---------- */
+#progress-root .pg-card.is-ready{ border-color:rgb(var(--gold-rgb) / .7); background:linear-gradient(160deg, rgb(var(--gold-rgb) / .16), rgb(var(--gold-rgb) / .03) 60%), var(--glass); box-shadow:0 0 0 1px rgb(var(--gold-rgb) / .25), 0 8px 22px -12px rgb(var(--gold-rgb) / .7); }
+#progress-root .pg-card.is-ready .pg-bar > i{ background:linear-gradient(90deg, rgb(var(--gold-rgb)), rgb(var(--gold-rgb) / .8)); }
+#progress-root .pg-st svg{ flex:none; }
+#progress-root .pg-sum.has-ready{ border-color:rgb(var(--gold-rgb) / .55); }
+#progress-root .pg-sum-r{ color:var(--gold-text, var(--text)); }
+#progress-root .pg-rw-v{ display:inline-flex; align-items:center; gap:8px; flex-wrap:wrap; }
+#progress-root .pg-claim{ position:relative; overflow:hidden; margin-inline-start:auto; min-height:42px; padding:0 18px; display:inline-flex; align-items:center; gap:8px; font-weight:900; }
+#progress-root .pg-claim svg{ width:18px; height:18px; flex:none; }
+#progress-root .pg-claim::after{ content:''; position:absolute; top:0; bottom:0; width:40%; inset-inline-start:0; background:linear-gradient(90deg, rgb(255 255 255 / 0), rgb(255 255 255 / .35), rgb(255 255 255 / 0)); transform:translateX(-160%) skewX(-18deg); pointer-events:none; }
+#progress-root .pg-claim:disabled{ opacity:.6; }
+/* ختم «تم الاستلام» */
+#progress-root .pg-card.is-claimed{ padding-top:22px; }
+#progress-root .pg-stamp{ position:absolute; top:10px; inset-inline-end:12px; display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:8px; border:2px solid rgb(var(--success-rgb) / .7); color:var(--success-ink, var(--success)); font-size:11.5px; font-weight:900; transform:rotate(-6deg); background:rgb(var(--success-rgb) / .08); }
+#progress-root .pg-stamp svg{ width:13px; height:13px; }
+/* الحركات (مرة واحدة؛ transform/opacity فقط؛ تتوقف مع تقليل الحركة) */
+@keyframes pgReadyIn{ 0%{ transform:scale(.97); opacity:.6; } 60%{ transform:scale(1.012); opacity:1; } 100%{ transform:none; } }
+@keyframes pgSheen{ 0%, 55%{ transform:translateX(-160%) skewX(-18deg); } 100%{ transform:translateX(330%) skewX(-18deg); } }
+@keyframes pgFly{ 0%{ transform:translateY(0) scale(.6); opacity:0; } 25%{ transform:translateY(-14px) scale(1.15); opacity:1; } 100%{ transform:translateY(-58px) scale(1); opacity:0; } }
+@keyframes pgStampIn{ 0%{ transform:rotate(-6deg) scale(1.8); opacity:0; } 70%{ transform:rotate(-6deg) scale(.94); opacity:1; } 100%{ transform:rotate(-6deg) scale(1); } }
+@keyframes pgClaimOut{ to{ transform:scale(.9); opacity:0; } }
+html:not(.sx-calm) #progress-root .pg-card.is-ready{ animation:pgReadyIn .6s cubic-bezier(.2,.8,.2,1) both; }
+html:not(.sx-calm) #progress-root .pg-card.is-ready .pg-claim::after{ animation:pgSheen 3.2s ease-in-out 1s 3; }
+#progress-root .pg-fly{ position:absolute; inset-inline-end:24px; bottom:22px; display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none; z-index:2; }
+#progress-root .pg-fly-i{ display:inline-flex; align-items:center; gap:4px; font-size:18px; font-weight:900; color:var(--gold-text, var(--text)); animation:pgFly 1.15s cubic-bezier(.2,.8,.2,1) both; }
+#progress-root .pg-fly-i .eco-gem-ico{ width:22px; height:22px; }
+#progress-root .pg-card.is-claiming .pg-claim{ animation:pgClaimOut .35s ease-in both; }
+html:not(.sx-calm) #progress-root .pg-card.is-claimed.is-just .pg-stamp{ animation:pgStampIn .45s cubic-bezier(.2,.8,.2,1) both; }
+@media (prefers-reduced-motion:reduce){ #progress-root .pg-card, #progress-root .pg-card *, #progress-root .pg-claim::after{ animation:none !important; } }
+html.sx-calm #progress-root .pg-claim::after{ animation:none; }
+#home-progress-state.is-ready{ color:var(--gold-text, var(--text)); background:rgb(var(--gold-rgb) / .18); font-weight:800; }

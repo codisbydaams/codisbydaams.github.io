@@ -144,30 +144,58 @@ function codisProgressRewardTxt(rw){
   if(rw.type === 'coins') return econFmt(rw.n) + ' كوين';
   return '';
 }
+function codisProgressCardHtml(s, i){
+  const a = s.def, rw = a.rewards.map(codisProgressRewardHtml).join('');
+  const st = s.claimed ? '<span class="pg-st is-claimed">' + codisIcon('check') + 'تم الاستلام</span>' : s.ready ? '<span class="pg-st is-ready">' + codisIcon('gift') + 'جاهزة للاستلام</span>' : '<span class="pg-st">قيد التقدّم</span>';
+  return '<article class="pg-card is-' + s.status + '" role="listitem" data-ach="' + escapeHtml(a.id) + '" style="--i:' + i + '" aria-label="' + escapeHtml(a.name + ' — ' + (s.claimed ? 'تم الاستلام' : s.ready ? 'جاهزة للاستلام' : s.shown + ' من ' + a.goal)) + '">' +
+    (s.claimed ? '<span class="pg-stamp" aria-hidden="true">' + codisIcon('check') + '<b>تم الاستلام</b></span>' : '') +
+    '<div class="pg-top"><span class="pg-ico" aria-hidden="true">' + codisIcon(a.icon || 'star') + '</span><div class="pg-id"><h4 class="pg-name">' + escapeHtml(a.name) + '</h4><p class="pg-desc">' + escapeHtml(a.desc) + '</p></div>' + st + '</div>' +
+    '<div class="pg-prog"><span class="pg-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + a.goal + '" aria-valuenow="' + s.shown + '"><i style="width:' + (s.pct * 100).toFixed(1) + '%"></i></span><b class="pg-num" dir="ltr">' + econFmt(s.shown) + ' / ' + econFmt(a.goal) + '</b></div>' +
+    '<div class="pg-rw"><span class="pg-rw-l">المكافأة</span><span class="pg-rw-v">' + rw + '</span>' +
+    (s.ready ? '<button type="button" class="btn btn-primary pg-claim" onclick="codisProgressClaimUI(\'' + escapeHtml(a.id) + '\', this)">' + codisIcon('gift') + '<span>استلام المكافأة</span></button>' : '') + '</div></article>';
+}
 function codisProgressRender(){
   const root = document.getElementById('progress-root'); if(!root) return;
   let L = []; try{ L = CodisProgress.list(); }catch(e){ console.error('CODIS progress:', e); }
-  const nC = L.filter(s=>s.claimed).length;
-  root.innerHTML = '<div class="pg-sum" role="status"><span class="pg-sum-ico" aria-hidden="true">' + codisIcon('trophy') + '</span><span><b>' + econFmt(nC) + ' من ' + econFmt(L.length) + '</b> إنجازات مكتملة</span>' +
-    '<span class="pg-sum-x">المكافأة تنضاف تلقائياً لحظة تحقيق الإنجاز — مرة وحدة بس.</span></div>' +
-    '<div class="pg-list" role="list">' + L.map((s, i)=>{ const a = s.def;
-      const st = s.claimed ? '<span class="pg-st is-claimed">' + codisIcon('check') + 'استلمت المكافأة</span>' : s.done ? '<span class="pg-st is-done">اكتمل — جارٍ المنح</span>' : '<span class="pg-st">قيد التقدّم</span>';
-      return '<article class="pg-card is-' + s.status + '" role="listitem" style="--i:' + i + '" aria-label="' + escapeHtml(a.name + ' — ' + s.shown + ' من ' + a.goal) + '">' +
-        '<div class="pg-top"><span class="pg-ico" aria-hidden="true">' + codisIcon(a.icon || 'star') + '</span><div class="pg-id"><h4 class="pg-name">' + escapeHtml(a.name) + '</h4><p class="pg-desc">' + escapeHtml(a.desc) + '</p></div>' + st + '</div>' +
-        '<div class="pg-prog"><span class="pg-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + a.goal + '" aria-valuenow="' + s.shown + '"><i style="width:' + (s.pct * 100).toFixed(1) + '%"></i></span><b class="pg-num" dir="ltr">' + econFmt(s.shown) + ' / ' + econFmt(a.goal) + '</b></div>' +
-        '<div class="pg-rw"><span class="pg-rw-l">المكافأة</span>' + a.rewards.map(codisProgressRewardHtml).join('') + '</div></article>';
-    }).join('') + '</div>';
+  const nC = L.filter(s=>s.claimed).length, nR = L.filter(s=>s.ready).length;
+  root.innerHTML = '<div class="pg-sum' + (nR ? ' has-ready' : '') + '" role="status"><span class="pg-sum-ico" aria-hidden="true">' + codisIcon('trophy') + '</span><span><b>' + econFmt(nC) + ' من ' + econFmt(L.length) + '</b> مكافآت مستلمة' + (nR ? '، <b class="pg-sum-r">' + econFmt(nR) + ' جاهزة للاستلام</b>' : '') + '</span>' +
+    '<span class="pg-sum-x">حقّق الإنجاز ثم اضغط «استلام المكافأة» — المكافأة الجاهزة تبقى محفوظة لك حتى تستلمها.</span></div>' +
+    '<div class="pg-list" role="list">' + L.map(codisProgressCardHtml).join('') + '</div>';
   codisHydrateIcons(root);
+  codisProgressHomeBadge();
 }
-/* إشعار الإنجاز: رسالة + صوت. التحديث الحي للصفحة إن كانت مفتوحة */
+/* الاستلام من الواجهة: قفل ضد الضغط المتكرر (الزر + القفل + المحرك نفسه يرفض الثانية)، والمنح من CodisProgress.claim فقط */
+let codisPgBusy = false;
+function codisProgressClaimUI(id, btn){
+  if(codisPgBusy) return; codisPgBusy = true;
+  if(btn){ btn.disabled = true; btn.setAttribute('aria-disabled', 'true'); }
+  let r; try{ r = CodisProgress.claim(id); }catch(e){ console.error(e); r = { ok:false, reason:'error' }; }
+  if(!r.ok){
+    codisPgBusy = false;
+    try{ codisSfx('invalid', { ctx:'settings' }); }catch(e){}
+    showToast(r.reason === 'claimed' ? 'استلمت هذي المكافأة من قبل' : r.reason === 'save' ? 'تعذّر الحفظ — المكافأة بقيت جاهزة، حاول مرة ثانية' : r.reason === 'notyet' ? 'الإنجاز لم يكتمل بعد' : 'تعذّر الاستلام — المكافأة بقيت جاهزة', 'var(--warning)');
+    codisProgressRender(); return;
+  }
+  try{ codisSfx('success', { ctx:'settings' }); codisHaptic([12, 40, 18]); econRenderChip(); }catch(e){}
+  const card = document.querySelector('#progress-root .pg-card[data-ach="' + id + '"]'), calm = !!window.CODIS_REDUCED_MOTION;
+  const done = ()=>{ codisPgBusy = false; codisProgressRender(); const c2 = document.querySelector('#progress-root .pg-card[data-ach="' + id + '"]'); if(c2) c2.classList.add('is-just'); };
+  if(card && !calm){
+    /* حركة الاستلام: المكافأة تنبثق من الزر وتصعد وتتلاشى + ختم «تم الاستلام» — transform/opacity فقط */
+    const fly = document.createElement('span'); fly.className = 'pg-fly'; fly.setAttribute('aria-hidden', 'true');
+    fly.innerHTML = r.rewards.map(rw=>'<span class="pg-fly-i">+' + codisProgressRewardHtml(rw) + '</span>').join('');
+    card.appendChild(fly); card.classList.add('is-claiming');
+    setTimeout(done, 1250);
+  } else done();
+  showToast('استلمت مكافأة «' + r.def.name + '»: +' + r.rewards.map(codisProgressRewardTxt).filter(Boolean).join(' + '), 'var(--success)', 'trophy');
+}
+/* إشعار فتح الإنجاز (لا منح): المكافأة جاهزة للاستلام من الإعدادات */
 function codisProgressAnnounce(list){
-  list.forEach((r, i)=>setTimeout(()=>{
+  list.forEach((a, i)=>setTimeout(()=>{
     try{ codisSfx('success', { ctx:'settings' }); codisHaptic([10, 30, 14]); }catch(e){}
-    showToast('إنجاز جديد: ' + r.def.name + ' — +' + r.rewards.map(codisProgressRewardTxt).filter(Boolean).join(' + '), 'var(--gold)', 'trophy');
+    showToast('إنجاز جديد: ' + a.name + ' — مكافأتك جاهزة للاستلام من الإعدادات ← مكافآت التقدم', 'var(--gold)', 'trophy');
   }, i * 2600));
-  try{ codisProgressRender(); econRenderChip(); }catch(e){}
+  try{ codisProgressRender(); codisProgressHomeBadge(); }catch(e){}
 }
-
 /* ---------- (4) أداء: إيقاف حركات الخانات المتخطّاة (انظر v61.css §5) — مستمع واحد مفوَّض، صنف فقط ---------- */
 try{ if(codisCvOK) document.addEventListener('contentvisibilityautostatechange', e=>{
   const t = e.target, p = t && t.parentElement; if(!p || p.getAttribute('role') !== 'list' || !t.closest('#eco-store-body')) return;

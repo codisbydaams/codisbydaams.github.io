@@ -245,7 +245,7 @@ rep("  /* السجل: دفتر مفتوح بشريط مرجعي */", """  /* ا�
 ui = rd('identity', 'v61_ui.js'); assert '</script' not in ui and '<!--' not in ui
 rep("/* ---- سجل الكوينز ---- */\nfunction econShowMoreLog(){", "/* ===== CODIS-V61 ===== */\n" + ui + r"""
 function codisVoucherTotalSafe(){ try{ return CodisVouchers.total(); }catch(e){ return 0; } }
-function codisProgressHomeBadge(){ try{ const b = document.getElementById('home-progress-state'); if(!b) return; const L = CodisProgress.list(); b.textContent = econFmt(L.filter(s=>s.claimed).length) + ' / ' + econFmt(L.length); }catch(e){} }
+function codisProgressHomeBadge(){ try{ const b = document.getElementById('home-progress-state'); if(!b) return; const L = CodisProgress.list(), r = L.filter(s=>s.ready).length; b.textContent = r ? econFmt(r) + ' جاهزة' : econFmt(L.filter(s=>s.claimed).length) + ' / ' + econFmt(L.length); b.classList.toggle('is-ready', !!r); }catch(e){} }
 /* بعد التحميل: إنجازات تحققت قبل هذا النظام (أو على جهاز آخر) تُمنح مرة واحدة — المرجع الثابت يمنع التكرار */
 window.addEventListener('load', ()=>{ try{ codisProgressHomeBadge(); CodisProgress.soon(5000); setTimeout(codisProgressHomeBadge, 6500); }catch(e){} }, { once:true });
 

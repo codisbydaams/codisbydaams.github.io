@@ -188,45 +188,71 @@ for (let ri = 0; ri < RUNS.length; ri++) {
     await p.evaluate(() => codisFreeBoxClose()); await p.waitForTimeout(500);
   }
 
-  // ================= 4) مكافآت التقدم =================
+  // ================= 4) مكافآت التقدم: الشرط ← جاهزة للاستلام ← الاستلام اليدوي فقط =================
+  const GEM = () => p.evaluate(() => CodisWallet.gemBalance());
+  const ST = id => p.evaluate(id => CodisProgress.state(CodisProgress.def(id)).status, id);
+  const goPage = async () => { await p.evaluate(() => { try { econCloseStore({ silent:true }); } catch (e) {} document.querySelector('.navbtn[data-page="settings"]').click(); }); await p.waitForTimeout(600); await p.evaluate(() => openSettingsCategory('progress')); await p.waitForTimeout(900); };
+  const card = id => p.evaluate(id => { const c = document.querySelector('#progress-root .pg-card[data-ach="' + id + '"]'); return c ? { cls:c.className, btn:!!c.querySelector('.pg-claim'), stamp:!!c.querySelector('.pg-stamp'), st:c.querySelector('.pg-st').textContent.trim(), num:c.querySelector('.pg-num').textContent } : null; }, id);
   if (full) {
-    const seedWeek = (ops, learn, dup) => p.evaluate(([ops, learn, dup]) => { const mk = (pre, n, st, off) => { const days = {}; for (let d = 0; d < 7; d++) days[d] = []; for (let i = 0; i < n; i++) days[i % 6].push({ id:pre + (off + i), text:'م ' + i, status:st, qty:1 }); return { days, holidayDay:6, planName:'qa' }; };
-      const tw = mk('qt', ops.done, 'done', 0); for (let i = 0; i < ops.half; i++) tw.days[i % 6].push({ id:'qh' + i, text:'نص', status:'half', progress:90, qty:1 });
-      if (dup) tw.days[3].push(JSON.parse(JSON.stringify(tw.days[0][0])));   /* المعرّف نفسه بيوم آخر */
-      tw.days[6].push({ id:'qhol', text:'عطلة', status:'done', qty:1 });   /* يوم العطلة خارج الحساب */
-      const lw = mk('ql', learn.done, 'done', 0);
-      data.archive.unshift({ id:'arc_qa_' + Math.random(), name:'qa', weekId:'2026-10-04', status:'completed', cause:'completed', tasksWeek:tw, learnWeek:lw }); saveData(); return { ops:codisProgressDoneCount('tasks'), learn:codisProgressDoneCount('learn') }; }, [ops, learn, dup]);
+    const seedWeek = (ops, learn, dup) => p.evaluate(([ops, learn, dup]) => { const mk = (pre, n, st) => { const days = {}; for (let d = 0; d < 7; d++) days[d] = []; for (let i = 0; i < n; i++) days[i % 6].push({ id:pre + i, text:'م ' + i, status:st, qty:1 }); return { days, holidayDay:6, planName:'qa' }; };
+      const tw = mk('qt', ops.done, 'done'); for (let i = 0; i < ops.half; i++) tw.days[i % 6].push({ id:'qh' + i, text:'نص', status:'half', progress:90, qty:1 });
+      if (dup) tw.days[3].push(JSON.parse(JSON.stringify(tw.days[0][0])));
+      tw.days[6].push({ id:'qhol', text:'عطلة', status:'done', qty:1 });
+      const lw = mk('ql', learn.done, 'done');
+      data.archive.unshift({ id:'arc_qa', name:'qa', weekId:'2026-10-04', status:'completed', cause:'completed', tasksWeek:tw, learnWeek:lw }); saveData(); return { ops:codisProgressDoneCount('tasks'), learn:codisProgressDoneCount('learn') }; }, [ops, learn, dup]);
     const p0 = await p.evaluate(() => { const L = CodisProgress.list(); return { ids:L.map(s => s.def.id), st:L.map(s => s.status), goals:L.map(s => s.goal), rw:L.map(s => s.def.rewards.map(r => r.type + r.n).join()) }; });
-    ok(T + 'three achievements only (5 / 10 / 10 gems), none claimed', p0.ids.join() === 'first_week,ops_tasks_25,learn_items_25' && p0.goals.join() === '1,25,25' && p0.rw.join('|') === 'gems5|gems10|gems10' && p0.st.every(s => s !== 'claimed'), p0);
-    const c1 = await seedWeek({ done:24, half:25 }, { done:24 }, true);
-    const g1 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); const r = CodisProgress.check({ quiet:true }); return { n:r.length, dg:CodisWallet.gemBalance() - g0 }; });
-    ok(T + '24 done + 25 half + duplicate id + holiday task ⇒ counts 24/24, no reward', c1.ops === 24 && c1.learn === 24 && g1.n === 0 && g1.dg === 0, { c1, g1 });
+    ok(T + 'three achievements (5 / 10 / 10 gems), all in progress', p0.ids.join() === 'first_week,ops_tasks_25,learn_items_25' && p0.goals.join() === '1,25,25' && p0.rw.join('|') === 'gems5|gems10|gems10' && p0.st.every(s => s === 'progress'), p0);
+    const c1 = await seedWeek({ done:24, half:25 }, { done:24 }, true); let g0 = await GEM();
+    const u1 = await p.evaluate(() => CodisProgress.check({ quiet:true }).map(a => a.id));
+    ok(T + '24 done + 25 half + duplicate id + holiday task ⇒ 24/24, nothing unlocked', c1.ops === 24 && c1.learn === 24 && !u1.length && await GEM() === g0, { c1, u1 });
+    // (1) 25 مهمة ⇒ جاهزة للاستلام بلا أي جواهر
     await p.evaluate(() => { data.archive[0].tasksWeek.days[2].push({ id:'qt_25', text:'٢٥', status:'done', qty:1 }); saveData(); });
-    const g2 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); const r = CodisProgress.check({ quiet:true }); return { ids:r.map(x => x.def.id), dg:CodisWallet.gemBalance() - g0, tx:CodisWallet.gemTxs().filter(t => t.type === 'PROGRESS_REWARD').map(t => t.referenceId) }; });
-    ok(T + '25th ops task ⇒ +10 gems once (ref progress|ops_tasks_25); learning not affected', g2.ids.join() === 'ops_tasks_25' && g2.dg === 10 && g2.tx.join() === 'progress|ops_tasks_25', g2);
-    const g3 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); CodisProgress.check({ quiet:true }); CodisProgress.check({ quiet:true }); const r = CodisProgress.claim('ops_tasks_25'); return { dg:CodisWallet.gemBalance() - g0, reason:r.reason }; });
-    ok(T + 'repeated checks / manual claim ⇒ no second grant', g3.dg === 0 && g3.reason === 'claimed', g3);
-    await p.evaluate(() => { data.archive[0].learnWeek.days[1].push({ id:'ql_25', text:'٢٥', status:'done', qty:1 }); saveData(); });
-    const g4 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); const r = CodisProgress.check({ quiet:true }); return { ids:r.map(x => x.def.id), dg:CodisWallet.gemBalance() - g0 }; });
-    ok(T + '25th learning item ⇒ +10 gems once', g4.ids.join() === 'learn_items_25' && g4.dg === 10, g4);
-    const g5 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); data.outcomeLedger['weekly|qa|1'] = { id:'weekly|qa|1', scope:'weekly', kind:'neutral', status:'resolved', item:'', room:'tasks', type:'weekly_neutral', at:econNowIso() }; saveData(); const a = CodisProgress.check({ quiet:true }).length;
-      data.outcomeLedger['weekly|qa|2'] = { id:'weekly|qa|2', scope:'weekly', kind:'reward', status:'resolved', decision:'item', item:'م', room:'tasks', type:'weekly_reward', at:econNowIso(), rarity:'C', rarityTone:'c' }; saveData(); const b = CodisProgress.check({ quiet:true }).map(x => x.def.id);
-      data.outcomeLedger['weekly|qa|3'] = Object.assign({}, data.outcomeLedger['weekly|qa|2'], { id:'weekly|qa|3' }); saveData(); const c = CodisProgress.check({ quiet:true }).length;
-      return { a, b, c, dg:CodisWallet.gemBalance() - g0 }; });
-    ok(T + 'neutral week ⇒ nothing; first successful week ⇒ +5 gems; later weeks ⇒ nothing', g5.a === 0 && g5.b.join() === 'first_week' && g5.c === 0 && g5.dg === 5, g5);
-    const g6 = await p.evaluate(() => { const g0 = CodisWallet.gemBalance(); codisSaveSuspended = 'fail'; data.progress.claims = data.progress.claims.filter(c => c.id !== 'first_week'); return 0; });
-    // سجل الاستلام مفقود (نسخة أقدم مثلاً) لكن دفتر الجواهر فيه المرجع ⇒ لا منح ثانٍ
-    const g7 = await p.evaluate(() => { codisSaveSuspended = false; const g0 = CodisWallet.gemBalance(); const r = CodisProgress.check({ quiet:true }); return { n:r.length, dg:CodisWallet.gemBalance() - g0, claimed:CodisProgress.claimed('first_week') }; });
-    ok(T + 'claim log lost but gem ledger has the reference ⇒ still claimed, no re-grant', g7.n === 0 && g7.dg === 0 && g7.claimed, g7);
-    const gBefore = await p.evaluate(() => CodisWallet.gemBalance());
+    const u2 = await p.evaluate(() => CodisProgress.check({ quiet:true }).map(a => a.id));
+    ok(T + '(1) 25 ops tasks ⇒ «ready to claim», no gems added', u2.join() === 'ops_tasks_25' && await ST('ops_tasks_25') === 'ready' && await GEM() === g0 && await p.evaluate(() => CodisWallet.gemTxs().every(t => t.type !== 'PROGRESS_REWARD')), u2);
+    // (2) فتح الصفحة لا يمنح
+    await goPage(); const k1 = await card('ops_tasks_25');
+    ok(T + '(2) opening the page: card highlighted with «استلام المكافأة», no gems', /is-ready/.test(k1.cls) && k1.btn && !k1.stamp && /جاهزة للاستلام/.test(k1.st) && await GEM() === g0, k1);
+    await shot(p, tag + '_progress_ready', '#settings-page-progress');
+    // (3)(7) إعادة التحميل / إغلاق التطبيق: تبقى جاهزة ولا منح
     await o.boot(); await p.waitForTimeout(6500);
-    const g8 = await p.evaluate(() => ({ g:CodisWallet.gemBalance(), tx:CodisWallet.gemTxs().filter(t => t.type === 'PROGRESS_REWARD').length }));
-    ok(T + 'reload (+ boot catch-up check) ⇒ no repeat', g8.g === gBefore && g8.tx === 3, { gBefore, g8 });
-    // الدمج بين جهازين استلما الإنجاز نفسه
-    const g9 = await p.evaluate(() => { const base = JSON.parse(JSON.stringify(data)); base.wallet.gems.transactions = base.wallet.gems.transactions.filter(t => t.type !== 'PROGRESS_REWARD'); base.progress = { v:1, claims:[] };
-      const A = JSON.parse(JSON.stringify(base)), B = JSON.parse(JSON.stringify(base)); const add = (X, id) => { X.wallet.gems.transactions.push({ id, type:'PROGRESS_REWARD', currency:'GEMS', amount:10, reason:'x', source:'progress', referenceId:'progress|ops_tasks_25', createdAt:econNowIso() }); X.wallet.gems.balance += 10; X.progress.claims.push({ id:'ops_tasks_25', at:econNowIso() }); };
-      add(A, 'gtxA'); add(B, 'gtxB'); const m = CodisMerge.merge(base, A, B); return { d:m.wallet.gems.balance - base.wallet.gems.balance, n:m.wallet.gems.transactions.filter(t => t.referenceId === 'progress|ops_tasks_25').length, claims:m.progress.claims.length }; });
-    ok(T + 'merge: both devices claimed ⇒ +10 once', g9.d === 10 && g9.n === 1, g9);
+    ok(T + '(3)(7) reload + boot check ⇒ still ready, no gems', await ST('ops_tasks_25') === 'ready' && await GEM() === g0 && await p.evaluate(() => CodisProgress.unlocked('ops_tasks_25')));
+    // (4)(5) الضغط على «استلام المكافأة»
+    await goPage(); await p.click('#progress-root .pg-card[data-ach="ops_tasks_25"] .pg-claim'); await p.waitForTimeout(300);
+    const flying = await p.evaluate(() => !!document.querySelector('#progress-root .pg-card[data-ach="ops_tasks_25"] .pg-fly'));
+    await p.waitForTimeout(1500); const k2 = await card('ops_tasks_25');
+    ok(T + '(4) tapping «استلام المكافأة» ⇒ +10 gems (PROGRESS_REWARD progress|ops_tasks_25)', await GEM() === g0 + 10 && await p.evaluate(() => CodisWallet.gemTxs().filter(t => t.referenceId === 'progress|ops_tasks_25').length === 1), { g:await GEM(), g0 });
+    ok(T + '(5) state «تم الاستلام»: stamp shown, button gone (with claim animation)', /is-claimed/.test(k2.cls) && k2.stamp && !k2.btn && /تم الاستلام/.test(k2.st) && flying, { k2, flying });
+    await shot(p, tag + '_progress_claimed', '#progress-root .pg-card[data-ach="ops_tasks_25"]');
+    // (6) مرة ثانية: لا شيء
+    const r6 = await p.evaluate(() => [CodisProgress.claim('ops_tasks_25').reason, CodisProgress.claim('ops_tasks_25').reason]);
+    ok(T + '(6) claiming again ⇒ refused, no extra gems', r6.join() === 'claimed,claimed' && await GEM() === g0 + 10, r6);
+    // (9) فشل الحفظ أثناء الاستلام ⇒ لا منح جزئي وتبقى جاهزة
+    await p.evaluate(() => { data.archive[0].learnWeek.days[1].push({ id:'ql_25', text:'٢٥', status:'done', qty:1 }); saveData(); CodisProgress.check({ quiet:true }); });
+    g0 = await GEM();
+    const r9 = await p.evaluate(() => { const b = JSON.stringify([CodisWallet.gemBalance(), CodisWallet.gemTxs().length, data.progress.claims.length]); codisSaveSuspended = 'fail'; const r = CodisProgress.claim('learn_items_25'); codisSaveSuspended = false;
+      return { reason:r.reason, same:b === JSON.stringify([CodisWallet.gemBalance(), CodisWallet.gemTxs().length, data.progress.claims.length]), st:CodisProgress.state(CodisProgress.def('learn_items_25')).status }; });
+    ok(T + '(9) save failure while claiming ⇒ nothing granted, still ready', r9.reason === 'save' && r9.same && r9.st === 'ready', r9);
+    // الضغط المزدوج/المتزامن على الزر ⇒ مرة واحدة
+    await goPage();
+    await p.evaluate(() => { const b = document.querySelector('#progress-root .pg-card[data-ach="learn_items_25"] .pg-claim'); b.click(); b.click(); codisProgressClaimUI('learn_items_25', b); }); await p.waitForTimeout(1600);
+    ok(T + 'double / concurrent taps ⇒ +10 once', await GEM() === g0 + 10 && await ST('learn_items_25') === 'claimed', { g:await GEM(), g0 });
+    // أول أسبوع ناجح: جاهزة بلا منح، وتبقى جاهزة حتى لو اختفى مصدرها لاحقاً
+    const r11 = await p.evaluate(() => { data.outcomeLedger['weekly|qa|2'] = { id:'weekly|qa|2', scope:'weekly', kind:'reward', status:'resolved', decision:'item', item:'م', room:'tasks', type:'weekly_reward', at:econNowIso(), rarity:'C', rarityTone:'c' }; saveData();
+      const u = CodisProgress.check({ quiet:true }).map(a => a.id); delete data.outcomeLedger['weekly|qa|2']; saveData(); return { u, st:CodisProgress.state(CodisProgress.def('first_week')).status }; });
+    ok(T + '(10) first successful week ⇒ ready (no gems); stays ready even if the source later disappears', r11.u.join() === 'first_week' && r11.st === 'ready' && await GEM() === g0 + 10, r11);
+    const r12 = await p.evaluate(() => { data.outcomeLedger['weekly|qa|n'] = { id:'weekly|qa|n', scope:'weekly', kind:'neutral', status:'resolved', item:'', room:'tasks', type:'weekly_neutral', at:econNowIso() }; saveData(); const a = CodisProgress.check({ quiet:true }).length; const r = CodisProgress.claim('first_week'); return { a, ok:r.ok, again:CodisProgress.claim('first_week').reason }; });
+    ok(T + '(10) first week claimed manually ⇒ +5 once; neutral weeks change nothing', r12.a === 0 && r12.ok && r12.again === 'claimed' && await GEM() === g0 + 15, r12);
+    // (8) استلام على جهاز ثم مزامنة مع جهاز آخر كانت فيه جاهزة ⇒ لا استلام ثانٍ
+    const r8 = await p.evaluate(() => { const base = JSON.parse(JSON.stringify(data)); base.wallet.gems.transactions = base.wallet.gems.transactions.filter(t => t.referenceId !== 'progress|ops_tasks_25'); base.wallet.gems.balance -= 10; base.progress.claims = base.progress.claims.filter(c => c.id !== 'ops_tasks_25');
+      const A = JSON.parse(JSON.stringify(base)), B = JSON.parse(JSON.stringify(base));
+      A.wallet.gems.transactions.push({ id:'gtxA', type:'PROGRESS_REWARD', currency:'GEMS', amount:10, reason:'x', source:'progress', referenceId:'progress|ops_tasks_25', createdAt:econNowIso() }); A.wallet.gems.balance += 10; A.progress.claims.push({ id:'ops_tasks_25', at:econNowIso() });
+      const m = CodisMerge.merge(base, B, A); normalizeData(m, false); const keep = data; data = m; const st = CodisProgress.state(CodisProgress.def('ops_tasks_25')).status, again = CodisProgress.claim('ops_tasks_25').reason, n = data.wallet.gems.transactions.filter(t => t.referenceId === 'progress|ops_tasks_25').length; data = keep;
+      return { st, again, n, d:m.wallet.gems.balance - base.wallet.gems.balance }; });
+    ok(T + '(8) claimed on device A, synced to device B ⇒ «claimed» on B, cannot claim again, +10 once', r8.st === 'claimed' && r8.again === 'claimed' && r8.n === 1 && r8.d === 10, r8);
+    // سجل الاستلام مفقود لكن دفتر الجواهر فيه المرجع ⇒ مستلمة
+    const r13 = await p.evaluate(() => { data.progress.claims = data.progress.claims.filter(c => c.id !== 'first_week'); const s = CodisProgress.state(CodisProgress.def('first_week')).status, r = CodisProgress.claim('first_week').reason; return { s, r }; });
+    ok(T + 'claim log lost but gem ledger has the reference ⇒ still «claimed»', r13.s === 'claimed' && r13.r === 'claimed' && await GEM() === g0 + 15, r13);
+    await p.evaluate(() => saveData());
   }
   // صفحة الإعدادات
   await p.evaluate(() => { try { econCloseStore({ silent:true }); } catch (e) {} document.querySelector('.navbtn[data-page="settings"]').click(); }); await p.waitForTimeout(700);
@@ -236,7 +262,7 @@ for (let ri = 0; ri < RUNS.length; ri++) {
   await p.evaluate(() => openSettingsCategory('progress')); await p.waitForTimeout(900);
   const pg = await p.evaluate(() => { const cards = [...document.querySelectorAll('#progress-root .pg-card')]; return { n:cards.length, cls:cards.map(c => c.className.replace('pg-card ', '')), nums:cards.map(c => c.querySelector('.pg-num').textContent), rw:cards.map(c => c.querySelector('.pg-rw .eco-coin b') && c.querySelector('.pg-rw .eco-coin b').textContent), clip:cards.filter(c => [...c.querySelectorAll('.pg-name, .pg-num, .pg-st')].some(e => e.scrollWidth > e.clientWidth + 1)).length, hs:document.documentElement.scrollWidth > innerWidth + 1 }; });
   ok(T + 'progress page: 3 cards with name/progress/goal/bar/reward/state', pg.n === 3 && pg.rw.join() === '5,10,10' && pg.nums.every(x => /^\d+ \/ (1|25)$/.test(x)) && !pg.clip && !pg.hs, pg);
-  if (full) ok(T + 'progress page: claimed state shown for all three', pg.cls.every(c => c === 'is-claimed'), pg.cls);
+  if (full) ok(T + 'progress page: claimed state shown for all three', pg.cls.every(c => /^is-claimed/.test(c)), pg.cls);
   else ok(T + 'progress page: fresh account = in-progress state', pg.cls.every(c => c === 'is-progress'), pg.cls);
   ok(T + 'opening the page grants nothing', await p.evaluate(() => CodisWallet.gemBalance()) === gpg);
   await shot(p, tag + '_progress', '#settings-page-progress');

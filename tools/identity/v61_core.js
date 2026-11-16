@@ -7,7 +7,7 @@
        reward 'vp|<معرّف الإنجاز>|<رقم>'        n = الكمية (مكافأة تقدم مستقبلية)
        redeem 'vr|<المستوى>|<k>'                n = −10، k = رقم الاستبدال التراكمي لهذا المستوى ⇒ جهازان استبدلا الدفعة نفسها ينتجان المعرّف نفسه (صندوق واحد)
      الرصيد = مجموع n لكل مستوى (لا قيمة مخزّنة). كل 10 من المستوى نفسه ⇒ صندوق مغلق عادي بالمخزون uid 'box|vr|<المستوى>|<k>' داخل المعاملة نفسها.
-   • مكافآت التقدم (data.progress = { v:1, claims:[{ id, at }] }): سجل استلام لكل إنجاز بمعرّف ثابت. المنح داخل CodisWallet.transact
+   • مكافآت التقدم (data.progress = { v:1, unlocked:[{ id, at }], claims:[{ id, at }] }): فتح (جاهزة) ثم استلام يدوي لكل إنجاز بمعرّف ثابت. المنح (عند الضغط فقط) داخل CodisWallet.transact
      بمرجع 'progress|<id>' في دفتر العملة (لا تكرار ولا عند الدمج). التعريفات بسجل CODIS_PROGRESS (إنجاز جديد = تعريف واحد بلا تعديل المحرّك). */
 
 function codisVoucherDefs(){
@@ -44,8 +44,11 @@ function codisProgressNorm(p){
     const src = (p && typeof p === 'object' && !Array.isArray(p) && Array.isArray(p.claims)) ? p.claims : [], seen = {}, out = [];
     src.forEach(c=>{ if(!c || typeof c !== 'object' || typeof c.id !== 'string' || !/^[a-z0-9_.-]{1,60}$/i.test(c.id) || seen[c.id]) return; seen[c.id] = true;
       out.push({ id:c.id, at:(typeof c.at === 'string' && isFinite(Date.parse(c.at))) ? c.at : '' }); });
-    return { v:1, claims:out.slice(0, 2000) };
-  }catch(e){ return { v:1, claims:[] }; }
+    const us = (p && typeof p === 'object' && !Array.isArray(p) && Array.isArray(p.unlocked)) ? p.unlocked : [], useen = {}, uo = [];
+    us.forEach(c=>{ if(!c || typeof c !== 'object' || typeof c.id !== 'string' || !/^[a-z0-9_.-]{1,60}$/i.test(c.id) || useen[c.id]) return; useen[c.id] = true;
+      uo.push({ id:c.id, at:(typeof c.at === 'string' && isFinite(Date.parse(c.at))) ? c.at : '' }); });
+    return { v:1, claims:out.slice(0, 2000), unlocked:uo.slice(0, 2000) };   /* unlocked = «جاهزة للاستلام» (فُتحت ولم تُستلم بعد، أو استُلمت) */
+  }catch(e){ return { v:1, claims:[], unlocked:[] }; }
 }
 /* عدد صحيح عشوائي متساوي الاحتمال بين min وmax (شاملين) — crypto بلا انحياز (رفض الباقي)، وإلا Math.random */
 function codisRandInt(min, max){
@@ -178,50 +181,70 @@ const CODIS_PROGRESS_GRANT = Object.freeze({
   },
   packs:(r, a, ref, i)=>CODIS_PROGRESS_GRANT.boxes(r, a, ref, i)   /* البكجات = الصناديق بنظامها نفسه */
 });
+/* ثلاث مراحل مستقلة (CODIS-V61 · الاستلام اليدوي):
+   (1) الشرط: المقياس الحقيقي ≥ الهدف (value) — قراءة فقط.
+   (2) الفتح: الإنجاز يصير «جاهزاً للاستلام» ويُحفظ بـdata.progress.unlocked (بلا أي عملة) — بعد الحدث الحقيقي وعند الإقلاع (إنجازات تحققت قبل النظام).
+       المفتوح يبقى جاهزاً حتى لو نزل المقياس لاحقاً (حذف أرشيف مثلاً) — لا يضيع حق المستخدم.
+   (3) الاستلام: فقط بضغط المستخدم (claim) — المعاملة الذرّية الوحيدة التي تمنح أي عملة/عنصر، مرة واحدة بمرجع ثابت. */
 const CodisProgress = (function(){
   let busy = false, soonT = 0;
   function defs(){ return CODIS_PROGRESS.slice().sort((a, b)=>a.order - b.order); }
   function def(id){ return CODIS_PROGRESS.find(a=>a.id === id) || null; }
-  function C(){ if(!data.progress || typeof data.progress !== 'object' || !Array.isArray(data.progress.claims)) data.progress = { v:1, claims:[] }; return data.progress.claims; }
+  function P(){ const p = data.progress; if(!p || typeof p !== 'object' || Array.isArray(p)) data.progress = { v:1, claims:[], unlocked:[] }; if(!Array.isArray(data.progress.claims)) data.progress.claims = []; if(!Array.isArray(data.progress.unlocked)) data.progress.unlocked = []; return data.progress; }
   function ref(id){ return 'progress|' + id; }
   /* مستلَم = بسجل الاستلام، أو بأي دفتر عملة بمرجعه (يحمي من نسخة فقدت السجل) */
   function claimed(id){
-    if(C().some(c=>c.id === id)) return true;
+    if(P().claims.some(c=>c.id === id)) return true;
     const r = ref(id), w = data.wallet || {}, hit = L=>Array.isArray(L) && L.some(t=>t && t.type === 'PROGRESS_REWARD' && t.referenceId === r);
     return hit(w.transactions) || hit(w.silver && w.silver.transactions) || hit(w.gems && w.gems.transactions);
   }
+  function unlocked(id){ return P().unlocked.some(u=>u.id === id); }
   function value(a){ try{ const f = CODIS_PROGRESS_METRICS[a.metric]; const v = f ? Number(f()) : 0; return isFinite(v) && v > 0 ? Math.floor(v) : 0; }catch(e){ return 0; } }
-  function state(a){ const v = value(a), c = claimed(a.id); return { def:a, value:v, shown:Math.min(v, a.goal), goal:a.goal, pct:Math.min(1, v / a.goal), done:v >= a.goal, claimed:c, status:c ? 'claimed' : v >= a.goal ? 'done' : 'progress' }; }
-  function list(){ return defs().map(state); }
-  /* استلام إنجاز واحد: يُتحقق من المقياس الحقيقي داخل المعاملة، كل المكافآت تُمنح أو لا شيء */
-  function claim(id){
-    const a = def(id); if(!a) return { ok:false, reason:'invalid' };
-    if(claimed(id)) return { ok:false, reason:'claimed' };
-    if(value(a) < a.goal) return { ok:false, reason:'notyet' };
-    return CodisWallet.transact([], ()=>{
-      if(claimed(id) || value(a) < a.goal) return { ok:false, reason:'claimed' };
-      const r = ref(id), got = [];
-      for(let i = 0; i < a.rewards.length; i++){
-        const rw = a.rewards[i], fn = CODIS_PROGRESS_GRANT[rw.type]; if(!fn) return { ok:false, reason:'type' };
-        const res = fn(rw, a, r, i); if(!res) return { ok:false, reason:'grant' };
-        got.push(rw);
-      }
-      C().push({ id:id, at:econNowIso() });
-      return { ok:true, def:a, rewards:got };
-    });
+  function met(a){ return value(a) >= a.goal; }
+  /* الحالة: progress (قيد التقدم) · ready (جاهزة للاستلام) · claimed (تم الاستلام) */
+  function state(a){
+    const v = value(a), c = claimed(a.id), u = unlocked(a.id), ready = !c && (u || v >= a.goal), shown = (c || ready) ? a.goal : Math.min(v, a.goal);
+    return { def:a, value:v, shown:shown, goal:a.goal, pct:Math.min(1, shown / a.goal), done:c || ready, ready:ready, claimed:c, unlocked:u, status:c ? 'claimed' : ready ? 'ready' : 'progress' };
   }
-  /* يمنح كل إنجاز تحقق ولم يُستلم. يُستدعى بعد الحدث الحقيقي (مهمة «خلصتها»، نتيجة أسبوع ناجحة) وعند الإقلاع (إنجازات تحققت قبل هذا النظام — مرة واحدة) */
+  function list(){ return defs().map(state); }
+  function readyCount(){ return defs().filter(a=>state(a).ready).length; }
+  /* (2) الفتح: يسجّل كل إنجاز تحقق شرطه ولم يُفتح/يُستلم — بلا منح. يُحفظ وحده؛ فشل الحفظ ⇒ يُرجع (ويُعاد الفتح بالحدث التالي) */
   function check(o){
     if(busy) return [];
     busy = true; const out = [];
     try{
       if(window.CODIS_SYNC_HOLD || (typeof codisSaveSuspended !== 'undefined' && codisSaveSuspended)) return out;
-      defs().forEach(a=>{ if(claimed(a.id) || value(a) < a.goal) return; const r = claim(a.id); if(r && r.ok) out.push(r); });
+      const p = P(), at = econNowIso();
+      defs().forEach(a=>{ if(claimed(a.id) || unlocked(a.id) || !met(a)) return; p.unlocked.push({ id:a.id, at:at }); out.push(a); });
+      if(out.length && !saveData()){ p.unlocked = p.unlocked.filter(u=>out.indexOf(def(u.id)) === -1); out.length = 0; }
     }catch(e){ console.warn('CODIS progress check:', e && e.message); }
     finally{ busy = false; }
     if(out.length && !(o && o.quiet)){ try{ codisProgressAnnounce(out); }catch(e){} }
     return out;
   }
+  /* (3) الاستلام — بضغط المستخدم فقط. كل المكافآت + سجل الاستلام بمعاملة واحدة: أي فشل (منح/حفظ) ⇒ لا شيء، وتبقى جاهزة */
+  let claiming = false;
+  function claim(id){
+    const a = def(id); if(!a) return { ok:false, reason:'invalid' };
+    if(claiming) return { ok:false, reason:'busy' };
+    if(claimed(id)) return { ok:false, reason:'claimed' };
+    if(!unlocked(id) && !met(a)) return { ok:false, reason:'notyet' };
+    claiming = true;
+    try{
+      return CodisWallet.transact([], ()=>{
+        if(claimed(id)) return { ok:false, reason:'claimed' };
+        if(!unlocked(id)){ if(!met(a)) return { ok:false, reason:'notyet' }; P().unlocked.push({ id:id, at:econNowIso() }); }
+        const r = ref(id), got = [];
+        for(let i = 0; i < a.rewards.length; i++){
+          const rw = a.rewards[i], fn = CODIS_PROGRESS_GRANT[rw.type]; if(!fn) return { ok:false, reason:'type' };
+          const res = fn(rw, a, r, i); if(!res) return { ok:false, reason:'grant' };
+          got.push(rw);
+        }
+        P().claims.push({ id:id, at:econNowIso() });
+        return { ok:true, def:a, rewards:got };
+      });
+    } finally { claiming = false; }
+  }
   function soon(ms){ clearTimeout(soonT); soonT = setTimeout(()=>{ soonT = 0; check(); }, ms === undefined ? 900 : ms); }
-  return Object.freeze({ defs, def, list, state, claimed, claim, check, soon, value });
+  return Object.freeze({ defs, def, list, state, claimed, unlocked, readyCount, claim, check, soon, value });
 })();
