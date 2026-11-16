@@ -1,0 +1,355 @@
+/* ============ CODIS-V58 · ثيمات الغرف: عائلات + أسطح الغرفة (يحلّ محل طبقة V57 كاملة) ============
+   طبقة عامة تقرأ رموز الثيم (--pt-*) من خصائص style التي يضعها codisPlanThemeApply/codisPlanThemeStyle: ثيم جديد = رموز + راسم زخارف.
+   النطاق :is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) يعطي المربعات الحقيقية والمعاينة الخصوصية نفسها (1,x,0) ⇒ نفس الرسم حرفياً.
+   :is(#pt-mini, .pt-stage.is-mini) معرّف غير موجود يرفع خصوصية المعاينة المصغّرة لنفس الدرجة (1,x,0) فتغلب القاعدة العامة بالترتيب فقط.
+   رسمة كل غرفة تبقى عناصرها الأصلية (.ea-plan / .ea-ops / .ea-lrn) وتُعاد معالجتها بالخامات: لا استبدال رسمة بأخرى.
+   الحركة: transform/opacity لعناصر HTML فقط، لا blur ولا canvas، وتتوقف مع prefers-reduced-motion و html.sx-calm؛ المصغّرة ثابتة دائماً. */
+
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box{
+  position:relative; isolation:isolate; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  gap:8px; padding:32px 20px; border:0; border-radius:20px; color:var(--pt-ea-ink);
+  background:var(--pt-bg); box-shadow:var(--pt-edge);
+}
+.pt-stage > .empty-state.pt-box{ min-height:340px; }
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box::before,
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box::after{ display:none; }   /* شبكة النقاط وعلامات القص الأصلية لا تخص الثيم */
+
+/* ---- طبقة الزخارف (خلف المحتوى، لا تلتقط اللمس) ---- */
+:is(.pt-box, .pt-card) > .pt-decor{ position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:inherit; overflow:hidden; }
+:is(.pt-box, .pt-card) .pt-decor > *{ position:absolute; display:block; }
+:is(.pt-box, .pt-card) .pt-facets{ inset:0; width:100%; height:100%; }
+:is(.pt-box, .pt-card) .pt-lava{ left:0; right:0; bottom:0; width:100%; height:32%; min-height:96px; }
+:is(.pt-box, .pt-card) .pt-crack{ width:84px; height:84px; opacity:.8; }
+:is(.pt-box, .pt-card) .pt-crack.c-ts{ top:0; right:0; }
+html[dir="ltr"] :is(.pt-box, .pt-card) .pt-crack.c-ts{ right:auto; left:0; transform:scaleX(-1); }
+:is(.pt-box, .pt-card) .pv-h{ stroke:#FF4E12; stroke-opacity:.16; }
+:is(.pt-box, .pt-card) .pv-m{ stroke:var(--pv, #E2391B); stroke-opacity:.72; }
+:is(.pt-box, .pt-card) .pv-c{ stroke:#FFD7A8; stroke-opacity:.92; }
+:is(.pt-box, .pt-card) .pt-embers circle{ fill:#FFC489; }
+:is(.pt-box, .pt-card) .pt-corner{ width:52px; height:52px; }
+:is(.pt-box, .pt-card) .pt-corner.k-ts{ top:6px; right:6px; transform:scaleX(-1); }
+:is(.pt-box, .pt-card) .pt-corner.k-te{ top:6px; left:6px; }
+:is(.pt-box, .pt-card) .pt-corner.k-bs{ bottom:6px; right:6px; transform:scale(-1, -1); }
+:is(.pt-box, .pt-card) .pt-corner.k-be{ bottom:6px; left:6px; transform:scaleY(-1); }
+:is(.pt-box, .pt-card) .pt-frame{ inset:11px; border:1px solid var(--pt-frame); border-radius:12px; box-shadow:inset 0 0 0 3px rgb(0 0 0 / .35), inset 0 0 0 4px rgb(255 140 60 / .07); }
+:is(.pt-box, .pt-card) .pt-rim{ top:0; left:12%; right:12%; height:1px; background:linear-gradient(90deg, transparent, rgb(255 236 214 / .55) 30%, rgb(255 190 130 / .75) 50%, rgb(255 236 214 / .55) 70%, transparent); }
+:is(.pt-box, .pt-card) .pt-breath{ left:-10%; right:-10%; bottom:-6%; height:58%; background:radial-gradient(60% 62% at 50% 100%, rgb(255 96 24 / .34), rgb(226 57 27 / .12) 46%, transparent 72%); opacity:.78; }
+:is(.pt-box, .pt-card) .pt-sheen{ top:-25%; bottom:-25%; left:0; width:34%; opacity:0; transform:translate3d(-170%, 0, 0) skewX(-16deg);
+  background:linear-gradient(90deg, transparent, rgb(255 236 214 / .055) 38%, rgb(255 206 160 / .13) 50%, rgb(255 236 214 / .055) 62%, transparent); }
+
+/* ---- الرسمة: قواعد مشتركة لكل الغرف ---- */
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box .es-mark.es-art{ width:min(176px, 62%); height:auto; margin:0 0 4px; border-radius:0; background:none; box-shadow:none;
+  --ea-paper:var(--pt-ea-paper); --ea-line:var(--pt-ea-line); --ea-shade:var(--pt-ea-shade); --ea-acc:var(--pt-ea-acc); --tile-fg:var(--pt-ea-ink); color:var(--pt-ea-ink); filter:var(--pt-art-glow); }
+.pt-box .es-art svg{ display:block; width:100%; height:auto; overflow:visible; }
+.pt-box .ea{ --ea-acc:var(--pt-ea-acc); }   /* .ea-ops/.ea-lrn تضع لونها على svg نفسه ⇒ (0,2,0) يعيدها للحمم */
+.pt-box .ea .pap{ stroke-width:1.6; }
+.pt-box .ea .sh{ fill:var(--pt-ea-shade); }
+.pt-box .ea .ink{ stroke:var(--pt-ea-ink); }
+.pt-box .ea .accw{ fill:rgb(255 138 46 / .14); stroke:var(--pt-ea-acc); }
+
+/* غرفة التخطيط: الورقة + المسار المحفور بحجر بركاني والحمم تجري فيه + علامات كهرمان + علم كريستالي */
+.pt-box .ea-plan .soft.dash{ stroke:var(--pt-road); stroke-width:6; stroke-dasharray:none; stroke-opacity:1; }
+.pt-box .ea-plan .acc.route{ stroke:var(--pt-ea-acc); stroke-width:2.2; }
+.pt-box .ea .accf.pop{ fill:var(--pt-gem); stroke:var(--pt-gem-edge); stroke-width:.9; }
+.pt-box .ea .accf.flag{ fill:var(--pt-gem); stroke:var(--pt-gem-edge); stroke-width:1; stroke-linejoin:round; }
+
+/* غرفة العمليات: لوح المهام ورقة أوبسيديان، المشبك ذهب شمبانيا، الخانات تجاويف محفورة بحافة جمر، السطور أخاديد، وسهم النزول حمم */
+.pt-box .ea-ops > .accw{ fill:var(--pt-metal); stroke:var(--pt-metal-edge); stroke-width:1.1; }
+.pt-box .ea-ops rect.soft.dash{ fill:var(--pt-socket); stroke:var(--pt-road-edge); stroke-width:1.4; stroke-dasharray:none; }
+.pt-box .ea-ops rect.soft.dash:nth-of-type(4){ stroke:var(--pt-ea-acc); stroke-opacity:.75; }
+.pt-box .ea-ops path.soft.dash{ stroke:var(--pt-road); stroke-width:4; stroke-dasharray:none; stroke-opacity:1; }
+.pt-box .ea-ops .drop .acc{ stroke:var(--pt-gem); stroke-width:3; }
+
+/* غرفة الأستاذ: كتاب بأوراق أوبسيديان وحبر شمبانيا، المسار محفور، المحطات بلورات كهرمان (المقبلة تجويف)، والعلامة محفورة على البلورة */
+.pt-box .ea-lrn path.soft.dash{ stroke:var(--pt-road); stroke-width:5; stroke-dasharray:none; stroke-opacity:1; }
+.pt-box .ea-lrn rect.soft.dash{ fill:var(--pt-socket); stroke:var(--pt-road-edge); stroke-width:1.4; stroke-dasharray:none; }
+.pt-box .ea-lrn .accw.pop{ fill:var(--pt-gem); stroke:var(--pt-gem-edge); stroke-width:1; }
+.pt-box .ea-lrn .acc.rise{ stroke:var(--pt-mark-ink); stroke-width:2.2; }
+
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box .es-title{ position:relative; font-size:18px; font-weight:700; line-height:1.4; letter-spacing:0; color:var(--pt-title); text-shadow:var(--pt-title-glow); }
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box .es-copy{ position:relative; max-width:272px; font-size:14px; line-height:1.8; color:var(--pt-copy); text-shadow:0 1px 0 rgb(0 0 0 / .6); }
+/* الزر: أوبسيديان بحافة حمم منصهرة. .btn.btn.btn = (1,5,0) يغلب زر المتجر الداكن (1,4,2) وزر الأستاذ #learn-empty .btn-primary (1,1,0).
+   الأيقونة حسب الغرفة: + لبناء الخطة، وسهم «روح» للعمليات والأستاذ (نصوص الأزرار ووظائفها كما هي) */
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box{
+  --pt-btn-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.5v11M2.5 8h11' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E"); }
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box:is([data-pt-target="operations"], [data-pt-target="teacher"]){
+  --pt-btn-ico:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M13.5 8h-11M6.5 4L2.5 8l4 4' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box .btn.btn.btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:50px; margin-top:16px; padding:10px 24px 10px 32px;
+  border:1.5px solid transparent; border-radius:12px; font-size:16px; font-weight:700; line-height:1.2; color:var(--pt-btn-tx); text-shadow:0 1px 0 rgb(0 0 0 / .8);
+  background:var(--pt-btn-bg); box-shadow:var(--pt-btn-sh); transition:box-shadow .2s ease, transform .12s ease; -webkit-tap-highlight-color:transparent; }
+:is(#planning-empty, #tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box .btn.btn.btn::before{ content:''; flex:0 0 auto; width:16px; height:16px; background:currentColor;
+  -webkit-mask:var(--pt-btn-ico) center / contain no-repeat; mask:var(--pt-btn-ico) center / contain no-repeat; }
+html[dir="ltr"] :is(#tasks-empty, #learn-empty, .pt-stage) > .empty-state.pt-box:is([data-pt-target="operations"], [data-pt-target="teacher"]) .btn.btn.btn::before{ transform:scaleX(-1); }
+@media (hover:hover) and (pointer:fine){ :is(#planning-empty, #tasks-empty, #learn-empty) > .empty-state.pt-box .btn.btn.btn:hover{ box-shadow:var(--pt-btn-sh-hover); } }
+:is(#planning-empty, #tasks-empty, #learn-empty) > .empty-state.pt-box .btn.btn.btn:active{ transform:translateY(1px) scale(.985); box-shadow:var(--pt-btn-sh-press); }
+:is(#planning-empty, #tasks-empty, #learn-empty) > .empty-state.pt-box .btn.btn.btn:focus-visible{ outline:2px solid var(--pt-focus); outline-offset:3px; }
+
+/* ---- الحركة (راقية، طويلة الدورة، compositor) ---- */
+@keyframes ptBreath{ from{ opacity:.55; } to{ opacity:1; } }
+@keyframes ptSheen{ 0%{ opacity:0; transform:translate3d(-170%, 0, 0) skewX(-16deg); } 4%{ opacity:1; } 20%{ opacity:1; } 26%{ opacity:0; transform:translate3d(420%, 0, 0) skewX(-16deg); } 100%{ opacity:0; transform:translate3d(420%, 0, 0) skewX(-16deg); } }
+@keyframes ptLava{ from{ opacity:.78; } to{ opacity:1; } }
+@keyframes ptGlint{ 0%, 82%, 100%{ opacity:1; } 88%{ opacity:.72; } 92%{ opacity:1; } }
+@keyframes ptRim{ 0%, 100%{ opacity:.65; } 50%{ opacity:1; } }
+@media (prefers-reduced-motion:no-preference){
+  html:not(.sx-calm) :is(.pt-box, .pt-card) .pt-breath{ animation:ptBreath var(--pt-breath-dur, 6s) ease-in-out infinite alternate; }
+  html:not(.sx-calm) :is(.pt-box, .pt-card) .pt-lava{ animation:ptLava calc(var(--pt-breath-dur, 6s) * .8) ease-in-out .6s infinite alternate; }
+  html:not(.sx-calm) :is(.pt-box, .pt-card) .pt-sheen{ animation:ptSheen var(--pt-sheen-dur, 10s) cubic-bezier(.45, .05, .35, 1) 1.4s infinite; }
+  html:not(.sx-calm) :is(.pt-box, .pt-card) .pt-rim{ animation:ptRim calc(var(--pt-sheen-dur, 10s) * .5) ease-in-out infinite; }
+  html:not(.sx-calm) .pt-box .ea .accf.flag{ animation:eaFlag 460ms .8s var(--ease) both, ptGlint var(--pt-glint-dur, 7s) ease-in-out 2.4s infinite; }
+  html:not(.sx-calm) .pt-box .ea-ops .drop{ animation:eaDrop 640ms .1s var(--ease) both, ptGlint var(--pt-glint-dur, 7s) ease-in-out 2.2s infinite; }
+  html:not(.sx-calm) .pt-box .ea-lrn .accw.pop.d2{ animation:eaPop 420ms .45s var(--ease-spring) both, ptGlint var(--pt-glint-dur, 7s) ease-in-out 2.6s infinite; }
+}
+@media (prefers-reduced-motion:reduce){ :is(.pt-box, .pt-card) .pt-decor > *{ animation:none !important; } :is(.pt-box, .pt-card) .pt-breath{ opacity:.8; } :is(.pt-box, .pt-card) .pt-sheen{ display:none; } }
+
+/* ============ المعاينة المصغّرة (Mini): نفس المربع والرموز والزخارف، بنِسب مصممة للبلاطة ============
+   الرسمة الحقيقية للغرفة + مقابض بمكان العنوان/النص/الزر بألوان الرموز نفسها (النص بهذا الحجم لا يُقرأ فلا يُرسم مضغوطاً). ثابتة بلا حركة. */
+.pt-stage.is-mini{ position:relative; display:block; aspect-ratio:4 / 5; border-radius:12px; }
+:is(#pt-mini, .pt-stage.is-mini) > .empty-state.pt-box{ position:absolute; inset:0; min-height:0; height:100%; gap:0; padding:12% 9% 11%; border-radius:12px; justify-content:center;
+  box-shadow:0 0 0 1px rgb(217 190 150 / .34), inset 0 1px 0 rgb(255 236 214 / .14), 0 8px 14px -10px rgb(0 0 0 / .85); }
+:is(#pt-mini, .pt-stage.is-mini) > .empty-state.pt-box .es-mark.es-art{ width:84%; margin:0 0 10%; filter:drop-shadow(0 0 4px rgb(255 110 30 / .34)) drop-shadow(0 1px 1px rgb(0 0 0 / .7)); }
+.pt-stage.is-mini .pt-box .ea *{ animation:none !important; }
+.pt-stage.is-mini .pt-box .pt-decor > *{ animation:none !important; }
+.pt-stage.is-mini .pt-box .pt-sheen{ display:none; }
+.pt-stage.is-mini .pt-box .pt-corner{ width:22px; height:22px; }
+.pt-stage.is-mini .pt-box .pt-corner.k-ts{ top:2px; right:2px; } .pt-stage.is-mini .pt-box .pt-corner.k-te{ top:2px; left:2px; }
+.pt-stage.is-mini .pt-box .pt-corner.k-bs{ bottom:2px; right:2px; } .pt-stage.is-mini .pt-box .pt-corner.k-be{ bottom:2px; left:2px; }
+.pt-stage.is-mini .pt-box .pt-frame{ inset:5px; border-radius:7px; box-shadow:inset 0 0 0 2px rgb(0 0 0 / .35); }
+.pt-stage.is-mini .pt-box .pt-lava{ height:34%; min-height:0; }
+.pt-stage.is-mini .pt-box .pt-crack{ width:34%; height:auto; aspect-ratio:1; }
+.pt-stage.is-mini .pt-box > span{ display:block; flex:0 0 auto; border-radius:999px; }
+.pt-stage.is-mini .pt-mini-t{ width:62%; height:5px; background:var(--pt-title); opacity:.9; box-shadow:0 0 6px rgb(255 120 40 / .35); }
+.pt-stage.is-mini .pt-mini-c{ width:44%; height:3px; margin-top:7%; background:var(--pt-copy); opacity:.45; }
+.pt-stage.is-mini .pt-mini-b{ width:56%; height:13%; max-height:16px; min-height:10px; margin-top:11%; border:1px solid transparent; border-radius:5px; background:var(--pt-btn-bg); box-shadow:var(--pt-btn-sh); }
+.pt-stage > .pt-box *{ pointer-events:none; }
+
+/* ============ المتجر: قسم «المظاهر» بتبويبين داخليين ============ */
+#pane-cosmetics .cos-seg{ position:relative; display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:0 0 14px; padding:4px; border-radius:12px; background:var(--sx-surface-lo, rgb(0 0 0 / .08)); box-shadow:inset 0 1px 2px rgb(var(--sx-sh, 0 0 0) / .25), 0 1px 0 rgb(var(--sx-hi, 255 255 255) / .3); }
+#pane-cosmetics .cos-seg-b{ display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:0 8px; border:0; border-radius:9px; background:none; color:var(--sx-text2, var(--text-2)); font:inherit; font-size:13.5px; font-weight:800; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background-color .18s, color .18s, box-shadow .18s; }
+#pane-cosmetics .cos-seg-b.is-on{ color:var(--sx-text, var(--text)); background:linear-gradient(180deg, var(--sx-surface-hi, #fff), var(--sx-surface, #f4efe4)); box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb, 200 160 90) / .7), 0 2px 6px -2px rgb(var(--sx-sh, 0 0 0) / .45); }
+#pane-cosmetics .cos-seg-b:focus-visible{ outline:2px solid var(--sx-gold-hi, #e0b060); outline-offset:2px; }
+#pane-cosmetics .cos-seg-n{ min-width:20px; height:20px; padding:0 6px; display:grid; place-items:center; border-radius:10px; font-size:11px; line-height:1; font-variant-numeric:tabular-nums; color:#2A1C08; background:linear-gradient(180deg, var(--sx-gold-hi, #f3d18a), var(--sx-gold, #d1a032)); }
+#pane-cosmetics .cos-sub[hidden]{ display:none !important; }
+#pane-cosmetics .cos-sub{ display:flex; flex-direction:column; gap:var(--sp-lg, 16px); }
+#eco-store-body .pt-lead{ margin:-4px 2px 2px; font-size:12.5px; line-height:1.7; color:var(--sx-text2, var(--text-2)); }
+
+/* ---- شبكة الثيمات: ثلاثة أعمدة متساوية دائماً (المتجر وبحوزتك)، تلتف للصف التالي، بلا تمرير أفقي ---- */
+#eco-store-body .pt-grid{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:clamp(6px, 2.2vw, 10px); margin:0; padding:0; align-items:stretch; }
+#eco-store-body .st-tile.pt-mtile{ position:relative; display:flex; min-width:0; padding:0; border-radius:14px; overflow:hidden;
+  background:var(--sx-speck), linear-gradient(180deg, var(--sx-surface-hi), var(--sx-surface)); background-size:96px 96px, auto;
+  box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb) / .55), inset 0 1px 0 rgb(var(--sx-hi) / .6), 0 8px 14px -10px rgb(var(--sx-sh) / .8); }
+#eco-store-body .st-tile.pt-mtile.is-on{ box-shadow:0 0 0 2px #FF8A2E, 0 0 0 4px rgb(255 138 46 / .18), inset 0 1px 0 rgb(var(--sx-hi) / .6), 0 10px 18px -10px rgb(255 90 20 / .55); }
+#eco-store-body .pt-mbtn{ display:flex; flex-direction:column; align-items:stretch; gap:4px; width:100%; min-width:0; margin:0; padding:clamp(4px, 1.3vw, 6px) clamp(4px, 1.3vw, 6px) clamp(6px, 1.8vw, 8px);
+  border:0; border-radius:inherit; background:none; color:inherit; font:inherit; text-align:center; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+#eco-store-body .pt-mbtn:focus-visible{ outline:2px solid #FF8A2E; outline-offset:-2px; }
+#eco-store-body .pt-mbtn:active .pt-stage{ transform:scale(.97); transition:transform .12s ease; }
+#eco-store-body .pt-mname{ display:flex; align-items:center; justify-content:center; min-height:2.6em; margin-top:2px; font-size:clamp(10.5px, 3.1vw, 13px); font-weight:800; line-height:1.3; letter-spacing:0; color:var(--sx-text); text-wrap:balance; }
+#eco-store-body .pt-mbadge{ align-self:center; display:inline-flex; align-items:center; justify-content:center; gap:3px; max-width:100%; min-height:20px; margin-top:2px; padding:1px 7px; border-radius:999px;
+  font-size:clamp(9.5px, 2.6vw, 11px); font-weight:800; line-height:1.2; white-space:nowrap; color:var(--sx-text2); background:var(--sx-surface-hi); box-shadow:0 0 0 1px var(--sx-line-hi); }
+#eco-store-body .pt-mbadge.is-on{ color:#7A2A0A; background:rgb(255 138 46 / .16); box-shadow:0 0 0 1px rgb(255 138 46 / .6); }
+#eco-store-body .pt-mbadge.is-on::before{ content:''; width:6px; height:6px; transform:rotate(45deg); border-radius:1px; background:linear-gradient(135deg, #FFE2BF, #FF8A2E 55%, #8A1A08); }
+html[data-theme="dark"] #eco-store-body .pt-mbadge.is-on{ color:#FFC48A; }
+#eco-store-body .pt-mbadge.is-price .eco-coin{ font-size:inherit; gap:2px; }
+#eco-store-body .pt-mbadge.is-price .eco-coin svg{ width:1.05em; height:1.05em; }
+#eco-store-body .pt-mbadge.is-short{ opacity:.7; }
+
+/* ============ نافذة التفاصيل (معاينة كبيرة + هوية + حالة + إجراء) ============ */
+.pt-ov{ position:fixed; inset:0; z-index:660; display:grid; place-items:center; padding:max(12px, env(safe-area-inset-top, 0px)) 12px max(12px, env(safe-area-inset-bottom, 0px)); }
+.pt-ov-bg{ position:absolute; inset:0; background:rgb(8 5 4 / .8); opacity:0; transition:opacity .22s ease; touch-action:none; }
+.pt-ov-card{ position:relative; width:min(100%, 410px); max-height:100%; overflow:auto; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; display:grid; gap:10px; padding:14px;
+  border-radius:22px; background:radial-gradient(90% 40% at 50% 0%, rgb(255 120 40 / .1), transparent 70%), linear-gradient(180deg, #1b1310, #0d0907);
+  box-shadow:0 0 0 1px rgb(217 190 150 / .3), inset 0 1px 0 rgb(255 236 214 / .1), 0 30px 60px -20px rgb(0 0 0 / .9); color:#F4D7B6;
+  opacity:0; transform:translate3d(0, 14px, 0) scale(.98); transition:opacity .24s ease, transform .3s cubic-bezier(.2, .9, .3, 1); }
+.pt-ov.is-in .pt-ov-bg{ opacity:1; } .pt-ov.is-in .pt-ov-card{ opacity:1; transform:none; }
+.pt-ov-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.pt-ov-chips{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; min-width:0; }
+.pt-rar{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; letter-spacing:.02em; color:#B8481B; }
+.pt-rar::before{ content:''; width:8px; height:8px; transform:rotate(45deg); border-radius:1.5px; background:linear-gradient(135deg, #FFE2BF, #FF8A2E 55%, #8A1A08); box-shadow:0 0 6px rgb(255 120 40 / .6); }
+.pt-ov .pt-rar{ color:#FFB565; }
+.pt-ov-room{ display:inline-flex; align-items:center; min-height:22px; padding:0 9px; border-radius:999px; font-size:11.5px; font-weight:800; color:#F4D7B6; background:rgb(255 236 214 / .07); box-shadow:inset 0 0 0 1px rgb(217 194 160 / .3); }
+.pt-ov-x{ flex:0 0 auto; display:grid; place-items:center; width:44px; height:44px; margin:-6px -6px -6px 0; border:0; border-radius:12px; background:rgb(255 236 214 / .06); color:#F4D7B6; cursor:pointer; }
+.pt-ov-x:focus-visible{ outline:2px solid #FFB565; outline-offset:2px; }
+.pt-ov-x svg{ width:20px; height:20px; }
+.pt-ov-name{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; } .pt-ov-name b{ font-size:22px; letter-spacing:.01em; } .pt-ov-name span{ font-size:13px; color:#CDB8A3; }
+.pt-ov .pt-stage.is-big{ position:relative; display:block; border-radius:20px; }
+.pt-ov .pt-stage.is-big > .pt-box{ min-height:min(420px, 52vh); }
+.pt-ov-meta{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:6px; margin:0; }
+.pt-ov-meta > div{ min-width:0; padding:7px 8px; border-radius:11px; background:rgb(255 236 214 / .045); box-shadow:inset 0 0 0 1px rgb(217 194 160 / .16); }
+.pt-ov-meta dt{ font-size:10.5px; font-weight:700; color:#A8917C; }
+.pt-ov-meta dd{ margin:2px 0 0; font-size:12.5px; font-weight:800; line-height:1.35; color:#F4D7B6; overflow-wrap:anywhere; }
+.pt-ov-desc{ margin:0; font-size:13px; line-height:1.85; color:#D8C3AE; }
+.pt-ov-dyn{ display:grid; gap:8px; }
+.pt-ov-state{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.pt-ov-st{ display:inline-flex; align-items:center; gap:6px; min-height:26px; padding:0 10px; border-radius:999px; font-size:12px; font-weight:800; color:#CDB8A3; box-shadow:inset 0 0 0 1px rgb(217 194 160 / .28); }
+.pt-ov-st.is-own{ color:#F4D7B6; }
+.pt-ov-st.is-on{ color:#FFD2A6; background:rgb(255 138 46 / .14); box-shadow:inset 0 0 0 1px rgb(255 138 46 / .6); }
+.pt-ov-st.is-on::before{ content:''; width:7px; height:7px; transform:rotate(45deg); border-radius:1px; background:linear-gradient(135deg, #FFE2BF, #FF8A2E 55%, #8A1A08); box-shadow:0 0 6px rgb(255 120 40 / .7); }
+.pt-ov-price{ display:inline-flex; align-items:center; gap:5px; font-size:18px; font-weight:800; color:#F4D7B6; }
+.pt-ov-price .eco-coin{ font-size:inherit; } .pt-ov-price small{ font-size:12px; color:#A8917C; }
+.pt-ov-note{ margin:0; font-size:12px; line-height:1.7; color:#A8917C; }
+.pt-ov-note.is-short{ color:#FFB088; }
+.pt-ov-act{ display:inline-flex; align-items:center; justify-content:center; gap:8px; width:100%; min-height:52px; padding:10px 18px; border:1.5px solid transparent; border-radius:14px; font:inherit; font-size:16px; font-weight:800; line-height:1.2; cursor:pointer;
+  color:#FFE8D0; text-shadow:0 1px 0 rgb(0 0 0 / .8); background:linear-gradient(180deg, #2c1a13, #150c09) padding-box, linear-gradient(180deg, #FFC48A, #D2541F 46%, #6B1D08) border-box;
+  box-shadow:0 0 0 1px rgb(0 0 0 / .65), inset 0 1px 0 rgb(255 226 196 / .2), 0 10px 20px -10px rgb(255 90 20 / .7); -webkit-tap-highlight-color:transparent; transition:box-shadow .2s ease, transform .12s ease; }
+.pt-ov-act.is-off{ color:#E9D3BC; background:linear-gradient(180deg, #221713, #120c0a) padding-box, linear-gradient(180deg, rgb(217 194 160 / .55), rgb(217 194 160 / .2)) border-box; box-shadow:0 0 0 1px rgb(0 0 0 / .6); }
+.pt-ov-act:active:not([disabled]){ transform:translateY(1px) scale(.985); }
+.pt-ov-act:focus-visible{ outline:2px solid #FFB565; outline-offset:3px; }
+.pt-ov-act[disabled]{ cursor:default; opacity:.5; }
+.pt-ov-act-p{ display:inline-flex; align-items:center; padding:1px 8px; border-radius:999px; font-size:13px; font-variant-numeric:tabular-nums; background:rgb(255 236 214 / .1); }
+@media (max-height:640px){ .pt-ov .pt-stage.is-big > .pt-box{ min-height:300px; } }
+@media (prefers-reduced-motion:reduce){ .pt-ov-bg, .pt-ov-card{ transition:none; } }
+
+/* ============ المتجر/بحوزتك: الثيمات مجمّعة حسب العائلة (عنوان ← وصف ← شبكة) وفاصل شمبانيا راقٍ بين العائلات ============ */
+#eco-store-body .pt-fams{ display:flex; flex-direction:column; }
+#eco-store-body .pt-fam{ position:relative; display:grid; gap:12px; min-width:0; }
+#eco-store-body .pt-fam + .pt-fam{ margin-top:28px; padding-top:30px; }
+#eco-store-body .pt-fam + .pt-fam::before{ content:''; position:absolute; top:0; left:6%; right:6%; height:10px; pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 10'%3E%3Cpath d='M15 1l4 4-4 4-4-4z' fill='%23C9A26E'/%3E%3Cpath d='M15 1l4 4h-4z' fill='%23F3DDB8'/%3E%3Ccircle cx='5' cy='5' r='1.1' fill='%23C9A26E'/%3E%3Ccircle cx='25' cy='5' r='1.1' fill='%23C9A26E'/%3E%3C/svg%3E") center / 30px 10px no-repeat,
+    linear-gradient(90deg, transparent, rgb(var(--sx-gold-rgb, 201 162 110) / .6) 22%, rgb(var(--sx-gold-rgb, 201 162 110) / .6) calc(50% - 22px), transparent calc(50% - 21px) calc(50% + 21px), rgb(var(--sx-gold-rgb, 201 162 110) / .6) calc(50% + 22px), rgb(var(--sx-gold-rgb, 201 162 110) / .6) 78%, transparent) center / 100% 1px no-repeat; }
+#eco-store-body .pt-fam-head{ display:grid; gap:1px; min-width:0; padding:0 2px; text-align:start; }
+#eco-store-body .pt-fam-ar{ display:flex; align-items:center; gap:8px; margin:0; font-size:19px; font-weight:800; line-height:1.35; letter-spacing:0; color:var(--sx-text); }
+#eco-store-body .pt-fam-ar::before{ content:''; flex:0 0 auto; width:9px; height:9px; transform:rotate(45deg); border-radius:1.5px; background:linear-gradient(135deg, #FFE2BF, #FF8A2E 55%, #8A1A08); box-shadow:0 0 6px rgb(255 120 40 / .55); }
+#eco-store-body .pt-fam-en{ font-size:10.5px; font-weight:700; line-height:1.4; letter-spacing:.2em; text-transform:uppercase; color:var(--sx-text2); padding-inline-start:17px; }
+#eco-store-body .pt-fam-desc{ margin:6px 0 0; font-size:12.5px; line-height:1.75; color:var(--sx-text2); overflow-wrap:anywhere; }
+#eco-store-body .pt-fams.is-own .pt-fam{ gap:10px; }
+#eco-store-body .pt-fams.is-own .pt-fam-ar{ font-size:15.5px; }
+#eco-store-body .pt-fams.is-own .pt-fam + .pt-fam{ margin-top:20px; padding-top:22px; }
+
+/* ============ غرفة التخطيط: بطاقة الخطة النشطة (.pt-card) — لوحة تحكم أوبسيديان كريستالية ============
+   بصري فقط: لا يمسّ نص #plan-active-pct ولا عرض #plan-active-fill (style المضمَّن) ولا الأزرار ووظائفها. */
+#planning-active > .plan-card.pt-card{ isolation:isolate; border:0; color:var(--pt-ea-ink); background:var(--pt-bg); box-shadow:var(--pt-edge); }
+#planning-active > .plan-card.pt-card::before{ display:none; }   /* شريط الحلقات الورقي لا يخص الثيم */
+.pt-card .pt-lava{ height:40px; min-height:0; opacity:.85; }   /* منخفض: العروق تحت أزرار الإجراءات لا خلفها */
+.pt-card .pt-corner{ width:40px; height:40px; }
+.pt-card .pt-frame{ inset:7px; border-radius:calc(var(--pl-r-panel, 20px) - 6px); }
+.pt-card .pt-crack{ width:64px; height:64px; }
+.pt-card .pt-breath{ height:40%; opacity:.6; }
+#planning-active > .plan-card.pt-card .eyebrow{ color:#D9C2A0; letter-spacing:.04em; }
+#planning-active > .plan-card.pt-card .eyebrow::before{ height:2px; background:linear-gradient(90deg, #FFE2BF, #FF8A2E 60%, #8A1A08); box-shadow:0 0 6px rgb(255 120 40 / .6); }
+#planning-active > .plan-card.pt-card .plan-name{ color:var(--pt-title); text-shadow:var(--pt-title-glow); }
+#planning-active > .plan-card.pt-card .plan-info{ color:var(--pt-copy); }
+/* منطقة الإنجاز: بئر كريستالي داخل البطاقة نفسها (لا لوحة منفصلة) */
+#planning-active > .plan-card.pt-card .plan-progress{ position:relative; margin:0 12px; padding:14px 14px 16px; border:0; border-radius:14px;
+  background:linear-gradient(115deg, rgb(255 236 214 / .055) 0 22%, transparent 22.3% 64%, rgb(255 236 214 / .03) 64.3% 72%, transparent 72.3%), linear-gradient(180deg, rgb(0 0 0 / .42), rgb(10 6 5 / .62));
+  box-shadow:inset 0 0 0 1px rgb(217 194 160 / .2), inset 0 1px 0 rgb(255 236 214 / .07), inset 0 -10px 18px -12px rgb(255 90 20 / .35), 0 1px 0 rgb(255 236 214 / .04); }
+#planning-active > .plan-card.pt-card .plan-progress-row{ color:#CDB8A3; }
+#planning-active > .plan-card.pt-card .plan-pct{ font-size:32px; color:#FFD9B0; background:linear-gradient(180deg, #FFF3E2 8%, #FFC48A 52%, #FF7A2A 92%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 10px rgb(255 120 40 / .38)); }
+#planning-active > .plan-card.pt-card .xp-track{ height:9px; overflow:hidden; background:#050303; box-shadow:inset 0 1px 3px rgb(0 0 0 / .95), 0 0 0 1px rgb(217 194 160 / .26), 0 1px 0 rgb(255 236 214 / .07); }
+#planning-active > .plan-card.pt-card .xp-track::after{ background:linear-gradient(90deg, transparent calc(25% - 1px), rgb(255 226 196 / .22) calc(25% - 1px) 25%, transparent 25%) 0 0 / 25% 100%; }
+#planning-active > .plan-card.pt-card .xp-fill{ background:linear-gradient(to left, #6B1D08, #E2391B 38%, #FF8A2E 74%, #FFD7A8); box-shadow:0 0 10px rgb(255 110 30 / .55), inset 0 1px 0 rgb(255 236 214 / .35); }
+html[dir="ltr"] #planning-active > .plan-card.pt-card .xp-fill{ background:linear-gradient(to right, #6B1D08, #E2391B 38%, #FF8A2E 74%, #FFD7A8); }
+#planning-active > .plan-card.pt-card .plan-cta{ margin-top:16px; }
+#planning-active > .plan-card.pt-card .plan-cta .btn.btn.btn, #planning-active > .plan-card.pt-card .plan-save-active .btn.btn.btn-primary{
+  border:1.5px solid transparent; color:var(--pt-btn-tx); text-shadow:0 1px 0 rgb(0 0 0 / .8); background:var(--pt-btn-bg); box-shadow:var(--pt-btn-sh); }
+#planning-active > .plan-card.pt-card .plan-cta .btn.btn.btn:active{ transform:translateY(1px) scale(.985); box-shadow:var(--pt-btn-sh-press); }
+@media (hover:hover) and (pointer:fine){ #planning-active > .plan-card.pt-card .plan-cta .btn.btn.btn:hover{ box-shadow:var(--pt-btn-sh-hover); } }
+#planning-active > .plan-card.pt-card .plan-cta .btn.btn.btn:focus-visible{ outline:2px solid var(--pt-focus); outline-offset:3px; }
+#planning-active > .plan-card.pt-card .plan-save-active input{ color:#F4D7B6; background:#0a0605; border:1px solid rgb(217 194 160 / .32); }
+#planning-active > .plan-card.pt-card .plan-save-active input::placeholder{ color:#8E7A68; }
+#planning-active > .plan-card.pt-card .plan-save-active .btn.btn.btn-secondary{ color:#E9D3BC; background:transparent; border:1px solid rgb(217 194 160 / .38); box-shadow:none; }
+#planning-active > .plan-card.pt-card .plan-more{ margin-bottom:34px; border-top:1px solid rgb(217 194 160 / .16); }
+#planning-active > .plan-card.pt-card .pm-btn{ color:#CDB8A3; }
+#planning-active > .plan-card.pt-card .pm-btn:active{ background:rgb(255 236 214 / .08); }
+#planning-active > .plan-card.pt-card .pm-btn.is-danger{ color:#FF9A8E; }
+#planning-active > .plan-card.pt-card .pm-btn:focus-visible{ outline-color:#FFB565; }
+@media (hover:hover){ #planning-active > .plan-card.pt-card .pm-btn:hover{ background:rgb(255 236 214 / .06); color:#F4D7B6; } #planning-active > .plan-card.pt-card .pm-btn.is-danger:hover{ background:rgb(200 40 50 / .16); color:#FFB0A6; } }
+
+/* ============ مستطيلات المهام: العمليات (#day-task-list) والأستاذ (#learn-day-task-list) ============
+   النطاق دائماً حاوية الغرفة المجهّزة (.pt-scope) ⇒ لا أثر على .task-item في أي مكان آخر؛ كل مستطيل جديد يلبس الثيم تلقائياً.
+   الحالات الثلاث بهويات متميزة: كريستال بارد (خلصتها) · كهرمان (نصها) · قرمزي (ما سويتها). الأحجام/أهداف اللمس/الحركات كما هي. */
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope{
+  --pt-st-done:#CFEFF6; --pt-st-half:#FFB565; --pt-st-none:#E8473C; --pt-st-idle:rgb(217 194 160 / .28); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item{
+  --pt-wash:transparent; color:var(--pt-ea-ink); border:0;
+  background:linear-gradient(to left, var(--pt-wash), transparent 46%),
+    linear-gradient(115deg, rgb(255 236 214 / .05) 0 16%, transparent 16.2% 64%, rgb(255 236 214 / .03) 64.2% 71%, transparent 71.2%),
+    radial-gradient(90% 70% at 50% 125%, rgb(255 92 24 / .16), transparent 70%),
+    linear-gradient(162deg, #1c1310, #0d0907 48%, #0a0706 72%, #150c09);
+  box-shadow:0 0 0 1px rgb(217 190 150 / .28), inset 0 1px 0 rgb(255 236 214 / .12), inset 0 0 0 1px rgb(255 224 190 / .04), 0 12px 22px -16px rgb(0 0 0 / .9), 0 14px 26px -22px rgb(255 80 20 / .4); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item.is-done{ --pt-wash:rgb(190 235 245 / .08); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item.is-half{ --pt-wash:rgb(255 181 101 / .09); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item.is-none{ --pt-wash:rgb(232 71 60 / .11); }
+/* النص */
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-text{ color:#F1DCC4; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-text:has(.task-prio){ color:#FFE8D0; text-shadow:0 0 14px rgb(255 120 40 / .22); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item.is-done .task-text,
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-text.done{ color:#A08C7A; text-decoration-color:rgb(255 181 101 / .6); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-prio{ color:#FFB565; filter:drop-shadow(0 0 4px rgb(255 120 40 / .55)); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-del{ color:rgb(217 194 160 / .55); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-del:active{ color:#FFB0A6; background:rgb(200 40 50 / .18); }
+@media (hover:hover){ :is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-del:hover{ color:#FFB0A6; background:rgb(200 40 50 / .14); } }
+/* الوزن: شريحة معدن شمبانيا (الكلمة + القيمة + تلقائي/يدوي) — نفس الزر ونفس الضغط للتعديل */
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt{ color:#BFA88F;
+  background:linear-gradient(180deg, rgb(255 236 214 / .1), rgb(255 236 214 / .025)), #120c0a; border:1px solid rgb(217 194 160 / .42);
+  box-shadow:inset 0 1px 0 rgb(255 236 214 / .14), 0 2px 6px -3px rgb(0 0 0 / .8); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt .tw-v{ color:#FFE2BF; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt .tw-s{ color:#D9C2A0; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt.is-manual{ border-color:rgb(255 138 46 / .72); color:#E9C9A6; box-shadow:inset 0 1px 0 rgb(255 236 214 / .14), 0 0 10px -3px rgb(255 120 40 / .5); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt.is-manual :is(.tw-v, .tw-s){ color:#FFB565; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .task-wt:focus-visible{ outline-color:#FFB565; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item :is(.tw-lab, .tw-why){ color:#A8917C; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tw-in{ color:#F4D7B6; background:#0a0605; border-color:rgb(217 194 160 / .35); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tw-btn{ color:#E9D3BC; background:rgb(255 236 214 / .05); border-color:rgb(217 194 160 / .32); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tw-btn.tw-save{ color:#FFC48A; border-color:rgb(255 138 46 / .6); }
+/* المؤقت */
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-start{ color:#FFD2A6; background:rgb(255 138 46 / .08); border-color:rgb(255 138 46 / .5); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-start svg{ color:#FFB565; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-dur{ color:#A8917C; border-inline-start-color:rgb(217 194 160 / .25); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-row.is-run .tt-clock{ background:#0a0605; border-color:rgb(255 138 46 / .35); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-ring{ background:conic-gradient(#FF8A2E calc(var(--tp, 0) * 360deg), rgb(255 236 214 / .12) 0); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .tt-txt b{ color:#F4D7B6; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item :is(.tt-txt i, .tt-stop, .tt-again){ color:#CDB8A3; }
+/* خيارات الحالة: كل زر يحمل لون حالته حتى وهو غير محدد (الأيقونة)، والمحدد يضيء بخامته */
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn{ color:#BFA88F; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.stat-x .stat-ico{ color:rgb(255 130 118 / .8); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.stat-half .stat-ico{ color:rgb(255 194 120 / .85); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.stat-done .stat-ico{ color:rgb(200 238 246 / .9); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.active .stat-ico{ color:inherit; }
+@media (hover:hover){ :is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn:not(.active):hover{ color:#F4D7B6; background:rgb(255 236 214 / .06); } }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn:focus-visible{ outline:2px solid #FFB565; }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.active.stat-done{ color:#F2FBFD; font-weight:700;
+  background:linear-gradient(160deg, rgb(255 255 255 / .2) 0 30%, transparent 30.5%), linear-gradient(180deg, rgb(214 240 246 / .3), rgb(150 205 220 / .1)), #0e1416;
+  border-color:rgb(214 240 246 / .78); box-shadow:0 0 0 1px rgb(0 0 0 / .6), inset 0 1px 0 rgb(255 255 255 / .4), 0 0 14px -2px rgb(160 220 240 / .5); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.active.stat-half{ color:#FFDDA8; font-weight:700;
+  background:linear-gradient(180deg, rgb(255 196 120 / .28), rgb(210 140 40 / .1)), #170e06;
+  border-color:#E7A64C; box-shadow:0 0 0 1px rgb(0 0 0 / .6), inset 0 1px 0 rgb(255 226 180 / .3), 0 0 14px -3px rgb(255 170 60 / .55); }
+:is(#page-tasks #day-task-list, #page-learn #learn-day-task-list).pt-scope > .task-item .stat-btn.active.stat-x{ color:#FFB6AC; font-weight:700;
+  background:linear-gradient(180deg, rgb(200 40 50 / .34), rgb(120 15 25 / .18)), #150607;
+  border-color:rgb(232 71 60 / .82); box-shadow:0 0 0 1px rgb(0 0 0 / .6), inset 0 1px 0 rgb(255 180 170 / .2), 0 0 14px -3px rgb(232 50 40 / .55); }
+
+/* ---- العمليات: لوحة تحكم — زوايا معدنية + عرق حمم سفلي + سكة حالة متوهجة + درج أزرار محفور ---- */
+#page-tasks #day-task-list.pt-scope > .task-item{ --op-state:var(--pt-st-idle); }
+#page-tasks #day-task-list.pt-scope > .task-item.is-done{ --op-state:var(--pt-st-done); }
+#page-tasks #day-task-list.pt-scope > .task-item.is-half{ --op-state:var(--pt-st-half); }
+#page-tasks #day-task-list.pt-scope > .task-item.is-none{ --op-state:var(--pt-st-none); }
+#page-tasks #day-task-list.pt-scope > .task-item::before{ background:var(--op-state); box-shadow:0 0 8px var(--op-state); }
+#page-tasks #day-task-list.pt-scope > .task-item::after{ content:''; position:absolute; inset:0; width:auto; height:auto; opacity:.75; transform:none; border-radius:inherit; pointer-events:none; transition:none;
+  background:
+    linear-gradient(#D9C2A0, #D9C2A0) left 6px top 6px / 11px 1px no-repeat, linear-gradient(#D9C2A0, #D9C2A0) left 6px top 6px / 1px 11px no-repeat,
+    linear-gradient(#D9C2A0, #D9C2A0) right 6px top 6px / 11px 1px no-repeat, linear-gradient(#D9C2A0, #D9C2A0) right 6px top 6px / 1px 11px no-repeat,
+    linear-gradient(#D9C2A0, #D9C2A0) left 6px bottom 6px / 11px 1px no-repeat, linear-gradient(#D9C2A0, #D9C2A0) left 6px bottom 6px / 1px 11px no-repeat,
+    linear-gradient(#D9C2A0, #D9C2A0) right 6px bottom 6px / 11px 1px no-repeat, linear-gradient(#D9C2A0, #D9C2A0) right 6px bottom 6px / 1px 11px no-repeat,
+    linear-gradient(90deg, transparent 6%, rgb(255 106 26 / .5) 24%, rgb(255 215 168 / .9) 50%, rgb(255 106 26 / .5) 76%, transparent 94%) center bottom / 100% 1px no-repeat; }
+#page-tasks #day-task-list.pt-scope > .task-item .status-group{ background:#070404; border-radius:12px;
+  box-shadow:inset 0 1px 3px rgb(0 0 0 / .85), 0 0 0 1px rgb(217 194 160 / .2), 0 1px 0 rgb(255 236 214 / .06); }
+#page-tasks #day-task-list.pt-scope > .task-item .stat-btn:not(.active){ background:linear-gradient(180deg, rgb(255 236 214 / .05), transparent); border-color:rgb(217 194 160 / .12); }
+
+/* ---- الأستاذ: غلاف كتاب فاخر — إطار ذهبي محفور مزدوج، كعب مضاء بجمرة، محطة كريستالية لكل درس، شريط حالة كمؤشر الكتاب ---- */
+#page-learn #learn-day-task-list.pt-scope > .task-item{
+  background:linear-gradient(to left, rgb(255 236 214 / .045) 0 18px, rgb(0 0 0 / .3) 18px 19px, transparent 19px),
+    radial-gradient(60% 80% at 0% 0%, rgb(255 140 60 / .12), transparent 70%),
+    linear-gradient(to left, var(--pt-wash), transparent 46%),
+    linear-gradient(162deg, #1b120f, #0e0907 52%, #0b0706 76%, #140b08);
+  box-shadow:0 0 0 1px rgb(217 190 150 / .3), inset 0 0 0 4px #0c0807, inset 0 0 0 5px rgb(217 194 160 / .16), inset 0 1px 0 rgb(255 236 214 / .1), 0 12px 22px -16px rgb(0 0 0 / .9), 0 14px 26px -22px rgb(255 80 20 / .35); }
+html[dir="ltr"] #page-learn #learn-day-task-list.pt-scope > .task-item{
+  background:linear-gradient(to right, rgb(255 236 214 / .045) 0 18px, rgb(0 0 0 / .3) 18px 19px, transparent 19px), radial-gradient(60% 80% at 100% 0%, rgb(255 140 60 / .12), transparent 70%), linear-gradient(to right, var(--pt-wash), transparent 46%), linear-gradient(162deg, #1b120f, #0e0907 52%, #0b0706 76%, #140b08); }
+#page-learn #learn-day-task-list.pt-scope > .task-item::after{ content:''; position:absolute; inset-block:12px; inset-inline-start:10px; width:1px; pointer-events:none;
+  background:linear-gradient(180deg, transparent, rgb(217 194 160 / .5) 16%, rgb(255 138 46 / .7) 50%, rgb(217 194 160 / .5) 84%, transparent); box-shadow:0 0 6px rgb(255 120 40 / .35); }
+#page-learn #learn-day-task-list.pt-scope > .task-item::before{ width:15px; height:15px; border-radius:0; clip-path:polygon(50% 0, 100% 50%, 50% 100%, 0 50%); background-color:#070404; box-shadow:inset 0 0 0 2px rgb(217 194 160 / .55); }
+#page-learn #learn-day-task-list.pt-scope > .task-item.is-none::before{ background-color:rgb(120 15 25 / .55); box-shadow:inset 0 0 0 2px var(--pt-st-none); }
+#page-learn #learn-day-task-list.pt-scope > .task-item.is-half::before{ background:linear-gradient(90deg, var(--pt-st-half) 50%, #070404 50%); box-shadow:inset 0 0 0 2px var(--pt-st-half); }
+#page-learn #learn-day-task-list.pt-scope > .task-item.is-done::before{ background-color:var(--pt-st-done); background-size:9px 9px; box-shadow:inset 0 0 0 1.5px #fff; }
+#page-learn #learn-day-task-list.pt-scope > .task-item .status-group{ background:linear-gradient(180deg, #0a0605, #120b08); border:0; border-radius:12px;
+  box-shadow:inset 0 0 0 1px rgb(217 194 160 / .24), inset 0 0 0 3px #080504, inset 0 0 0 4px rgb(217 194 160 / .1), inset 0 1px 3px rgb(0 0 0 / .7); }
+#page-learn #learn-day-task-list.pt-scope > .task-item .stat-btn + .stat-btn::before{ background:linear-gradient(180deg, transparent, rgb(217 194 160 / .32), transparent); }

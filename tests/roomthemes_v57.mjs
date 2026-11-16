@@ -104,7 +104,7 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430').sp
   // 16: بحوزتك
   await p.evaluate(() => econOpenVault()); await p.waitForTimeout(1300); await p.evaluate(() => econOwnSetPart('cosmetics')); await p.waitForTimeout(400);
   g = await p.evaluate(gridInfo, '#own-panel-cosmetics .pt-grid');
-  st = await p.evaluate(() => ({ n:(document.querySelector('#own-tab-cosmetics .own-tab-n') || {}).textContent, on:[...document.querySelectorAll('#own-panel-cosmetics .pt-mtile.is-on')].length, rooms:[...document.querySelectorAll('#own-panel-cosmetics .pt-mroom')].map(e => e.textContent) }));
+  st = await p.evaluate(() => ({ n:(document.querySelector('#own-tab-cosmetics .own-tab-n') || {}).textContent, on:[...document.querySelectorAll('#own-panel-cosmetics .pt-mtile.is-on')].length, rooms:[...document.querySelectorAll('#own-panel-cosmetics .pt-mname')].map(e => e.textContent) }));
   ok(T + '16 «بحوزتك» lists the 3 owned themes in a 3-column grid with room + equipped state', g.n === 3 && g.cols === 3 && !g.cut.length && !g.out && st.on === 3 && st.rooms.length === 3, { g, st });
   await p.evaluate(() => document.querySelector('#own-panel-cosmetics .pt-mtile[data-ptid="infernoCrystalOperations"] .pt-mbtn').click()); await p.waitForTimeout(500);
   await p.evaluate(() => document.querySelector('.pt-ov-act').click()); await p.waitForTimeout(600);
