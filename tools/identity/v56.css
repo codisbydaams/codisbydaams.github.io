@@ -1,0 +1,136 @@
+/* ============ CODIS-V56 · ثيمات غرفة التخطيط ============
+   طبقة عامة تقرأ رموز الثيم (--pt-*) من خاصية style التي يضعها codisPlanThemeStyle: ثيم جديد = رموز + راسم زخارف، بلا CSS خاص به.
+   النطاق :is(#planning-empty, .pt-stage) يعطي المربع الحقيقي والمعاينة الخصوصية نفسها (1,x,0) ⇒ نفس الرسم حرفياً.
+   قيم التخطيط (حشوة/فجوة/خطوط/زر) منسوخة من القيم المحسوبة للمربع الأصلي حتى تطابق المعاينة خارج #page-planning.
+   الحركة: transform/opacity لعناصر HTML فقط (طبقات compositor)، لا blur ولا canvas، وتتوقف مع prefers-reduced-motion و html.sx-calm. */
+
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box{
+  position:relative; isolation:isolate; overflow:hidden; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+  gap:8px; padding:32px 20px; border:0; border-radius:20px; color:var(--pt-ea-ink);
+  background:var(--pt-bg); box-shadow:var(--pt-edge);
+}
+.pt-stage > .empty-state.pt-box{ min-height:340px; }
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box::before,
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box::after{ display:none; }   /* شبكة النقاط وعلامات القص الأصلية لا تخص الثيم */
+
+/* ---- طبقة الزخارف (خلف المحتوى، لا تلتقط اللمس) ---- */
+.pt-box > .pt-decor{ position:absolute; inset:0; z-index:-1; pointer-events:none; border-radius:inherit; overflow:hidden; }
+.pt-box .pt-decor > *{ position:absolute; display:block; }
+.pt-box .pt-facets{ inset:0; width:100%; height:100%; }
+.pt-box .pt-lava{ left:0; right:0; bottom:0; width:100%; height:32%; min-height:96px; }
+.pt-box .pt-crack{ width:84px; height:84px; opacity:.8; }
+.pt-box .pt-crack.c-ts{ top:0; right:0; }
+html[dir="ltr"] .pt-box .pt-crack.c-ts{ right:auto; left:0; transform:scaleX(-1); }
+.pt-box .pv-h{ stroke:#FF4E12; stroke-opacity:.16; }
+.pt-box .pv-m{ stroke:var(--pv, #E2391B); stroke-opacity:.72; }
+.pt-box .pv-c{ stroke:#FFD7A8; stroke-opacity:.92; }
+.pt-box .pt-embers circle{ fill:#FFC489; }
+.pt-box .pt-corner{ width:52px; height:52px; }
+.pt-box .pt-corner.k-ts{ top:6px; right:6px; transform:scaleX(-1); }
+.pt-box .pt-corner.k-te{ top:6px; left:6px; }
+.pt-box .pt-corner.k-bs{ bottom:6px; right:6px; transform:scale(-1, -1); }
+.pt-box .pt-corner.k-be{ bottom:6px; left:6px; transform:scaleY(-1); }
+/* إطار داخلي كلاسيكي + حافة كريستال علوية (انعكاس ثابت) */
+.pt-box .pt-frame{ inset:11px; border:1px solid var(--pt-frame); border-radius:12px; box-shadow:inset 0 0 0 3px rgb(0 0 0 / .35), inset 0 0 0 4px rgb(255 140 60 / .07); }
+.pt-box .pt-rim{ top:0; left:12%; right:12%; height:1px; background:linear-gradient(90deg, transparent, rgb(255 236 214 / .55) 30%, rgb(255 190 130 / .75) 50%, rgb(255 236 214 / .55) 70%, transparent); }
+/* توهّج الحمم (يتنفس) + انعكاس كريستالي يعبر المربع بين فترة وأخرى */
+.pt-box .pt-breath{ left:-10%; right:-10%; bottom:-6%; height:58%; background:radial-gradient(60% 62% at 50% 100%, rgb(255 96 24 / .34), rgb(226 57 27 / .12) 46%, transparent 72%); opacity:.78; }
+.pt-box .pt-sheen{ top:-25%; bottom:-25%; left:0; width:34%; opacity:0; transform:translate3d(-170%, 0, 0) skewX(-16deg);
+  background:linear-gradient(90deg, transparent, rgb(255 236 214 / .055) 38%, rgb(255 206 160 / .13) 50%, rgb(255 236 214 / .055) 62%, transparent); }
+
+/* ---- المحتوى الأصلي بهوية الثيم ---- */
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box .es-mark.es-art{ width:min(176px, 62%); height:auto; margin:0 0 4px; border-radius:0; background:none; box-shadow:none;
+  --ea-paper:var(--pt-ea-paper); --ea-line:var(--pt-ea-line); --ea-shade:var(--pt-ea-shade); --ea-acc:var(--pt-ea-acc); color:var(--pt-ea-ink); filter:var(--pt-art-glow); }
+.pt-box .es-art svg{ display:block; width:100%; height:auto; overflow:visible; }
+/* الطريق: مسار محفور بحجر بركاني (أخدود داكن بحافة جمر) والحمم تجري فيه */
+.pt-box .ea .soft.dash{ stroke:var(--pt-road); stroke-width:6; stroke-dasharray:none; stroke-opacity:1; }
+.pt-box .ea .acc.route{ stroke:var(--pt-ea-acc); stroke-width:2.2; }
+.pt-box .ea .pap{ stroke-width:1.6; }
+.pt-box .ea .sh{ fill:var(--pt-ea-shade); }
+/* العلامات على الطريق وعلامة الهدف: بلورات كهرمان بحافة فاتحة؛ العلم كريستالي مضاء */
+.pt-box .ea .accf.pop{ fill:var(--pt-gem); stroke:var(--pt-gem-edge); stroke-width:.9; }
+.pt-box .ea .accf.flag{ fill:var(--pt-gem); stroke:var(--pt-gem-edge); stroke-width:1; stroke-linejoin:round; }
+.pt-box .ea .ink{ stroke:var(--pt-ea-ink); }
+.pt-box .ea .accw{ fill:rgb(255 138 46 / .14); stroke:var(--pt-ea-acc); }
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box .es-title{ position:relative; font-size:18px; font-weight:700; line-height:1.4; letter-spacing:0; color:var(--pt-title); text-shadow:var(--pt-title-glow); }
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box .es-copy{ position:relative; max-width:272px; font-size:14px; line-height:1.8; color:var(--pt-copy); text-shadow:0 1px 0 rgb(0 0 0 / .6); }
+/* الزر: أوبسيديان بحافة حمم منصهرة. .btn.btn.btn = (1,5,0) يغلب زر المتجر الداكن html[data-theme=dark] :is(...) .btn.btn-primary (1,4,2) فتطابق المعاينة المربع الحقيقي */
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box .btn.btn.btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:50px; margin-top:16px; padding:10px 24px 10px 32px;
+  border:1.5px solid transparent; border-radius:12px; font-size:16px; font-weight:700; line-height:1.2; color:var(--pt-btn-tx); text-shadow:0 1px 0 rgb(0 0 0 / .8);
+  background:var(--pt-btn-bg); box-shadow:var(--pt-btn-sh); transition:box-shadow .2s ease, transform .12s ease; -webkit-tap-highlight-color:transparent; }
+:is(#planning-empty, .pt-stage) > .empty-state.pt-box .btn.btn.btn::before{ content:''; flex:0 0 auto; width:16px; height:16px; background:currentColor;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.5v11M2.5 8h11' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M8 2.5v11M2.5 8h11' fill='none' stroke='%23000' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center / contain no-repeat; }
+@media (hover:hover) and (pointer:fine){ #planning-empty > .empty-state.pt-box .btn.btn.btn:hover{ box-shadow:var(--pt-btn-sh-hover); } }
+#planning-empty > .empty-state.pt-box .btn.btn.btn:active{ transform:translateY(1px) scale(.985); box-shadow:var(--pt-btn-sh-press); }
+#planning-empty > .empty-state.pt-box .btn.btn.btn:focus-visible{ outline:2px solid var(--pt-focus); outline-offset:3px; }
+
+/* ---- الحركة (راقية، طويلة الدورة، compositor) ---- */
+@keyframes ptBreath{ from{ opacity:.55; } to{ opacity:1; } }
+@keyframes ptSheen{ 0%{ opacity:0; transform:translate3d(-170%, 0, 0) skewX(-16deg); } 4%{ opacity:1; } 20%{ opacity:1; } 26%{ opacity:0; transform:translate3d(420%, 0, 0) skewX(-16deg); } 100%{ opacity:0; transform:translate3d(420%, 0, 0) skewX(-16deg); } }
+@keyframes ptLava{ from{ opacity:.78; } to{ opacity:1; } }
+@keyframes ptGlint{ 0%, 82%, 100%{ opacity:1; } 88%{ opacity:.72; } 92%{ opacity:1; } }
+@keyframes ptRim{ 0%, 100%{ opacity:.65; } 50%{ opacity:1; } }
+@media (prefers-reduced-motion:no-preference){
+  html:not(.sx-calm) .pt-box .pt-breath{ animation:ptBreath var(--pt-breath-dur, 6s) ease-in-out infinite alternate; }
+  html:not(.sx-calm) .pt-box .pt-lava{ animation:ptLava calc(var(--pt-breath-dur, 6s) * .8) ease-in-out .6s infinite alternate; }
+  html:not(.sx-calm) .pt-box .pt-sheen{ animation:ptSheen var(--pt-sheen-dur, 10s) cubic-bezier(.45, .05, .35, 1) 1.4s infinite; }
+  html:not(.sx-calm) .pt-box .pt-rim{ animation:ptRim calc(var(--pt-sheen-dur, 10s) * .5) ease-in-out infinite; }
+  html:not(.sx-calm) .pt-box .ea .accf.flag{ animation:eaFlag 460ms .8s var(--ease) both, ptGlint var(--pt-glint-dur, 7s) ease-in-out 2.4s infinite; }
+}
+/* بلا حركة: الحالة الثابتة كاملة الجمال (التوهّج بمنتصفه، الانعكاس مخفي) */
+@media (prefers-reduced-motion:reduce){ .pt-box .pt-decor > *{ animation:none !important; } .pt-box .pt-breath{ opacity:.8; } .pt-box .pt-sheen{ display:none; } }
+
+/* ============ المتجر: قسم «المظاهر» بتبويبين داخليين ============ */
+#pane-cosmetics .cos-seg{ position:relative; display:grid; grid-template-columns:1fr 1fr; gap:4px; margin:0 0 14px; padding:4px; border-radius:12px; background:var(--sx-surface-lo, rgb(0 0 0 / .08)); box-shadow:inset 0 1px 2px rgb(var(--sx-sh, 0 0 0) / .25), 0 1px 0 rgb(var(--sx-hi, 255 255 255) / .3); }
+#pane-cosmetics .cos-seg-b{ display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:44px; padding:0 8px; border:0; border-radius:9px; background:none; color:var(--sx-text2, var(--text-2)); font:inherit; font-size:13.5px; font-weight:800; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background-color .18s, color .18s, box-shadow .18s; }
+#pane-cosmetics .cos-seg-b.is-on{ color:var(--sx-text, var(--text)); background:linear-gradient(180deg, var(--sx-surface-hi, #fff), var(--sx-surface, #f4efe4)); box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb, 200 160 90) / .7), 0 2px 6px -2px rgb(var(--sx-sh, 0 0 0) / .45); }
+#pane-cosmetics .cos-seg-b:focus-visible{ outline:2px solid var(--sx-gold-hi, #e0b060); outline-offset:2px; }
+#pane-cosmetics .cos-seg-n{ min-width:20px; height:20px; padding:0 6px; display:grid; place-items:center; border-radius:10px; font-size:11px; line-height:1; font-variant-numeric:tabular-nums; color:#2A1C08; background:linear-gradient(180deg, var(--sx-gold-hi, #f3d18a), var(--sx-gold, #d1a032)); }
+#pane-cosmetics .cos-sub[hidden]{ display:none !important; }
+#pane-cosmetics .cos-sub{ display:flex; flex-direction:column; gap:var(--sp-lg, 16px); }
+
+/* ---- بطاقة الثيم (المتجر وبحوزتك): معاينة كاملة العرض + هوية + زر ---- */
+#eco-store-body .pt-grid{ display:grid; grid-template-columns:minmax(0, 1fr); gap:16px; margin:0; padding:0; }
+#eco-store-body .pt-lead{ margin:-4px 2px 2px; font-size:12.5px; line-height:1.7; color:var(--sx-text2, var(--text-2)); }
+#eco-store-body .st-tile.pt-tile{ display:flex; flex-direction:column; gap:10px; padding:10px; border-radius:18px; background:var(--sx-speck), linear-gradient(180deg, var(--sx-surface-hi), var(--sx-surface)); background-size:96px 96px, auto;
+  box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb) / .55), inset 0 1px 0 rgb(var(--sx-hi) / .6), 0 10px 18px -12px rgb(var(--sx-sh) / .8); }
+#eco-store-body .st-tile.pt-tile.is-on{ box-shadow:0 0 0 2px #FF8A2E, 0 0 0 5px rgb(255 138 46 / .18), inset 0 1px 0 rgb(var(--sx-hi) / .6), 0 12px 22px -12px rgb(255 90 20 / .55); }
+#eco-store-body .pt-stage{ position:relative; display:block; border-radius:20px; cursor:zoom-in; -webkit-tap-highlight-color:transparent; outline:none; }
+#eco-store-body .pt-stage:focus-visible{ box-shadow:0 0 0 2px var(--sx-surface-hi), 0 0 0 4px #FF8A2E; }
+#eco-store-body .pt-stage:active > .pt-box{ transform:scale(.985); transition:transform .12s ease; }
+.pt-stage > .pt-box *{ pointer-events:none; }
+#eco-store-body .pt-info{ display:grid; gap:3px; padding:0 4px; text-align:start; }
+#eco-store-body .pt-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; }
+.pt-rar{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; letter-spacing:.02em; color:#B8481B; }
+.pt-rar::before{ content:''; width:8px; height:8px; transform:rotate(45deg); border-radius:1.5px; background:linear-gradient(135deg, #FFE2BF, #FF8A2E 55%, #8A1A08); box-shadow:0 0 6px rgb(255 120 40 / .6); }
+html[data-theme="dark"] .pt-rar{ color:#FFB565; }
+#eco-store-body .pt-tile .shop-name.pt-name{ display:block; font-size:19px; font-weight:800; line-height:1.25; letter-spacing:.01em; color:var(--sx-text); -webkit-line-clamp:unset; }
+#eco-store-body .pt-ar{ font-size:13px; font-weight:700; color:var(--sx-text2); }
+#eco-store-body .pt-desc{ margin:2px 0 0; font-size:12.5px; line-height:1.75; color:var(--sx-text2); }
+#eco-store-body .pt-paid{ margin-top:2px; font-size:11.5px; font-weight:700; color:var(--sx-text3, var(--sx-text2)); }
+#eco-store-body .pt-tile .pt-state{ font-size:11px; padding:2px 8px; border-radius:999px; border:1px solid var(--sx-line-hi); color:var(--sx-text2); background:var(--sx-surface-hi); }
+#eco-store-body .pt-tile .pt-state.is-on{ color:#7A2A0A; border-color:rgb(255 138 46 / .6); background:rgb(255 138 46 / .14); }
+html[data-theme="dark"] #eco-store-body .pt-tile .pt-state.is-on{ color:#FFC48A; }
+#eco-store-body .pt-tile .store-meta{ margin:0; display:block; }
+#eco-store-body .pt-tile .store-meta .btn{ width:100%; min-height:46px; height:auto; padding:0 14px; font-size:15px; white-space:normal; }
+#eco-store-body .pt-tile .store-meta .btn .eco-coin{ font-size:inherit; }
+/* داخل «بحوزتك»: نفس البطاقة بعرض المسرح كاملاً */
+#eco-store-body #eco-own-sheet .pt-grid{ grid-template-columns:minmax(0, 1fr); }
+#eco-store-body #eco-own-sheet .st-tile.pt-tile .shop-acts, #eco-store-body #eco-own-sheet .st-tile.pt-tile .store-meta{ margin-top:0; }
+
+/* ---- نافذة المعاينة الكبيرة ---- */
+.pt-ov{ position:fixed; inset:0; z-index:660; display:grid; place-items:center; padding:max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px)); }
+.pt-ov-bg{ position:absolute; inset:0; background:rgb(8 5 4 / .78); opacity:0; transition:opacity .22s ease; }
+.pt-ov-card{ position:relative; width:min(100%, 400px); max-height:100%; overflow:auto; display:grid; gap:10px; padding:14px; border-radius:22px; background:linear-gradient(180deg, #1b1310, #0d0907); box-shadow:0 0 0 1px rgb(217 190 150 / .3), 0 30px 60px -20px rgb(0 0 0 / .9); color:#F4D7B6; opacity:0; transform:translate3d(0, 14px, 0) scale(.98); transition:opacity .24s ease, transform .3s cubic-bezier(.2, .9, .3, 1); }
+.pt-ov.is-in .pt-ov-bg{ opacity:1; } .pt-ov.is-in .pt-ov-card{ opacity:1; transform:none; }
+.pt-ov-head{ display:flex; align-items:center; justify-content:space-between; }
+.pt-ov .pt-rar{ color:#FFB565; }
+.pt-ov-x{ display:grid; place-items:center; width:44px; height:44px; margin:-6px -6px -6px 0; border:0; border-radius:12px; background:rgb(255 236 214 / .06); color:#F4D7B6; cursor:pointer; }
+.pt-ov-x:focus-visible{ outline:2px solid #FFB565; outline-offset:2px; }
+.pt-ov-x svg{ width:20px; height:20px; }
+.pt-ov-name{ display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; } .pt-ov-name b{ font-size:22px; letter-spacing:.01em; } .pt-ov-name span{ font-size:13px; color:#CDB8A3; }
+.pt-ov .pt-stage.is-big > .pt-box{ min-height:440px; }
+.pt-ov-note{ margin:0; font-size:12px; color:#A8917C; text-align:center; }
+@media (prefers-reduced-motion:reduce){ .pt-ov-bg, .pt-ov-card{ transition:none; } }
