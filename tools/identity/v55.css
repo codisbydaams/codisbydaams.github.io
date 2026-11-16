@@ -1,0 +1,119 @@
+/* ============ CODIS-V55 · المصدر الوحيد لسلوك كروت المتجر + «بحوزتك» بأقسام ============
+   لماذا هذه الطبقة بخصوصية #eco-store-body #pane-cards:
+   قاعدة v50 «:is(#eco-store-body, …, html[data-view=store] #codis-confirm-modal) .btn {font:inherit; padding:0 14px}»
+   خصوصيتها (1,2,1) لأن :is تأخذ أعلى وسيط ⇒ كانت تغلب أحجام v49 المضغوطة «#pane-cards .st-tile .btn» (1,2,0)
+   فيصير خط زر الكرت 15px داخل زر عرضه 44–61px ⇒ «ينقصك …» مقصوصة من الجهتين. القواعد المتعارضة القديمة
+   (سطرين v49 مقابل ثلاثة v50، فجوتان، زر العطلة الملتف 38px) أُزيلت من مصدرها بالـpatch، وما يلي هو التعريف النهائي. */
+
+/* ---- الشبكة: أربعة أعمدة ثابتة دائماً، والمسافات تنكمش مع العرض بدل أن ينكسر الصف ---- */
+#eco-store-body #pane-cards{ --tile-name:10px; --tile-sub:8.5px; --tile-gap:clamp(5px, 1.9vw, 9px); --tile-row-gap:14px; }
+#eco-store-body #pane-cards .store-row{ grid-template-columns:repeat(4, minmax(0, 1fr)); gap:var(--tile-row-gap) var(--tile-gap); }
+/* عرض محتوى البلاطة محسوب (لا container queries: كانت تكلّف ~250ms بأسوأ إطار عند إعادة فتح المتجر — تمرير أسلوب/تخطيط لكل بلاطة).
+   الإطار = min(100vw, 430px) (body بإطار 430 على الشاشات الأعرض) · الشريط 66 · حشوة المسرح 12+18 · ثلاث فجوات · حشوة البلاطة 3+3 */
+#eco-store-body #pane-cards{ --tc:calc((min(100vw, 430px) - 96px - 3 * var(--tile-gap)) / 4 - 6px); }
+#eco-store-body #pane-cards .st-tile{ gap:4px; }
+
+/* ---- الاسم: سطران كحد أقصى بارتفاع محجوز ثابت ⇒ كل البلاطات بارتفاع واحد مهما طال الاسم ----
+   مع شارة المدة: سطر واحد للاسم + سطر للشارة (المجموع نفس الارتفاع). الاسم الكامل: title + وجه البطاقة + الظهر + aria-label */
+#eco-store-body #pane-cards .st-cap{ --nm:clamp(10px, calc(var(--tc) * .155), 12px); display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:0; height:calc(var(--nm) * 1.3 * 2 + 1px); padding:0 1px; overflow:hidden; text-align:center; }
+#eco-store-body #pane-cards .st-tile .shop-name{ display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; max-width:100%; overflow:hidden; font-size:var(--nm); line-height:1.3; overflow-wrap:break-word; word-break:normal; }
+#eco-store-body #pane-cards .st-cap.has-dur .shop-name{ -webkit-line-clamp:1; line-clamp:1; flex:none; }
+#eco-store-body #pane-cards .st-cap .dur-badge{ flex:none; margin:1px auto 0; max-width:100%; min-height:0; height:calc(var(--nm) * 1.3); padding:0 5px; gap:2px; font-size:calc(var(--nm) * .86); line-height:1; overflow:hidden; text-overflow:ellipsis; }
+#eco-store-body #pane-cards .st-cap .dur-badge svg{ width:.95em; height:.95em; }
+
+/* ---- زر الشراء (المكافآت والعطلة نفس الصندوق): ارتفاع ثابت، بلا التفاف للسعر، والعملة ملتصقة بالرقم ---- */
+#eco-store-body #pane-cards .st-tile .store-meta{ margin-top:auto; display:block; }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy){ --bf:clamp(9.5px, calc(var(--tc) * .175), 12.5px); position:relative; display:flex; align-items:center; justify-content:center; gap:2px; width:100%; min-width:0; height:34px; min-height:34px; padding:0 4px; border-radius:8px; font-size:var(--bf); font-weight:800; line-height:1; white-space:nowrap; overflow:hidden; text-overflow:clip; text-align:center; }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy) .eco-coin{ display:inline-flex; align-items:center; gap:2px; font-size:inherit; white-space:nowrap; }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy) .eco-coin::before{ width:1.05em; height:1.05em; }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy)[data-len="5"]{ --bf:clamp(9px, calc(var(--tc) * .155), 12px); }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy)[data-len="6"],
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy)[data-len="7"]{ --bf:clamp(8.5px, calc(var(--tc) * .14), 11.5px); }
+/* سطران مكدّسان (ينقصك / الأسبوع القادم / جارٍ الشراء): التسمية صغيرة والرقم واضح، بنفس ارتفاع الزر */
+#eco-store-body #pane-cards .st-tile .sb2{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; min-width:0; max-width:100%; line-height:1.05; }
+#eco-store-body #pane-cards .st-tile .sb-k{ font-size:calc(var(--bf) * .8); font-weight:700; opacity:.85; }
+#eco-store-body #pane-cards .st-tile .sb-v{ font-size:var(--bf); font-weight:800; font-variant-numeric:tabular-nums; }
+#eco-store-body #pane-cards .st-tile :is(.shop-buy, .hcd-buy):disabled{ font-size:var(--bf); }
+/* نقطة «المسمار» الزخرفية (v50) تبقى للبلاطات العريضة فقط؛ بالضيقة كانت تغطي العملة وتأكل 13px من النص */
+#eco-store-body #pane-cards .st-tile .shop-buy{ padding-inline-start:4px; }
+#eco-store-body #pane-cards .st-tile .shop-buy::after{ display:none; }
+@media (min-width: 427px){   /* = بلاطة ≥76px (والإطار 430 على الأعرض) */
+  #eco-store-body #pane-cards .st-tile .shop-buy:not(:disabled){ padding-inline-start:12px; }
+  #eco-store-body #pane-cards .st-tile .shop-buy:not(:disabled)::after{ display:block; }
+}
+#eco-store-body #pane-cards .st-tile .shop-buy.is-busy, #eco-store-body #pane-cards .st-tile .hcd-buy.is-busy{ opacity:.75; }
+
+/* ============ «بحوزتك»: ترويسة + شريط أقسام عمودي (يمين) + مسرح قسم واحد ============ */
+#eco-store-body #eco-own-sheet.own-v55{ display:flex; flex-direction:column; overflow:hidden; padding:0; }
+#eco-store-body #eco-own-sheet.own-v55 > .own-sheet-bar{ position:relative; flex:none; margin:0; padding:calc(10px + env(safe-area-inset-top, 0px)) max(var(--pad-x, 16px), env(safe-area-inset-right, 0px)) 10px max(var(--pad-x, 16px), env(safe-area-inset-left, 0px)); }
+#eco-store-body #eco-own-sheet .own-sheet-title{ display:inline-flex; align-items:center; gap:8px; }
+#eco-store-body #eco-own-sheet .own-title-n{ min-width:22px; height:20px; padding:0 7px; display:grid; place-items:center; border-radius:10px; font-size:11px; font-weight:800; line-height:1; color:#2A1C08; background:linear-gradient(180deg, var(--sx-gold-hi), var(--sx-gold)); box-shadow:0 0 0 1.5px rgb(0 0 0 / .25); font-variant-numeric:tabular-nums; }
+#eco-store-body #eco-own-sheet .own-shell{ --own-rail-w:68px; flex:1 1 0; min-height:0; display:grid; grid-template-columns:var(--own-rail-w) minmax(0, 1fr); grid-template-rows:minmax(0, 1fr); }
+/* الشريط: نفس قماش شريط المتجر وخيطه النحاسي، بعناوين مكتوبة تحت الأيقونات (الأيقونة ليست وسيلة التعريف الوحيدة) */
+#eco-store-body #eco-own-sheet .own-rail{ position:relative; z-index:2; min-height:0; overflow-y:auto; overscroll-behavior:contain; scrollbar-width:none; display:grid; grid-auto-rows:minmax(74px, 96px); align-content:start; gap:6px; padding:10px 0 calc(env(safe-area-inset-bottom, 0px) + 10px); background:var(--sx-weave), linear-gradient(90deg, var(--sx-cloth-2), var(--sx-cloth)); box-shadow:inset 1px 0 0 rgb(var(--sx-gold-rgb) / .8), inset 3px 0 0 rgb(0 0 0 / .28); }
+#eco-store-body #eco-own-sheet .own-rail::-webkit-scrollbar{ display:none; }
+#eco-store-body #eco-own-sheet .own-tab{ position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; width:100%; min-height:44px; padding:6px 2px; border:0; border-radius:0; background:none; color:var(--sx-cloth-tx); font:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:color .18s var(--sx-ease, ease); }
+#eco-store-body #eco-own-sheet .own-tab::after{ content:''; position:absolute; inset:3px 6px; z-index:-1; border-radius:14px; background:rgb(255 240 210 / .06); box-shadow:inset 0 0 0 1px rgb(255 240 210 / .1); transition:background-color .2s, box-shadow .2s; }
+#eco-store-body #eco-own-sheet .own-tab .sx-ico{ width:30px; height:30px; flex:none; transition:transform .22s var(--sx-spring, ease); }
+#eco-store-body #eco-own-sheet .own-tab-l{ font-size:11px; font-weight:800; line-height:1.15; white-space:nowrap; }
+#eco-store-body #eco-own-sheet .own-tab-n{ position:absolute; top:5px; right:7px; min-width:18px; height:18px; padding:0 4px; display:grid; place-items:center; border-radius:9px; font-size:10px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; color:#2A1C08; background:linear-gradient(180deg, var(--sx-gold-hi), var(--sx-gold)); box-shadow:0 0 0 2px var(--sx-cloth-2), 0 1px 2px rgb(0 0 0 / .5); pointer-events:none; }
+#eco-store-body #eco-own-sheet .own-tab.is-empty:not(.is-on){ opacity:.62; }
+#eco-store-body #eco-own-sheet .own-tab.is-on{ color:var(--sx-accent-d); }
+html[data-theme="dark"] #eco-store-body #eco-own-sheet .own-tab.is-on{ color:var(--sx-accent); }
+#eco-store-body #eco-own-sheet .own-tab.is-on::after{ inset:3px 5px 3px 3px; border-radius:14px 8px 8px 14px; background:var(--sx-speck), linear-gradient(180deg, var(--sx-surface-hi), var(--sx-page)); background-size:96px 96px, auto; box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb) / .9), inset 0 0 0 3px var(--sx-surface-hi), inset 0 0 0 4px rgb(var(--sx-gold-rgb) / .35), 0 6px 10px -4px rgb(0 0 0 / .55); }
+html[data-theme="dark"] #eco-store-body #eco-own-sheet .own-tab.is-on::after{ background:var(--sx-speck), linear-gradient(180deg, var(--sx-surface-hi), var(--sx-surface)); background-size:96px 96px, auto; }
+#eco-store-body #eco-own-sheet .own-tab:not(.is-on):active::after{ background:rgb(255 240 210 / .14); }
+#eco-store-body #eco-own-sheet .own-tab:active .sx-ico{ transform:scale(.9); }
+#eco-store-body #eco-own-sheet .own-tab:focus-visible{ outline:2px solid var(--sx-gold-hi); outline-offset:-3px; border-radius:14px; }
+#eco-store-body #eco-own-sheet .own-tab.is-pop .sx-ico{ animation:railPop .5s var(--ease-spring, cubic-bezier(.2,.9,.3,1.3)); }
+@media (hover:hover) and (pointer:fine){ #eco-store-body #eco-own-sheet .own-tab:not(.is-on):hover::after{ background:rgb(255 240 210 / .12); } }
+/* المسرح: المُمرِّر الوحيد داخل الورقة (لكل قسم موضعه المحفوظ) */
+#eco-store-body #eco-own-sheet .own-stage{ min-width:0; min-height:0; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:12px 12px calc(env(safe-area-inset-bottom, 0px) + 24px) max(12px, env(safe-area-inset-left, 0px)); background:var(--sx-speck), linear-gradient(180deg, var(--sx-page), var(--sx-surface)); background-size:96px 96px, auto; }
+#eco-store-body #eco-own-sheet .own-stage::-webkit-scrollbar{ display:none; }
+#eco-store-body #eco-own-sheet .own-panel[hidden]{ display:none !important; }
+#eco-store-body #eco-own-sheet .own-panel.is-on{ display:grid; gap:12px; min-width:0; }
+@media (prefers-reduced-motion:no-preference){ html:not(.sx-calm) #eco-store-body #eco-own-sheet .own-panel.is-part-in{ animation:sxPage .3s var(--sx-ease, ease) both; } }
+#eco-store-body #eco-own-sheet .own-part{ scroll-margin-top:8px; }
+#eco-store-body #eco-own-sheet .own-sub{ flex-wrap:wrap; row-gap:6px; margin-top:0; color:var(--sx-text); border-bottom-color:var(--sx-line); }
+#eco-store-body #eco-own-sheet .own-sub-x{ font-size:11px; font-weight:700; color:var(--sx-text2); }
+#eco-store-body #eco-own-sheet .own-tools{ flex-wrap:wrap; justify-content:flex-end; }
+#eco-store-body #eco-own-sheet .own-tools :is(.btn, .chip-act){ min-height:34px; height:auto; padding:0 10px; font-size:12px; line-height:1.2; border-radius:9px; }
+/* الحالة الفارغة لقسم بلا مقتنيات (الشريط لا يُخفي أي قسم) */
+#eco-store-body #eco-own-sheet .own-empty{ display:grid; justify-items:center; gap:6px; margin-top:12vh; padding:18px 14px; text-align:center; color:var(--sx-text2); font-size:13px; line-height:1.6; border:1px dashed var(--sx-line-hi); border-radius:14px; background:rgb(var(--sx-hi) / .25); }
+#eco-store-body #eco-own-sheet .own-empty b{ font-size:15px; color:var(--sx-text); }
+#eco-store-body #eco-own-sheet .own-empty-ico{ color:var(--sx-text3, var(--sx-text2)); opacity:.75; }
+#eco-store-body #eco-own-sheet .own-empty-ico .sx-ico{ width:40px; height:40px; }
+
+/* ---- شبكات المخزون داخل المسرح: ثلاثة أعمدة ثابتة  ---- */
+#eco-store-body #eco-own-sheet :is(.shop-grid, .st-grid, .pcd-inv, .hcd-inv){ --tile-gap:8px; --tile-row-gap:14px; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:var(--tile-row-gap) var(--tile-gap); }
+/* بلاطة المخزون: (الإطار − شريط 68 − حشوة 24 − فجوتان 16) / 3 */
+#eco-store-body #eco-own-sheet{ --tc:calc((min(100vw, 430px) - 108px) / 3); }
+#eco-store-body #eco-own-sheet .st-tile{ gap:5px; }
+#eco-store-body #eco-own-sheet .st-cap{ --nm:clamp(10.5px, calc(var(--tc) * .135), 12.5px); display:flex; flex-direction:column; align-items:center; gap:1px; min-height:calc(var(--nm) * 1.3 * 2); text-align:center; }
+#eco-store-body #eco-own-sheet .st-tile .shop-name{ display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; max-width:100%; overflow:hidden; font-size:var(--nm); line-height:1.3; overflow-wrap:break-word; word-break:normal; }
+#eco-store-body #eco-own-sheet .st-cap.has-dur .shop-name{ -webkit-line-clamp:1; line-clamp:1; }
+#eco-store-body #eco-own-sheet .st-cap .dur-badge{ margin:1px auto 0; max-width:100%; font-size:calc(var(--nm) * .85); padding:0 6px; overflow:hidden; text-overflow:ellipsis; }
+#eco-store-body #eco-own-sheet .st-tile .st-sub{ font-size:calc(var(--nm) * .86); white-space:normal; }
+#eco-store-body #eco-own-sheet .st-tile .shop-acts{ margin-top:auto; display:grid; gap:5px; }
+/* أزرار المخزون (استخدام/بيع/تفكيك/فتح/تجهيز): حجم ثابت لكل البلاطات، والنص يتبع عرض البلاطة؛ تبقى مختلفة وظيفياً عن زر الشراء */
+#eco-store-body #eco-own-sheet .st-tile .shop-acts .btn,
+#eco-store-body #eco-own-sheet .st-tile .shop-acts .chip-act{ --bf:clamp(10.5px, calc(var(--tc) * .14), 13px); display:flex; align-items:center; justify-content:center; gap:3px; width:100%; min-width:0; height:auto; min-height:36px; padding:4px 5px; border-radius:9px; font-size:var(--bf); font-weight:800; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#eco-store-body #eco-own-sheet .st-tile .shop-acts .btn svg{ flex:none; width:1.1em; height:1.1em; }
+#eco-store-body #eco-own-sheet .st-tile .shop-acts .own-sell{ font-weight:700; }
+#eco-store-body #eco-own-sheet .st-tile .shop-acts .btn > span{ min-width:0; overflow:hidden; text-overflow:ellipsis; }
+#eco-store-body #eco-own-sheet .st-tile .own-pick{ min-height:34px; font-size:clamp(10.5px, calc(var(--tc) * .135), 12px); gap:3px; flex-wrap:wrap; line-height:1.15; padding:2px 4px; }
+/* شارة التحديد داخل حدود البطاقة (لا تغطي الصورة خارجها) */
+#eco-store-body #eco-own-sheet .own-art{ position:relative; }
+#eco-store-body #eco-own-sheet .own-check{ top:5px; inset-inline-end:5px; width:20px; height:20px; }
+/* شريط البيع الجماعي: لاصق بأسفل المسرح فوق مؤشر الرجوع بالآيفون */
+#eco-store-body #eco-own-sheet .own-bar{ bottom:calc(6px + env(safe-area-inset-bottom, 0px)); padding:8px 10px; gap:8px; background:var(--sx-surface-hi); border-color:rgb(var(--sx-gold-rgb) / .6); color:var(--sx-text); }
+#eco-store-body #eco-own-sheet .own-bar .btn{ min-height:44px; padding:0 12px; font-size:13px; }
+#eco-store-body #eco-own-sheet .own-bar-sum{ font-size:11.5px; }
+@media (prefers-reduced-motion:reduce){ #eco-store-body #eco-own-sheet .own-tab, #eco-store-body #eco-own-sheet .own-tab .sx-ico, #eco-store-body #eco-own-sheet .own-tab::after{ transition:none; animation:none !important; } }
+/* الأسماء المختلطة عربي+لاتيني: قصّ بلا نقاط (خطأ WebKit بالاتجاه) + طمس طرف السطر الأخير بنهاية القراءة عند الفيض فقط */
+#eco-store-body :is(#pane-cards, #eco-own-sheet) .st-tile .shop-name.is-bidi{ display:block; -webkit-line-clamp:unset; line-clamp:none; max-height:calc(1.3em * 2); }
+#eco-store-body :is(#pane-cards, #eco-own-sheet) .st-cap.has-dur .shop-name.is-bidi{ max-height:1.3em; }
+#eco-store-body :is(#pane-cards, #eco-own-sheet) .st-tile .shop-name.is-bidi.is-cut{ -webkit-mask-image:linear-gradient(#000, #000), linear-gradient(to right, transparent, #000 2.6em); mask-image:linear-gradient(#000, #000), linear-gradient(to right, transparent, #000 2.6em); -webkit-mask-size:100% calc(100% - 1.3em), 100% 1.3em; mask-size:100% calc(100% - 1.3em), 100% 1.3em; -webkit-mask-position:top, bottom; mask-position:top, bottom; -webkit-mask-repeat:no-repeat; mask-repeat:no-repeat; }
+#eco-store-body :is(#pane-cards, #eco-own-sheet) .st-tile .shop-name.is-bidi.is-ltr.is-cut{ -webkit-mask-image:linear-gradient(#000, #000), linear-gradient(to left, transparent, #000 2.6em); mask-image:linear-gradient(#000, #000), linear-gradient(to left, transparent, #000 2.6em); }
+/* نص قارئ الشاشة داخل التبويب (عدد القسم/فارغ) — مخفي بصرياً */
+#eco-store-body #eco-own-sheet .own-tab .sr{ position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden; clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap; border:0; }
