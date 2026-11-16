@@ -21,7 +21,7 @@
     table.push({ id:t.id, price:t.price, classes:rows.map(r=>r.name + ' ' + (r.pm / 10).toFixed(1) + '%'), ev:+st.ev.toFixed(1), sellRatio:+ratio.toFixed(3), pHi700:+hi.toFixed(4), duds:+dud.toFixed(3) });
   });
   const hiSeq = table.map(r=>r.pHi700); T('chance of a >=700-coin prize never decreases up the ladder', hiSeq.every((x,i)=>i === 0 || x >= hiSeq[i - 1] - 1e-9), hiSeq.join(','));
-  T('every prize is obtainable from at least one box (none excluded everywhere)', (()=>{ const seen = new Set(); tiers.forEach(t=>CodisBoxes.effective(t).forEach(r=>r.items.forEach(x=>seen.add(x.id)))); return CodisBoxes.classes(0).reduce((a,c)=>a + c.items.length, 0) === seen.size; })());
+  T('every prize is obtainable from at least one box (none excluded everywhere)', (()=>{ const seen = new Set(); tiers.forEach(t=>CodisBoxes.effective(t).forEach(r=>r.items.forEach(x=>seen.add(x.id)))); return CodisBoxes.classes(0).reduce((a,c)=>a + c.items.length, 0) + tiers.length === seen.size && tiers.every(t=>seen.has('voucher|' + t.id)); })());   /* CODIS-V61: + قسيمة كل مستوى (تظهر بمستواها فقط) */
 
   /* ---- displayed == actual: roll() must pick with exactly the displayed pm, then uniform inside the class ---- */
   const origPick = CodisRewardEngine.pick; let spied = null;

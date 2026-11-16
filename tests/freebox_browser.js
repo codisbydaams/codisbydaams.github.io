@@ -103,7 +103,8 @@
   const r1 = CodisFreeBox.claim();
   T('claim ok', r1.ok && r1.owned && r1.owned.source === 'free', JSON.stringify(r1).slice(0, 160));
   T('exactly one item added with reward data', data.inventory.items.length === invB + 1 && r1.owned.rewardId === r1.item.id && r1.owned.name === r1.item.name && r1.owned.coinValue === r1.coin && r1.owned.stickerId === r1.item.stickerId);
-  T('no coins deducted/added (balance + ledger + silver)', data.wallet.balance === balB && data.wallet.transactions.length === txB && JSON.stringify(data.wallet.silver) === silverB);
+  { const s0 = JSON.parse(silverB), s1 = data.wallet.silver, add = s1.transactions.slice(s0.transactions.length);   /* CODIS-V61: الصندوق يمنح فضة 1–20 أيضاً — معاملة FREEBOX_GRANT واحدة فقط */
+    T('no coins deducted/added; silver only +1..20 via one FREEBOX_GRANT', data.wallet.balance === balB && data.wallet.transactions.length === txB && add.length === 1 && add[0].type === 'FREEBOX_GRANT' && add[0].amount >= 1 && add[0].amount <= 20 && s1.balance === s0.balance + add[0].amount); }
   T('claim time stored', data.economyState.freeBox.at === r1.at && data.economyState.freeBox.n === 1);
   s = CodisFreeBox.status(); T('not ready right after claim', !s.ready && s.waitMs > 23.9 * 3600e3, s.waitMs);
   econRenderStore(); T('tile disappears immediately', !document.getElementById('eco-free'));

@@ -34,7 +34,7 @@ const shot = async (p, name, sel) => { if (!SHOTS) return; try { if (sel) { cons
 const grantGems = (p, n) => p.evaluate(n => CodisWallet.transact([], () => { const t = CodisWallet.applyGems('ADMIN_GRANT', n, 'qa', 'admin', 'qa|' + Math.random(), null); return t ? { ok:true } : { ok:false }; }), n);
 const BAL = () => ({ coin:CodisWallet.balance(), silver:CodisWallet.silverBalance(), gems:CodisWallet.gemBalance(), gtx:CodisWallet.gemTxs().length, ctx:data.wallet.transactions.length, stx:CodisWallet.silverTxs().length,
   boxes:JSON.stringify(data.inventory.boxes), passes:CodisPasses.owned().length, pouches:CodisPouches.owned().length, hc:CodisHolidayCards.usable().length, items:CodisInventory.owned().length });
-const KINDS_OK = ['pass', 'holiday', 'pouch'];
+const KINDS_OK = ['pass', 'holiday', 'pouch', 'voucher'];   /* CODIS-V61: + قسيمة المستوى نفسه */
 
 for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,paper:1280').split(',').map(x => x.split(':'))) {
   const T = theme + ' ' + w + ': ', tag = theme + w;
@@ -43,7 +43,7 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
 
   // ---- 1) الجواهر: البنية الأولية (صفر بلا منحة) ----
   const g0 = await p.evaluate(() => ({ g:JSON.stringify(data.wallet.gems), bal:CodisWallet.gemBalance(), name:econGemsCfg().name, types:econGemTxTypes() }));
-  ok(T + 'gems wallet exists, starts at 0 with an empty ledger (no free gems); 3 independent currencies', g0.g === '{"balance":0,"lifetimeEarned":0,"lifetimeSpent":0,"transactions":[]}' && g0.bal === 0 && g0.name === 'الجواهر' && g0.types.join() === 'PURCHASE_BOX,ADMIN_GRANT', g0);
+  ok(T + 'gems wallet exists, starts at 0 with an empty ledger (no free gems); 3 independent currencies', g0.g === '{"balance":0,"lifetimeEarned":0,"lifetimeSpent":0,"transactions":[]}' && g0.bal === 0 && g0.name === 'الجواهر' && g0.types.join() === 'PURCHASE_BOX,ADMIN_GRANT,FREEBOX_GRANT,PROGRESS_REWARD'   /* CODIS-V61: طريقتا الكسب الجديدتان بطلب المالك */, g0);
   await p.evaluate(() => econOpenStore()); await p.waitForTimeout(1300); await p.evaluate(() => econStoreSetPart('boxes', { quiet:true })); await p.waitForTimeout(400);
   let st = await p.evaluate(() => ({ gemLine:!!document.querySelector('#eco-store-body .eco-balance .eco-gem-line .eco-gem'), btns:[...document.querySelectorAll('#eco-boxes .bx-card')].map(c => ({ gem:!!c.querySelector('.bx-buy .eco-gem, .bx-buy .bx-buy-s'), coin:!!c.querySelector('.bx-buys .eco-coin:not(.eco-gem)'), dis:c.querySelector('.bx-buy').disabled, lab:c.querySelector('.bx-buy').getAttribute('aria-label') })),
     docW:document.documentElement.scrollWidth <= innerWidth }));
@@ -62,14 +62,14 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
   const buy = await p.evaluate(() => { const r = CodisBoxes.buy('bx2'); return { ok:r.ok, price:r.price, box:r.box, tx:CodisWallet.gemTxs().slice(-1)[0] }; });
   const b2 = await p.evaluate(BAL);
   ok(T + 'buy 1 box: −67 gems only (coins/silver untouched), gem ledger PURCHASE_BOX with unique ref, box unopened · GEMS · paid 67', buy.ok && buy.price === 67 && b2.gems === b1.gems - 67 && b2.coin === b1.coin && b2.silver === b1.silver && b2.ctx === b1.ctx && b2.stx === b1.stx && buy.tx.type === 'PURCHASE_BOX' && buy.tx.currency === 'GEMS' && buy.tx.amount === -67 && /^box\|bx2\|/.test(buy.tx.referenceId) && buy.box.status === 'unopened' && buy.box.currency === 'GEMS' && buy.box.paid === 67, { buy, b1, b2 });
-  const op = await p.evaluate(uid => { const c0 = { pa:CodisPasses.owned().length, po:CodisPouches.owned().length, hc:CodisHolidayCards.usable().length, it:CodisInventory.owned().length }; const r = CodisBoxes.open(uid); const again = CodisBoxes.open(uid);
-    return { ok:r.ok, kind:r.item && r.item.kind, pass:!!r.pass, pouch:!!r.pouch, holiday:!!r.holiday, owned:!!r.owned, cos:!!r.cosmetic, again:again.reason, c0, c1:{ pa:CodisPasses.owned().length, po:CodisPouches.owned().length, hc:CodisHolidayCards.usable().length, it:CodisInventory.owned().length }, box:CodisBoxes.get(uid) }; }, buy.box.uid);
-  const grew = (op.c1.pa - op.c0.pa) + (op.c1.po - op.c0.po) + (op.c1.hc - op.c0.hc);
-  ok(T + 'open owned box: prize is PASS/HOLIDAY/POUCH, granted to its own system (not reward inventory), box marked opened with its link, second open refused', op.ok && KINDS_OK.includes(op.kind) && !op.owned && !op.cos && grew === 1 && op.c1.it === op.c0.it && op.again === 'opened' && op.box.status === 'opened' && !!(op.box.passUid || op.box.pouchUid || op.box.holidayUid), op);
+  const op = await p.evaluate(uid => { const c0 = { vo:data.vouchers.events.filter(e => e.t === 'box').length, pa:CodisPasses.owned().length, po:CodisPouches.owned().length, hc:CodisHolidayCards.usable().length, it:CodisInventory.owned().length }; const r = CodisBoxes.open(uid); const again = CodisBoxes.open(uid);
+    return { ok:r.ok, kind:r.item && r.item.kind, pass:!!r.pass, pouch:!!r.pouch, holiday:!!r.holiday, owned:!!r.owned, cos:!!r.cosmetic, again:again.reason, c0, c1:{ pa:CodisPasses.owned().length, po:CodisPouches.owned().length, hc:CodisHolidayCards.usable().length, it:CodisInventory.owned().length, vo:data.vouchers.events.filter(e => e.t === 'box').length }, box:CodisBoxes.get(uid) }; }, buy.box.uid);
+  const grew = (op.c1.pa - op.c0.pa) + (op.c1.po - op.c0.po) + (op.c1.hc - op.c0.hc) + (op.c1.vo - (op.c0.vo || 0));
+  ok(T + 'open owned box: prize is PASS/HOLIDAY/POUCH, granted to its own system (not reward inventory), box marked opened with its link, second open refused', op.ok && KINDS_OK.includes(op.kind) && !op.owned && !op.cos && grew === 1 && op.c1.it === op.c0.it && op.again === 'opened' && op.box.status === 'opened' && !!(op.box.passUid || op.box.pouchUid || op.box.holidayUid || op.box.voucher), op);
 
   // ---- 3) ×10 ----
   const g10 = await p.evaluate(() => { const b0 = CodisWallet.gemBalance(), c0 = CodisWallet.balance(), n0 = CodisWallet.gemTxs().length; const r = CodisBoxes.buyOpenMany('bx3');
-    return { ok:r.ok, n:r.n, total:r.total, d:b0 - CodisWallet.gemBalance(), coin:c0 === CodisWallet.balance(), txs:CodisWallet.gemTxs().length - n0, kinds:r.items.map(x => x.item.kind), boxes:new Set(r.items.map(x => x.box.uid)).size, prizes:new Set(r.items.map(x => (x.pass || x.pouch || x.holiday || {}).uid)).size, before:r.balanceBefore, after:r.balanceAfter }; });
+    return { ok:r.ok, n:r.n, total:r.total, d:b0 - CodisWallet.gemBalance(), coin:c0 === CodisWallet.balance(), txs:CodisWallet.gemTxs().length - n0, kinds:r.items.map(x => x.item.kind), boxes:new Set(r.items.map(x => x.box.uid)).size, prizes:new Set(r.items.map(x => x.voucher ? x.voucher.ev.id : (x.pass || x.pouch || x.holiday || {}).uid)).size, before:r.balanceBefore, after:r.balanceAfter }; });
   ok(T + 'buy+open ×10: −1,050 gems in one atomic op, 10 gem tx, 10 distinct boxes and 10 distinct allowed prizes, coins untouched', g10.ok && g10.n === 10 && g10.total === 1050 && g10.d === 1050 && g10.coin && g10.txs === 10 && g10.kinds.every(k => KINDS_OK.includes(k)) && g10.boxes === 10 && g10.prizes === 10 && g10.before - g10.after === 1050, g10);
 
   // ---- 4) حماية: فشل الحفظ ⇒ تراجع كامل (الجواهر + الصناديق + العناصر)، لا سالب، لا تكرار ----
@@ -86,10 +86,10 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
   const rolls = await p.evaluate(() => { let sd = 12345; const R0 = Math.random; Math.random = () => { sd = (sd * 1103515245 + 12345) % 2147483648; return sd / 2147483648; };
     const out = { kinds:{}, bad:[], tiers:{} };
     try { CodisBoxes.tiers().forEach(t => { const rows = CodisBoxes.effective(t); out.tiers[t.id] = { n:rows.length, sum:rows.reduce((a, r) => a + r.pm, 0), neg:rows.some(r => !(r.pm >= 0)), poolKinds:[...new Set(rows.flatMap(r => r.items.map(x => x.kind)))].join() };
-      for (let i = 0; i < 3000; i++) { const r = CodisBoxes.roll(t); const k = r && r.item && r.item.kind; if (!k || ['pass', 'holiday', 'pouch'].indexOf(k) === -1 || r.cosmeticId || (!r.pass && !r.pouchType && !r.holidayKind)) out.bad.push(t.id + ':' + (k || 'null')); else out.kinds[k] = (out.kinds[k] || 0) + 1; } });
+      for (let i = 0; i < 3000; i++) { const r = CodisBoxes.roll(t); const k = r && r.item && r.item.kind; if (!k || ['pass', 'holiday', 'pouch', 'voucher'].indexOf(k) === -1 || r.cosmeticId || (!r.pass && !r.pouchType && !r.holidayKind && r.voucherTier !== t.id)) out.bad.push(t.id + ':' + (k || 'null')); else out.kinds[k] = (out.kinds[k] || 0) + 1; } });
     const saved = data.settings.rewardItems; data.settings.rewardItems = []; out.noRewards = CodisBoxes.tiers().map(t => CodisBoxes.effective(t).length); out.noRewardPool = CodisBoxes.pool().length; data.settings.rewardItems = saved;
     } finally { Math.random = R0; } return out; });
-  ok(T + '15,000 seeded draws over all 5 tiers: only PASS/HOLIDAY/POUCH (all three appear), no reward cards/cosmetics/themes', !rolls.bad.length && Object.keys(rolls.kinds).sort().join() === 'holiday,pass,pouch' && Object.values(rolls.kinds).reduce((a, b) => a + b, 0) === 15000, rolls);
+  ok(T + '15,000 seeded draws over all 5 tiers: only PASS/HOLIDAY/POUCH (all three appear), no reward cards/cosmetics/themes', !rolls.bad.length && Object.keys(rolls.kinds).sort().join() === 'holiday,pass,pouch,voucher' && Object.values(rolls.kinds).reduce((a, b) => a + b, 0) === 15000, rolls);
   ok(T + 'every tier available, probabilities sum to exactly 1000‰, none negative, pools hold only allowed kinds', Object.values(rolls.tiers).every(t => t.n > 0 && t.sum === 1000 && !t.neg && t.poolKinds.split(',').every(k => KINDS_OK.includes(k))), rolls.tiers);
   ok(T + 'with zero normal reward cards the boxes still work (availability depends on allowed prizes only)', rolls.noRewardPool === 0 && rolls.noRewards.every(n => n > 0), rolls.noRewards);
   await p.evaluate(() => { econPackOpen('bx5'); }); await p.waitForTimeout(600);
@@ -101,12 +101,12 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
   await p.evaluate(() => { location.hash = ''; }); await p.evaluate(() => { econRenderAll(); econStoreSetPart('boxes', { quiet:true }); }); await p.waitForTimeout(500);
   const chips = await p.evaluate(() => [...document.querySelectorAll('#eco-boxes .bx-own-chip')].length);
   ok(T + 'owned unopened boxes reachable from the store boxes section («بكجاتك المغلقة»)', chips >= 1, chips);
-  const ui = await p.evaluate(async () => { const sleep = ms => new Promise(r => setTimeout(r, ms)); const n0 = CodisBoxes.owned().length, pa0 = CodisPasses.owned().length + CodisPouches.owned().length + CodisHolidayCards.usable().length;
+  const ui = await p.evaluate(async () => { const sleep = ms => new Promise(r => setTimeout(r, ms)); const n0 = CodisBoxes.owned().length, pa0 = CodisPasses.owned().length + CodisPouches.owned().length + CodisHolidayCards.usable().length + data.vouchers.events.filter(e => e.t === 'box').length;
     const chip = document.querySelector('#eco-boxes .bx-own-chip'); chip.click(); await sleep(600);
     const btn = [...document.querySelectorAll('#econ-box-modal button, .bx-modal button')].find(b => /افتح|فتح/.test(b.textContent) && b.offsetParent !== null); if (btn) btn.click(); await sleep(5500);
     const res = document.querySelector('#econ-box-modal, .bx-modal'); const txt = res ? res.textContent.replace(/\s+/g, ' ').slice(0, 200) : '';
     try { econBoxClose(); } catch (e) {} await sleep(500);
-    return { opened:n0 - CodisBoxes.owned().length, grew:CodisPasses.owned().length + CodisPouches.owned().length + CodisHolidayCards.usable().length - pa0, txt, closed:!document.querySelector('#econ-box-modal.is-open, .bx-modal.is-open') }; });
+    return { opened:n0 - CodisBoxes.owned().length, grew:CodisPasses.owned().length + CodisPouches.owned().length + CodisHolidayCards.usable().length + data.vouchers.events.filter(e => e.t === 'box').length - pa0, txt, closed:!document.querySelector('#econ-box-modal.is-open, .bx-modal.is-open') }; });
   ok(T + 'open an owned box through the real 2D scene: one box consumed, one allowed item granted, result shown, window closes', ui.opened === 1 && ui.grew === 1, ui);
   const bulkUi = await p.evaluate(async () => { const sleep = ms => new Promise(r => setTimeout(r, ms)); const g0 = CodisWallet.gemBalance(); await econBuyBox10('bx1'); await sleep(1500); const shown = !!document.querySelector('.bk-modal, #econ-bulk-modal'); try { econBulkClose(); } catch (e) {} await sleep(500); return { d:g0 - CodisWallet.gemBalance(), shown }; });
   ok(T + '×10 through the UI: −350 gems, results window shown and closes', bulkUi.d === 350 && bulkUi.shown, bulkUi);
@@ -117,11 +117,11 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
   await p.waitForTimeout(1200); await p.evaluate(() => econOpenVault()); await p.waitForTimeout(1300);
   st = await p.evaluate(() => { const T = econOwnTotals(); return { tabs:[...document.querySelectorAll('#eco-own-sheet .own-tab')].map(b => b.dataset.own + ':' + (b.querySelector('.own-tab-n').hidden ? 0 : b.querySelector('.own-tab-n').textContent)), T,
     groups:[...document.querySelectorAll('#own-panel-items .own-kind')].map(s => s.dataset.kind + ':' + s.querySelector('.own-sub-n').textContent), cardsHasPass:!!document.querySelector('#own-panel-cards .pcd, #own-panel-cards .hcd, #own-panel-cards [data-pouch]'),
-    real:{ pouches:CodisPouches.owned().length, passes:CodisPasses.owned().length, hc:CodisHolidayCards.usable().length + Math.min(CodisHolidayCards.expired().length, 8) }, title:(document.querySelector('.own-title-n') || {}).textContent }; });
+    real:{ pouches:CodisPouches.owned().length, passes:CodisPasses.owned().length, hc:CodisHolidayCards.usable().length + Math.min(CodisHolidayCards.expired().length, 8), vouchers:CodisVouchers.total() }, title:(document.querySelector('.own-title-n') || {}).textContent }; });
   const gmap = Object.fromEntries(st.groups.map(x => x.split(':')));
   ok(T + '«بحوزتك» sections are exactly الكروت · العناصر · المظاهر (no الأكياس/البكجات)', st.tabs.map(x => x.split(':')[0]).join() === 'cards,items,cosmetics', st.tabs);
   ok(T + '«العناصر» groups pouches/passes/holiday with real counts; cards section shows no pass/holiday/pouch tiles; totals count each item once', String(st.real.pouches) === (gmap.pouches || '0') && String(st.real.passes) === (gmap.passes || '0') && (st.real.hc ? String(st.real.hc) === gmap.holiday : !gmap.holiday) && !st.cardsHasPass &&
-    st.T.elements === st.real.pouches + st.real.passes + st.real.hc && st.T.cards === st.T.items && st.T.total === st.T.cards + st.T.elements + st.T.cosmetics + st.T.themes, st);
+    st.T.elements === st.real.pouches + st.real.passes + st.real.hc + st.real.vouchers && st.T.cards === st.T.items && st.T.total === st.T.cards + st.T.elements + st.T.cosmetics + st.T.themes, st);
   await p.evaluate(() => econOwnSetPart('items')); await p.waitForTimeout(400); await shot(p, tag + '_own_items', '#own-panel-items');
   const pouch = await p.evaluate(async () => { const sleep = ms => new Promise(r => setTimeout(r, ms)); const t = CodisPouches.owned()[0]; if (!t) return 'none'; const n0 = CodisPouches.owned().length, s0 = CodisWallet.silverBalance(), g0 = CodisWallet.gemBalance();
     const b = document.querySelector('#own-panel-items .pch-use[onclick*="(' + t.type + ')"]'); b.click(); await sleep(600);
@@ -184,7 +184,7 @@ for (const [theme, w] of (process.env.RUNS || 'paper:375,dark:320,paper:430,pape
   const s = await p.evaluate(() => ({ c:CodisWallet.balance(), ctx:data.wallet.transactions.map(t => t.id).join(), s:CodisWallet.silverBalance(), stx:CodisWallet.silverTxs().length, g:JSON.stringify(data.wallet.gems), un:CodisBoxes.owned().map(b => b.uid).join(), op:JSON.stringify(data.inventory.boxes.find(b => b.uid === 'box|tx_old3')), pa:CodisPasses.owned().length, po:CodisPouches.owned().length }));
   ok(T + 'coins, coin history, silver, unopened + opened boxes, passes and pouches all preserved; gems initialised to 0', s.c === 812.5 && /tx_old1/.test(s.ctx) && s.s === 1234 && s.stx === 1 && s.g === '{"balance":0,"lifetimeEarned":0,"lifetimeSpent":0,"transactions":[]}' && s.un === 'box|tx_old1,box|tx_old2' && /"status":"opened"/.test(s.op) && /own\|box\|box\|tx_old3/.test(s.op) && s.pa === 1 && s.po === 1, s);
   const op = await p.evaluate(() => { const a = CodisBoxes.open('box|tx_old1'), b = CodisBoxes.open('box|tx_old2'); return { a:a.ok && a.item.kind, b:b.ok && b.item.kind, left:CodisBoxes.owned().length, old3:JSON.stringify(data.inventory.boxes.find(x => x.uid === 'box|tx_old3')), coin:CodisWallet.balance(), gems:CodisWallet.gemBalance() }; });
-  ok(T + 'old unopened boxes open (free, already paid) with the new allowlist; the old opened box record is untouched; no currency moves', ['pass', 'holiday', 'pouch'].includes(op.a) && ['pass', 'holiday', 'pouch'].includes(op.b) && op.left === 0 && op.old3 === s.op && op.coin === 812.5 && op.gems === 0, op);
+  ok(T + 'old unopened boxes open (free, already paid) with the new allowlist; the old opened box record is untouched; no currency moves', KINDS_OK.includes(op.a) && KINDS_OK.includes(op.b) && op.left === 0 && op.old3 === s.op && op.coin === 812.5 && op.gems === 0, op);
   ok(T + 'no errors', !o.errs.length, o.errs.slice(0, 3));
   await o.close();
 }

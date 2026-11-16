@@ -1,0 +1,121 @@
+/* ============ CODIS-V61 (3.48.0) ============
+   (1) معاينة البكج: شبكة واحدة لكل الجوائز + بطاقات تنقلب (codisFlipHtml نفسه: transform فقط). (2) القسائم. (3) الصندوق المجاني. (4) مكافآت التقدم.
+   الألوان من رموز المتجر (--sx-*) داخل المتجر ونوافذه، ومن رموز التطبيق العامة بالإعدادات ⇒ المظهران (ورقي/داكن) تلقائياً. بلا filter/blur جديد. */
+
+/* ---------- (1) معاينة البكج ---------- */
+#econ-pack-modal .pkg{ padding:4px 12px 6px; }
+#econ-pack-modal .pkg-head{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin:2px 2px 8px; }
+#econ-pack-modal .pkg-seg{ margin:0 2px 8px; }
+#econ-pack-modal .pkg-hint{ margin:0 2px 12px; font-size:12px; line-height:1.55; font-weight:700; color:var(--sx-text2, var(--text-2)); }
+#econ-pack-modal .pkg-grid{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px 10px; }
+@media (min-width:520px){ #econ-pack-modal .pkg-grid{ grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+@media (max-width:339px){ #econ-pack-modal .pkg-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+#econ-pack-modal .pkg-cell{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+#econ-pack-modal .pkg-cell .cflip{ display:block; width:100%; aspect-ratio:4 / 5; border-radius:var(--card-r, 12px); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+#econ-pack-modal .pkg-cell .cflip:focus-visible{ outline:2px solid rgb(var(--k)); outline-offset:3px; }
+#econ-pack-modal .pkg-cell .cflip-in{ position:relative; width:100%; height:100%; }
+#econ-pack-modal .pkg-cell .cflip-f{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+#econ-pack-modal .pkg-cell .cflip-f > .pk-tile{ width:100%; max-height:100%; }
+#econ-pack-modal .pkg-cell .pk-tile.is-pouch, #econ-pack-modal .pkg-cell .pk-tile.is-voucher{ height:100%; }
+#econ-pack-modal .pkg-cell .pk-tile.is-pouch .pch-art{ height:100%; aspect-ratio:auto; padding:0; }
+#econ-pack-modal .pkg-cap{ display:flex; flex-direction:column; align-items:center; gap:2px; min-width:0; text-align:center; }
+#econ-pack-modal .pkg-n{ font-size:12px; font-weight:800; line-height:1.35; color:var(--sx-text, var(--text)); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; overflow-wrap:anywhere; }
+#econ-pack-modal .pkg-p{ font-size:12.5px; font-weight:900; font-variant-numeric:tabular-nums; color:rgb(var(--k)); background:rgb(var(--k) / .13); border-radius:999px; padding:1px 8px; }
+html[data-theme="paper"] #econ-pack-modal .pkg-p{ color:color-mix(in srgb, rgb(var(--k)) 62%, #2b2116); }
+#econ-pack-modal .pkg-cell .cbk-rows .pkg-bp{ font-size:1.08em; font-weight:900; }
+
+/* ---------- (2) القسائم ---------- */
+/* لون كل قسيمة = معدن صندوقها: برونزي · فضي · كريستالي · ذهبي · خرافي (النص الأبيض فوقها ≥4.5:1) */
+.vch-art{ position:relative; display:block; width:100%; aspect-ratio:8 / 5; --vt:#9A5A28; color:#fff; container-type:inline-size; }
+.vch-art[data-tone="b"]{ --vt:#66717D; }
+.vch-art[data-tone="a"]{ --vt:#2A6FA3; }
+.vch-art[data-tone="s"]{ --vt:#9A6C12; }
+.vch-art[data-tone="ss"]{ --vt:#7B2F9E; }
+.vch-tk{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.vch-tk .vch-bg{ fill:var(--vt); stroke:rgb(0 0 0 / .22); stroke-width:1.2; }
+.vch-tk .vch-perf{ stroke:rgb(255 255 255 / .75); stroke-width:1.6; stroke-dasharray:3 4; fill:none; }
+.vch-tk .vch-gl{ stroke:rgb(255 255 255 / .35); stroke-width:3; stroke-linecap:round; fill:none; }
+/* رسم ثابت الاتجاه (لا يتبع RTL): الكعب يسار الحافة المثقّبة، والصندوق يمينها */
+.vch-box{ position:absolute; top:10%; bottom:10%; left:33%; right:7%; display:flex; align-items:center; justify-content:center; }
+.vch-box .bxa{ display:block; height:100%; aspect-ratio:120 / 112; }
+.vch-box .bxa-img{ width:100%; height:100%; object-fit:contain; }
+.vch-stub{ position:absolute; top:0; bottom:0; left:0; width:30%; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1; }
+.vch-stub b{ font-size:clamp(14px, 6.6cqw, 22px); font-weight:900; }
+.vch-stub small{ font-size:10px; font-weight:800; opacity:.85; margin-top:2px; }
+.vch-art.is-big{ width:min(76vw, 300px); margin:0 auto; }
+.vch-art.is-big .vch-stub b{ font-size:30px; }
+.pk-tile.is-voucher{ display:flex; align-items:center; justify-content:center; }
+
+#eco-store-body .vch-intro{ display:flex; flex-direction:column; gap:4px; margin:0 2px 12px; font-size:12.5px; line-height:1.55; color:var(--sx-text2, var(--text-2)); }
+#eco-store-body .vch-intro > b{ font-size:14px; color:var(--sx-text, var(--text)); }
+#eco-store-body .vch-left{ align-self:flex-start; margin-top:4px; padding:4px 10px; border-radius:999px; font-weight:800; color:var(--sx-text, var(--text)); background:rgb(var(--sx-gold-rgb, 196 154 60) / .14); border:1px solid rgb(var(--sx-gold-rgb, 196 154 60) / .35); }
+#eco-store-body .vch-left.is-out{ background:rgb(var(--danger-rgb, 200 60 60) / .1); border-color:rgb(var(--danger-rgb, 200 60 60) / .35); }
+#eco-store-body :is(#pane-items, #own-vouchers) .vch-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px 10px; }
+@media (min-width:600px){ #eco-store-body :is(#pane-items, #own-vouchers) .vch-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+#eco-store-body .vch-tile{ display:flex; flex-direction:column; gap:8px; min-width:0; padding:10px; border-radius:14px; background:var(--sx-surface, var(--glass)); border:1px solid var(--sx-line-hi, var(--glass-border)); container-type:inline-size; }
+#eco-store-body .vch-own-tile{ display:flex; flex-direction:column; gap:8px; min-width:0; padding:10px; border-radius:14px; background:var(--sx-surface, var(--glass)); border:1px solid var(--sx-line-hi, var(--glass-border)); container-type:inline-size; }
+#eco-store-body .vch-own-tile.is-zero{ opacity:.55; }
+#eco-store-body .vch-cap{ display:flex; flex-direction:column; gap:3px; min-width:0; }
+#eco-store-body .vch-name{ font-size:13.5px; font-weight:900; color:var(--sx-text, var(--text)); }
+#eco-store-body .vch-for, #eco-store-body .vch-own, #eco-store-body .vch-prog{ font-size:11.5px; font-weight:700; color:var(--sx-text2, var(--text-2)); }
+#eco-store-body .vch-own b, #eco-store-body .vch-prog b{ color:var(--sx-text, var(--text)); font-variant-numeric:tabular-nums; }
+.vch-meter{ display:block; height:6px; border-radius:999px; background:rgb(0 0 0 / .1); overflow:hidden; }
+html[data-theme="dark"] .vch-meter{ background:rgb(255 255 255 / .12); }
+.vch-meter > i{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, rgb(var(--sx-gold-rgb, 196 154 60)), rgb(var(--sx-gold-rgb, 196 154 60) / .7)); transition:width .5s var(--sx-ease, ease); }
+#eco-store-body .vch-buys{ display:grid; grid-template-columns:minmax(0, 1fr); gap:6px; margin-top:auto; }
+#eco-store-body #pane-items .vch-buys .btn{ width:100%; min-width:0; min-height:38px; padding:0 8px; font-size:12px; gap:6px; display:inline-flex; align-items:center; justify-content:center; white-space:nowrap; }
+#eco-store-body #pane-items .vch-buys .btn .eco-coin{ color:inherit; }
+#eco-store-body .vch-buys .vch-q{ font-weight:900; opacity:.85; }
+#eco-store-body .vch-buys .eco-coin{ font-size:12px; }
+#eco-store-body .vch-foot{ margin:12px 2px 0; font-size:11.5px; line-height:1.6; color:var(--sx-text2, var(--text-2)); display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+#econ-box-modal .vch-reveal{ padding:8px 0; }
+@media (prefers-reduced-motion:reduce){ .vch-meter > i{ transition:none; } }
+html.sx-calm .vch-meter > i{ transition:none; }
+
+/* ---------- (3) الصندوق المجاني ---------- */
+.fb-bonus{ display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:6px 0 2px; }
+.fb-bn{ display:inline-flex; align-items:center; gap:6px; padding:6px 12px; border-radius:999px; font-weight:900; font-size:15px; background:rgb(255 255 255 / .1); border:1px solid rgb(255 255 255 / .22); }
+html[data-theme="paper"] .fb-bn{ background:rgb(0 0 0 / .05); border-color:rgb(0 0 0 / .12); }
+.fb-bn em{ font-style:normal; font-size:12px; font-weight:800; opacity:.85; }
+.fb-bal{ margin:4px 0 0; font-size:12px; font-weight:700; display:flex; justify-content:center; align-items:center; gap:6px; flex-wrap:wrap; opacity:.9; }
+
+/* ---------- (4) مكافآت التقدم ---------- */
+#progress-root{ display:flex; flex-direction:column; gap:14px; padding-bottom:24px; }
+#progress-root .pg-sum{ display:grid; grid-template-columns:auto 1fr; align-items:center; gap:4px 12px; padding:14px 16px; border-radius:18px; background:var(--glass); border:1px solid var(--glass-border); color:var(--text); }
+#progress-root .pg-sum-ico{ grid-row:span 2; width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center; color:var(--gold); background:rgb(var(--gold-rgb) / .14); }
+#progress-root .pg-sum-ico svg{ width:26px; height:26px; }
+#progress-root .pg-sum b{ font-size:16px; }
+#progress-root .pg-sum-x{ font-size:12px; line-height:1.5; color:var(--text-2); }
+#progress-root .pg-list{ display:flex; flex-direction:column; gap:12px; }
+#progress-root .pg-card{ position:relative; display:flex; flex-direction:column; gap:12px; padding:16px; border-radius:18px; background:var(--glass); border:1px solid var(--glass-border); color:var(--text); overflow:hidden; }
+#progress-root .pg-card::before{ content:''; position:absolute; inset-block:0; inset-inline-start:0; width:4px; background:rgb(var(--ink-rgb, 120 120 120) / .25); }
+#progress-root .pg-card.is-done::before{ background:var(--gold); }
+#progress-root .pg-card.is-claimed::before{ background:var(--success); }
+#progress-root .pg-card.is-claimed{ border-color:rgb(var(--success-rgb) / .45); background:linear-gradient(180deg, rgb(var(--success-rgb) / .08), rgb(var(--success-rgb) / 0)), var(--glass); }
+#progress-root .pg-top{ display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:start; }
+#progress-root .pg-ico{ width:40px; height:40px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
+#progress-root .is-claimed .pg-ico{ color:var(--success); background:rgb(var(--success-rgb) / .14); }
+#progress-root .is-done .pg-ico{ color:var(--gold); background:rgb(var(--gold-rgb) / .16); }
+#progress-root .pg-ico svg{ width:22px; height:22px; }
+#progress-root .pg-id{ min-width:0; }
+#progress-root .pg-name{ margin:0; font-size:15.5px; font-weight:900; line-height:1.35; }
+#progress-root .pg-desc{ margin:3px 0 0; font-size:12.5px; line-height:1.55; color:var(--text-2); }
+#progress-root .pg-st{ grid-column:2; justify-self:start; display:inline-flex; align-items:center; gap:4px; margin-top:4px; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:800; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
+#progress-root .pg-st svg{ width:14px; height:14px; }
+#progress-root .pg-st.is-done{ color:var(--gold-text, var(--text)); background:rgb(var(--gold-rgb) / .18); }
+#progress-root .pg-st.is-claimed{ color:var(--success-ink, var(--success)); background:rgb(var(--success-rgb) / .16); }
+#progress-root .pg-prog{ display:flex; align-items:center; gap:10px; }
+#progress-root .pg-bar{ flex:1; height:10px; border-radius:999px; background:rgb(var(--ink-rgb, 120 120 120) / .12); overflow:hidden; }
+#progress-root .pg-bar > i{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, rgb(var(--gold-rgb)), rgb(var(--gold-rgb) / .75)); transform-origin:right; }
+#progress-root .is-claimed .pg-bar > i{ background:linear-gradient(90deg, rgb(var(--success-rgb)), rgb(var(--success-rgb) / .75)); }
+#progress-root .pg-num{ min-width:62px; text-align:end; font-size:14px; font-weight:900; font-variant-numeric:tabular-nums; }
+#progress-root .pg-rw{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding-top:10px; border-top:1px dashed rgb(var(--ink-rgb, 120 120 120) / .2); }
+#progress-root .pg-rw-l{ font-size:12px; font-weight:800; color:var(--text-2); }
+#progress-root .pg-rw .eco-coin{ font-size:15px; font-weight:900; }
+#progress-root .pg-rw .eco-gem-ico{ width:18px; height:18px; }
+
+/* ---------- (5) أداء: حركات الخانات البعيدة ---------- */
+/* سبب التقطيع المقاس بعد إعادة فتح المتجر: حركات لا نهائية (لمعة sxFoil على خلفية الخانة الخرافية، stSheen داخل البطاقات) تبقى تعمل على خانات بعيدة عن الشاشة
+   تحمل content-visibility:auto ⇒ المتصفح يعيد إدخالها بالتخطيط كل إطار (~90ms/إطار بالمعالج المبطّأ). خانة «متخطّاة» (غير مرسومة أصلاً) تُوقف حركتها مؤقتاً
+   وتكمل لحظة اقترابها من الشاشة (contentvisibilityautostatechange) ⇒ لا تغيير مرئي. */
+html.codis-cv #eco-store-body [role="list"] > .is-cv-off, html.codis-cv #eco-store-body [role="list"] > .is-cv-off *{ animation-play-state:paused !important; }
