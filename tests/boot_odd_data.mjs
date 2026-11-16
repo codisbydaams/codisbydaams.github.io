@@ -45,4 +45,9 @@ await boot('freebox items: orphan flag / bad fin / wrong card / valid', fbItems(
   { id: 'fb_w', name: 'بطاقة اخرى', rarity: 'C', weight: 10, room: 'tasks', enabled: true, freebox: true, fin: { v: 1, kind: 'time', minutes: 8, card: 'daily_C', coin: 4 } },
   { id: 'fb_v', name: 'سليم', rarity: 'ZZ', weight: 99, room: 'monthly', enabled: true, fin: { v: 1, kind: 'time', minutes: 8, card: 'free_box', coin: 4 }, stickerId: 'falafel' },
   { id: 'fb_s', name: 'نص', rarity: 'C', enabled: 'yes', freebox: 'true', fin: { v: 1, kind: 'time', minutes: 8, card: 'free_box' } }]));
+/* CODIS-V60 (3.47.0): data.wallet.gems مشوّه / قديم بلا جواهر / صناديق بعملة غريبة — الإقلاع لا يسقط والرصيد صفر آمن */
+const gemsSeed = (g) => `(K)=>{ const d = JSON.parse(localStorage.getItem(K) || '{}'); d.wallet = d.wallet || { balance:10, lifetimeEarned:10, lifetimeSpent:0, transactions:[] }; d.wallet.gems = ${JSON.stringify(g)};
+  d.inventory = d.inventory || {}; d.inventory.boxes = [{ uid:'box|g1', tier:'bx1', paid:'x', currency:{}, status:'unopened', acquiredAt:'bad' }, { uid:'box|g2', tier:'bx9', paid:5, currency:'GEMS', status:'unopened' }]; localStorage.setItem(K, JSON.stringify(d)); }`;
+for (const [n, g] of [['gems: string', 'x'], ['gems: array', [1, 2]], ['gems: negative/garbage', { balance:-50, lifetimeEarned:'a', transactions:'bad' }], ['gems: bad tx types', { balance:30, transactions:[{ id:'g1', type:'EVIL', amount:99, createdAt:'2026-01-01' }, { id:5 }, null, { id:'g2', type:'PURCHASE_BOX', amount:-35, createdAt:'2026-01-01', referenceId:'box|bx1|1' }] }], ['gems: missing (pre-3.47 data)', undefined]])
+  await boot(n, gemsSeed(g));
 await b.close(); console.log(bad ? bad + ' FAILED' : 'ALL BOOTS OK'); process.exit(bad ? 1 : 0);

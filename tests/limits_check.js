@@ -31,8 +31,8 @@ lines.forEach((ln, i)=>{
 /* (2) required sites: removing one silently limits the developer */
 const html = lines.join('\n');
 const need = [
-  [/CodisLimits\.afford\(CodisWallet\.balance\(\)/g, 4, 'afford(CodisWallet.balance(), …) purchase checks'], [/CodisLimits\.afford\(bal/g, 4, 'afford(bal, …) UI enable-states'], [/CodisLimits\.bypass\('holiday\.weekly'\)/g, 3, 'holiday weekly lock'],
-  [/CodisLimits\.bypass\('holiday\.expireduse'\)/g, 3, 'expired holiday card use'], [/CodisLimits\.bypass\('wallet\.nonnegative'\)/g, 2, 'wallet floor (coins + silver)'], [/CodisLimits\.bypass\('box\.empty'\)/g, 1, 'empty box gate'],
+  [/CodisLimits\.afford\(CodisWallet\.balance\(\)/g, 3, 'afford(CodisWallet.balance(), …) coin purchase checks (CODIS-V60: boxes moved to gems)'], [/CodisLimits\.afford\(gb, t\.gems\)/g, 2, 'gem box purchase: engine + UI (CODIS-V60)'], [/CodisLimits\.afford\(bal0, total\)/g, 1, 'gem ×10 box purchase (CODIS-V60)'], [/CodisLimits\.num\('box\.gemPrice\.'/g, 1, 'box gem price override (CODIS-V60)'], [/CodisLimits\.afford\(bal/g, 4, 'afford(bal, …) UI enable-states'], [/CodisLimits\.bypass\('holiday\.weekly'\)/g, 3, 'holiday weekly lock'],
+  [/CodisLimits\.bypass\('holiday\.expireduse'\)/g, 3, 'expired holiday card use'], [/CodisLimits\.bypass\('wallet\.nonnegative'\)/g, 3, 'wallet floor (coins + silver + gems)'], [/CodisLimits\.bypass\('box\.empty'\)/g, 1, 'empty box gate'],
   [/CodisLimits\.bypass\('box\.rtpGate'\)/g, 1, 'box RTP gate'], [/CodisLimits\.bypass\('sell\.unsellable'\)/g, 1, 'unsellable'], [/CodisLimits\.num\('box\.price\.'/g, 1, 'box price override'], [/overridePm\(t,/g, 1, 'box probability override'],
   [/CodisLimits\.bypass\('task\.futureDay'\)/g, 1, 'future-day task lock'], [/CodisLimits\.bypass\('habit\.sameDay'\)/g, 2, 'weekly habit same-day rule'], [/CodisLimits\.bypass\('claim\.crossPlan'\)/g, 2, 'cross-plan duplicate claims'],
   [/CodisLimits\.bypass\('claim\.lateCap'\)/g, 1, 'catch-up reward cap'], [/CodisLimits\.bypass\('claim\.burst'\)/g, 1, 'weekly reward needs several days'], [/CodisLimits\.bypass\('habit\.schedule'\)/g, 1, 'weekly habit only on its scheduled days'],
