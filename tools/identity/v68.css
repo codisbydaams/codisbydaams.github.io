@@ -1,0 +1,86 @@
+/* ===== CODIS-V68 =====
+   (1) النيزك يغطي الغرفة حتى أسفل الشاشة: السبب أن .main بلا ارتفاع أدنى، فالغرفة القصيرة تنتهي فوق الشريط السفلي وطبقة .bm-decor
+       (المربوطة بجذر الغرفة + حشوة .main) تنتهي معها وتظهر خلفية التطبيق تحتها. الحل: جذر الغرفة الملبّسة لا يقصر عن مساحة المحتوى المرئية
+       بالضبط (ارتفاع الشاشة − حشوتا .main نفسيهما) ⇒ لا تمرير إضافي، والطبقة تتمدد مع أي محتوى أطول تلقائياً كما كانت.
+   (2) مشاهد المعاينة · (3) تفاعل المشهد الظاهر فقط · (4) «؟» · (5) نظام مسافات واحد للمتجر و«بحوزتك». */
+
+/* ---------- 1) تغطية الغرفة كاملة ---------- */
+:is(#page-planning, #page-tasks, #page-learn, #page-habits).pt-room[data-pt^="blazingMeteor"]:not(.m-ghost):not(.m-exiting){
+  min-height:calc(100vh - var(--pad-top) - var(--pad-bottom));
+  min-height:calc(100dvh - var(--pad-top) - var(--pad-bottom));
+}
+
+/* ---------- 2) مشاهد المعاينة ---------- */
+.pt-ov{ --pt-scn-acc:#FF8A2E; }
+.pt-ov[data-pt-fam="frostCrystal"]{ --pt-scn-acc:#1C8FC4; }
+.pt-ov[data-pt-fam="agedWood"]{ --pt-scn-acc:#C9954E; }
+.pt-ov[data-pt-fam="blazingMeteor"]{ --pt-scn-acc:#FFB547; }
+.pt-scn-bar{ display:flex; align-items:center; gap:8px; }
+.pt-scn-mid{ flex:1 1 auto; min-width:0; display:grid; justify-items:center; gap:3px; text-align:center; }
+.pt-scn-top{ display:flex; align-items:baseline; justify-content:center; gap:8px; flex-wrap:wrap; max-width:100%; }
+.pt-scn-t{ font-size:14px; font-weight:800; line-height:1.35; overflow-wrap:anywhere; }
+.pt-scn-n{ font-size:11.5px; font-weight:800; font-variant-numeric:tabular-nums; opacity:.7; white-space:nowrap; }
+.pt-scn-d{ margin:0; min-height:2.9em; font-size:11.5px; line-height:1.45; opacity:.78; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.pt-scn-dots{ display:flex; justify-content:center; flex-wrap:wrap; gap:0; margin-top:1px; }
+.pt-scn-dot{ position:relative; width:26px; height:24px; margin:0; padding:0; border:0; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.pt-scn-dot::before{ content:''; position:absolute; left:50%; top:50%; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:2px; transform:rotate(45deg); background:#D9C2A0; opacity:.42; transition:opacity .2s ease, transform .2s ease, background-color .2s ease; }
+.pt-ov[data-pt-fam="frostCrystal"] .pt-scn-dot::before{ background:#0B3352; }
+.pt-scn-dot.is-on::before{ opacity:1; background:var(--pt-scn-acc); transform:rotate(45deg) scale(1.3); box-shadow:0 0 6px var(--pt-scn-acc); }
+@media (hover:hover){ .pt-scn-dot:hover::before{ opacity:.65; } }
+.pt-scn-dot:focus-visible{ outline:2px solid var(--pt-scn-acc); outline-offset:-2px; border-radius:8px; }
+.pt-ov .pt-scn{ position:relative; display:block; touch-action:pan-y; -webkit-user-select:none; user-select:none; }
+.pt-ov .pt-scn > .pt-slide.pt-stage:not(.is-on){ display:none; }
+.pt-ov .pt-scn > .pt-slide.pt-stage.is-on{ opacity:1; visibility:visible; animation:ptScnIn .24s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes ptScnIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.pt-ov .pt-scn > .pt-slide.is-on *{ pointer-events:auto; }
+.pt-ov .pt-scn > .pt-slide.is-on :is(.bm-decor, .pt-decor, .aw-fx), .pt-ov .pt-scn > .pt-slide.is-on :is(.bm-decor, .pt-decor, .aw-fx) *{ pointer-events:none; }
+.pt-ov .pt-scn > .pt-slide.is-on :is(button, .btn, .stat-btn, .pm-btn, .hb-chip, .day-tab, .disc-mode, textarea, input){ cursor:pointer; }
+.pt-scn-try{ margin:-2px 0 0; font-size:11.5px; line-height:1.6; text-align:center; opacity:.75; }
+/* زر المربع (السطح) بالمعاينة: نفس انضغاط الخشب بالغرفة */
+.pt-stage > .empty-state.pt-box[data-pt^="agedWood"] .btn.btn.btn:is(:active, .aw-press){ transform:translateY(2px); box-shadow:var(--pt-btn-sh-press); }
+@media (prefers-reduced-motion:reduce){ .pt-ov .pt-scn > .pt-slide.pt-stage.is-on{ animation:none; } }
+html.sx-calm .pt-ov .pt-scn > .pt-slide.pt-stage.is-on{ animation:none; }
+
+/* ---------- 4) «؟» ووصفه ---------- */
+#eco-store-body .pt-info{ position:relative; flex:0 0 auto; display:inline-grid; place-items:center; width:22px; height:22px; margin:0; padding:0; border:0; border-radius:50%;
+  font:inherit; font-size:12.5px; font-weight:900; line-height:1; color:var(--sx-text2); background:var(--sx-surface-hi); box-shadow:0 0 0 1px var(--sx-line-hi), inset 0 1px 0 rgb(var(--sx-hi) / .6);
+  cursor:pointer; -webkit-tap-highlight-color:transparent; transition:transform .15s ease, color .15s ease, box-shadow .15s ease; }
+#eco-store-body .pt-info::before{ content:''; position:absolute; inset:-11px; }   /* مساحة لمس 44px بلا تكبير الرمز */
+#eco-store-body .pt-info > span{ transform:translateY(.5px); }
+@media (hover:hover){ #eco-store-body .pt-info:hover{ color:var(--sx-text); transform:scale(1.08); box-shadow:0 0 0 1px rgb(var(--sx-gold-rgb, 201 149 78) / .9), inset 0 1px 0 rgb(var(--sx-hi) / .6); } }
+#eco-store-body .pt-info:active{ transform:scale(.94); }
+#eco-store-body .pt-info.is-open{ color:var(--sx-text); box-shadow:0 0 0 1.5px rgb(var(--sx-gold-rgb, 201 149 78) / 1); }
+#eco-store-body .pt-info:focus-visible{ outline:2px solid rgb(var(--sx-gold-rgb, 201 149 78) / 1); outline-offset:2px; }
+#eco-store-body .pt-fam-ar .pt-info{ width:20px; height:20px; font-size:11.5px; }
+#eco-store-body .pt-info.is-tile{ position:absolute; z-index:4; top:7px; inset-inline-start:7px; width:20px; height:20px; font-size:11px;
+  background:rgb(var(--sx-paper-rgb, 250 244 232) / .92); }
+html[data-theme="dark"] #eco-store-body .pt-info.is-tile{ background:rgb(28 22 16 / .86); }
+.pt-pop{ position:fixed; z-index:690; max-width:calc(100vw - 24px); padding:12px 14px 13px; border-radius:14px; color:var(--sx-text, var(--text)); text-align:start;
+  background:var(--sx-surface-hi, var(--mat-sheet-fill)); box-shadow:0 0 0 1px var(--sx-line-hi, var(--glass-border)), 0 18px 40px -16px rgb(0 0 0 / .45), inset 0 1px 0 rgb(255 255 255 / .35);
+  opacity:0; transform:translateY(-4px) scale(.98); transform-origin:var(--pop-ax, 50%) 0; transition:opacity .16s ease, transform .18s cubic-bezier(.2,.8,.3,1); }
+.pt-pop.is-up{ transform-origin:var(--pop-ax, 50%) 100%; transform:translateY(4px) scale(.98); }
+.pt-pop.is-in{ opacity:1; transform:none; }
+.pt-pop:focus{ outline:none; }
+.pt-pop-h{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:6px; }
+.pt-pop-tt{ display:grid; gap:1px; min-width:0; }
+.pt-pop-tt b{ font-size:14.5px; font-weight:800; line-height:1.4; overflow-wrap:anywhere; }
+.pt-pop-tt span{ font-size:10.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--sx-text2, var(--text-2)); }
+.pt-pop-x{ flex:0 0 auto; display:grid; place-items:center; width:32px; height:32px; margin:-6px -6px 0 0; border:0; border-radius:10px; background:none; color:var(--sx-text2, var(--text-2)); cursor:pointer; }
+.pt-pop-x svg{ width:16px; height:16px; }
+.pt-pop-x:focus-visible{ outline:2px solid rgb(var(--sx-gold-rgb, 201 149 78) / 1); outline-offset:1px; }
+.pt-pop-b{ margin:0; max-height:min(46vh, 300px); overflow:auto; font-size:13px; line-height:1.8; color:var(--sx-text2, var(--text-2)); overflow-wrap:anywhere; }
+@media (prefers-reduced-motion:reduce){ .pt-pop{ transition:none; } }
+
+/* ---------- 5) نظام المسافات الموحد (المتجر + «بحوزتك» + كل العائلات) ---------- */
+#eco-store-body{ --pt-gap-x:clamp(8px, 2.4vw, 12px); --pt-gap-y:clamp(10px, 2.8vw, 14px); --pt-fam-gap:30px; --pt-head-gap:10px; --pt-tile-gap:4px; }
+#eco-store-body .pt-fams{ display:flex; flex-direction:column; gap:0; }
+#eco-store-body .pt-fam, #eco-store-body .pt-fams.is-own .pt-fam{ gap:var(--pt-head-gap); }
+#eco-store-body .pt-fam + .pt-fam, #eco-store-body .pt-fams.is-own .pt-fam + .pt-fam{ margin-top:calc(var(--pt-fam-gap) / 2); padding-top:calc(var(--pt-fam-gap) / 2 + 2px); }
+#eco-store-body .pt-fam-head{ gap:0; }
+#eco-store-body .pt-fam-desc{ display:none; }   /* الوصف من «؟» فقط */
+#eco-store-body .pt-grid, #eco-store-body .pt-fams.is-own .pt-grid{ column-gap:var(--pt-gap-x); row-gap:var(--pt-gap-y); gap:var(--pt-gap-y) var(--pt-gap-x); align-items:stretch; }
+#eco-store-body .st-tile.pt-mtile{ height:100%; }
+#eco-store-body .pt-mbtn{ gap:var(--pt-tile-gap); height:100%; }
+#eco-store-body .pt-mname{ margin-top:2px; }
+#eco-store-body .pt-mbadge{ margin-top:auto; }
+#eco-store-body .own-part + .own-part #own-confirm-themes, #eco-store-body #own-confirm-themes .pt-fams.is-own{ margin-top:0; }

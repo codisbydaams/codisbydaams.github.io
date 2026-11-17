@@ -1,0 +1,252 @@
+/* ===== CODIS-V67 · ثيمات نوافذ الموافقة =====
+   النطاق الوحيد: @CF = نافذة التأكيد الحقيقية أو نسخة المعاينة، وعليها data-cfx (يضعه codisConfirm فقط).
+   الخصوصية (2,1,0)+ تغلب طبقة المتجر على نافذة التأكيد (1,3,1). لا قاعدة هنا تمسّ أي عنصر خارج النافذة.
+   كل ثيم: رموز ثم شخصية خاصة (خامة · حافة · إضاءة · أيقونة · أزرار · استجابة ضغط). الحركة transform/opacity، مرة واحدة عند الظهور، ولا حلقات. */
+
+/* ---------- 1) الرموز ---------- */
+@CF[data-cfx="earthConfirm"], .cf-mini[data-cfx="earthConfirm"]{
+  --cf-r:22px; --cf-btn-r:11px; --cf-ico-r:46% 54% 50% 50% / 55% 48% 52% 45%;
+  --cf-scrim:rgb(38 24 12 / .46);
+  --cf-base:linear-gradient(178deg, #F0E5D1 0%, #E6D5B8 46%, #D7BF9A 100%);
+  --cf-sheet:radial-gradient(90% 46% at 50% 0%, rgb(255 242 218 / .75), rgb(255 242 218 / 0) 70%),
+    radial-gradient(rgb(96 62 34 / .10) .6px, rgb(96 62 34 / 0) 1px) 0 0 / 5px 5px,
+    radial-gradient(rgb(255 252 244 / .35) .7px, rgb(255 252 244 / 0) 1.1px) 2px 3px / 7px 7px,
+    repeating-linear-gradient(112deg, rgb(120 84 50 / 0) 0 26px, rgb(120 84 50 / .045) 26px 27px),
+    var(--cf-base);
+  --cf-edge:#A9835B;
+  --cf-shadow:0 -18px 44px -22px rgb(60 35 15 / .6), inset 0 0 0 1px rgb(255 248 235 / .45), inset 0 -10px 30px -18px rgb(110 72 40 / .35);
+  --cf-handle:#F4E7CF; --cf-title:#3A2414; --cf-text:#563D2B; --cf-muted:#5C432F; --cf-line:rgb(120 84 50 / .28);
+  --cf-panel:rgb(255 248 236 / .5); --cf-panel-key:rgb(255 248 236 / .78); --cf-warn-bg:rgb(158 64 34 / .12); --cf-warn-line:rgb(158 64 34 / .38);
+  --cf-ico-bg:radial-gradient(circle at 34% 28%, #FBF2E2 0%, #E2CCA6 46%, #BF9A6E 100%); --cf-ico-edge:#8E6A45;
+  --cf-ico-sh:inset 0 -4px 7px rgb(90 59 36 / .28), inset 0 2px 2px rgb(255 252 244 / .8), 0 7px 14px -7px rgb(60 35 15 / .6);
+  --cf-ico-fg:#5A3B22; --cf-ico-fg-d:#8A2E16;
+  --cf-ok-bg:linear-gradient(180deg, #7C5434 0%, #5C3C22 100%); --cf-ok-fg:#FBF1E1; --cf-ok-edge:#4A2F1A;
+  --cf-ok-sh:inset 0 1px 0 rgb(255 228 186 / .35), 0 3px 0 #3E2716, 0 9px 16px -8px rgb(60 35 15 / .7);
+  --cf-dg-bg:linear-gradient(180deg, #A84A2C 0%, #7C2E17 100%); --cf-dg-fg:#FFF2E6; --cf-dg-edge:#5E200E;
+  --cf-dg-sh:inset 0 1px 0 rgb(255 205 170 / .35), 0 3px 0 #4C1A0B, 0 9px 16px -8px rgb(90 30 10 / .65);
+  --cf-no-bg:linear-gradient(180deg, rgb(255 251 243 / .82), rgb(240 228 206 / .82)); --cf-no-fg:#4A3020; --cf-no-edge:#B8956D;
+  --cf-no-sh:inset 0 1px 0 rgb(255 255 255 / .7), 0 2px 0 rgb(120 84 50 / .38);
+  --cf-focus:#7C4A22; --cf-hit:rgb(255 236 200 / .55);
+}
+@CF[data-cfx="waterConfirm"], .cf-mini[data-cfx="waterConfirm"]{
+  --cf-r:28px; --cf-btn-r:16px; --cf-ico-r:50%;
+  --cf-scrim:rgb(6 48 70 / .4);
+  --cf-base:linear-gradient(180deg, #F4FCFE 0%, #DEF3F9 40%, #C2E7F1 100%);
+  --cf-sheet:radial-gradient(70% 38% at 18% 0%, rgb(255 255 255 / .95), rgb(255 255 255 / 0) 70%),
+    radial-gradient(60% 44% at 100% 100%, rgb(52 170 208 / .22), rgb(52 170 208 / 0) 70%),
+    radial-gradient(50% 30% at 70% 55%, rgb(255 255 255 / .35), rgb(255 255 255 / 0) 70%),
+    var(--cf-base);
+  --cf-edge:rgb(110 196 222 / .95);
+  --cf-shadow:0 -16px 46px -20px rgb(10 90 130 / .45), inset 0 1px 0 rgb(255 255 255 / .95), inset 0 0 0 1px rgb(255 255 255 / .45), inset 0 -18px 34px -22px rgb(20 140 180 / .35);
+  --cf-handle:rgb(32 130 170 / .45); --cf-title:#08324A; --cf-text:#1C4B62; --cf-muted:#2F5A70; --cf-line:rgb(40 140 180 / .3);
+  --cf-panel:rgb(255 255 255 / .55); --cf-panel-key:rgb(255 255 255 / .8); --cf-warn-bg:rgb(190 50 80 / .1); --cf-warn-line:rgb(190 50 80 / .32);
+  --cf-ico-bg:radial-gradient(circle at 32% 26%, #FFFFFF 0 9%, #D6F2FA 26%, #7ACDE5 70%, #3AA6CC 100%); --cf-ico-edge:rgb(255 255 255 / .95);
+  --cf-ico-sh:inset 0 -5px 9px rgb(10 110 150 / .3), 0 8px 18px -8px rgb(10 100 140 / .55), 0 0 0 5px rgb(120 205 230 / .2);
+  --cf-ico-fg:#064A6A; --cf-ico-fg-d:#7E1A30;
+  --cf-ok-bg:linear-gradient(180deg, #137BA8 0%, #075A82 100%); --cf-ok-fg:#FFFFFF; --cf-ok-edge:#0A6A95;
+  --cf-ok-sh:inset 0 1px 0 rgb(200 240 255 / .55), 0 8px 18px -8px rgb(6 80 120 / .6);
+  --cf-dg-bg:linear-gradient(180deg, #B83A50 0%, #8E2236 100%); --cf-dg-fg:#FFFFFF; --cf-dg-edge:#7A1A2C;
+  --cf-dg-sh:inset 0 1px 0 rgb(255 205 215 / .5), 0 8px 18px -8px rgb(120 20 40 / .55);
+  --cf-no-bg:linear-gradient(180deg, rgb(255 255 255 / .88), rgb(232 247 251 / .88)); --cf-no-fg:#0B4766; --cf-no-edge:rgb(43 140 180 / .45);
+  --cf-no-sh:inset 0 1px 0 #FFFFFF, 0 4px 10px -6px rgb(10 100 140 / .35);
+  --cf-focus:#0A6E9C; --cf-hit:rgb(255 255 255 / .6);
+}
+@CF[data-cfx="fireConfirm"], .cf-mini[data-cfx="fireConfirm"]{
+  --cf-r:16px; --cf-btn-r:10px; --cf-ico-r:14px;
+  --cf-scrim:rgb(12 4 2 / .62);
+  --cf-base:linear-gradient(180deg, #1D120E 0%, #130B08 58%, #180B07 100%);
+  --cf-sheet:radial-gradient(115% 58% at 50% 114%, rgb(255 96 24 / .3), rgb(160 30 10 / .12) 46%, rgb(160 30 10 / 0) 72%),
+    radial-gradient(60% 26% at 50% -4%, rgb(255 150 60 / .16), rgb(255 150 60 / 0) 72%),
+    radial-gradient(rgb(255 190 140 / .05) .6px, rgb(255 190 140 / 0) 1px) 0 0 / 6px 6px,
+    var(--cf-base);
+  --cf-edge:#6A2610;
+  --cf-shadow:0 -14px 42px -14px rgb(255 90 20 / .42), inset 0 1px 0 rgb(255 196 120 / .3), inset 0 0 0 1px rgb(255 120 50 / .1);
+  --cf-handle:rgb(255 150 80 / .55); --cf-title:#FFF1E2; --cf-text:#EBD1BA; --cf-muted:#CFAF96; --cf-line:rgb(255 150 80 / .24);
+  --cf-panel:rgb(255 140 60 / .07); --cf-panel-key:rgb(255 140 60 / .14); --cf-warn-bg:rgb(255 70 30 / .14); --cf-warn-line:rgb(255 110 60 / .45);
+  --cf-ico-bg:radial-gradient(circle at 50% 74%, #6A200C 0%, #2C130C 62%, #1A0D09 100%); --cf-ico-edge:rgb(255 138 74 / .75);
+  --cf-ico-sh:inset 0 0 14px rgb(255 110 40 / .45), 0 0 20px -2px rgb(255 90 20 / .5), 0 0 0 1px rgb(0 0 0 / .55);
+  --cf-ico-fg:#FFC56A; --cf-ico-fg-d:#FF9466;
+  --cf-ok-bg:linear-gradient(180deg, #FFC062 0%, #F08A2C 55%, #D2621C 100%); --cf-ok-fg:#2A0E04; --cf-ok-edge:#FFD08A;
+  --cf-ok-sh:inset 0 1px 0 rgb(255 240 210 / .7), 0 0 0 1px rgb(0 0 0 / .55), 0 8px 20px -6px rgb(255 120 30 / .55);
+  --cf-dg-bg:linear-gradient(180deg, #BE321B 0%, #9A1C0D 58%, #761309 100%); --cf-dg-fg:#FFF6EC; --cf-dg-edge:#FF8A4A;
+  --cf-dg-sh:inset 0 1px 0 rgb(255 200 150 / .45), 0 0 0 1px rgb(0 0 0 / .6), 0 8px 22px -6px rgb(255 70 20 / .6);
+  --cf-no-bg:linear-gradient(180deg, rgb(255 236 214 / .07), rgb(255 236 214 / .03)); --cf-no-fg:#F1D9C3; --cf-no-edge:rgb(255 190 140 / .3);
+  --cf-no-sh:inset 0 1px 0 rgb(255 220 190 / .08);
+  --cf-focus:#FFB565; --cf-hit:#FFB04A;
+}
+@CF[data-cfx="windConfirm"], .cf-mini[data-cfx="windConfirm"]{
+  --cf-r:32px; --cf-btn-r:999px; --cf-ico-r:50%;
+  --cf-scrim:rgb(70 95 125 / .26);
+  --cf-base:linear-gradient(180deg, #FFFFFF 0%, #F6F9FC 52%, #EDF3F9 100%);
+  --cf-sheet:radial-gradient(80% 46% at 88% -6%, rgb(176 214 242 / .45), rgb(176 214 242 / 0) 70%),
+    radial-gradient(60% 40% at 0% 100%, rgb(206 220 238 / .5), rgb(206 220 238 / 0) 70%),
+    var(--cf-base);
+  --cf-edge:#DCE5EE;
+  --cf-shadow:0 -14px 40px -22px rgb(70 100 140 / .35), inset 0 1px 0 #FFFFFF;
+  --cf-handle:#C9D6E4; --cf-title:#1D2F44; --cf-text:#43576D; --cf-muted:#566A80; --cf-line:#DCE4EE;
+  --cf-panel:rgb(240 245 251 / .9); --cf-panel-key:#FFFFFF; --cf-warn-bg:rgb(176 58 84 / .07); --cf-warn-line:rgb(176 58 84 / .28);
+  --cf-ico-bg:linear-gradient(160deg, #FFFFFF 0%, #E4EEF8 100%); --cf-ico-edge:#CFDDEB;
+  --cf-ico-sh:0 6px 16px -8px rgb(60 100 150 / .35), inset 0 1px 0 #FFFFFF;
+  --cf-ico-fg:#2E6CAA; --cf-ico-fg-d:#A23852;
+  --cf-ok-bg:linear-gradient(180deg, #2C73B2 0%, #1F5690 100%); --cf-ok-fg:#FFFFFF; --cf-ok-edge:#2A6AA8;
+  --cf-ok-sh:inset 0 1px 0 rgb(220 238 255 / .5), 0 8px 18px -10px rgb(36 95 156 / .6);
+  --cf-dg-bg:linear-gradient(180deg, #BE4762 0%, #93304A 100%); --cf-dg-fg:#FFFFFF; --cf-dg-edge:#8A2C44;
+  --cf-dg-sh:inset 0 1px 0 rgb(255 220 228 / .45), 0 8px 18px -10px rgb(140 40 70 / .55);
+  --cf-no-bg:#FFFFFF; --cf-no-fg:#2A3E54; --cf-no-edge:#CBD7E4;
+  --cf-no-sh:0 1px 2px rgb(60 90 130 / .12);
+  --cf-focus:#2E6CAA; --cf-hit:rgb(255 255 255 / .75);
+}
+
+/* ---------- 2) البنية المشتركة (كل ثيم يقرأ رموزه) ---------- */
+#codis-confirm-modal[data-cfx]:is(#cfx-k, [data-cfx]){ background:var(--cf-scrim); }
+@CF[data-cfx] .confirm-modal{
+  --text:var(--cf-title); --text-2:var(--cf-text); --glass-border:var(--cf-line); --glass-strong:var(--cf-panel); --sx-text:var(--cf-title); --sx-text2:var(--cf-text);
+  position:relative; isolation:isolate; overflow-x:hidden; color:var(--cf-text);
+  background:var(--cf-sheet); border:1px solid var(--cf-edge); border-bottom:0; border-radius:var(--cf-r) var(--cf-r) 0 0; box-shadow:var(--cf-shadow);
+}
+@CF[data-cfx] .confirm-modal::before{ position:relative; z-index:1; background:var(--cf-handle); }
+@CF[data-cfx] .confirm-modal::after{ content:''; position:absolute; z-index:-1; top:0; bottom:0; left:-48px; right:-48px; pointer-events:none; background:var(--cf-decor, none); background-repeat:no-repeat; }
+@CF[data-cfx] .confirm-modal h3{ color:var(--cf-title); font-weight:800; }
+@CF[data-cfx] .confirm-modal > p:not(.confirm-detail){ color:var(--cf-text); }
+@CF[data-cfx] .confirm-detail{ background:var(--cf-panel); border-color:var(--cf-line); color:var(--cf-text); }
+@CF[data-cfx] .confirm-detail.is-irreversible{ background:var(--cf-warn-bg); border-color:var(--cf-warn-line); color:var(--cf-title); }
+@CF[data-cfx] .confirm-rows{ background:var(--cf-panel); border-color:var(--cf-line); color:var(--cf-text); }
+@CF[data-cfx] .confirm-rows > div + div{ border-top-color:var(--cf-line); }
+@CF[data-cfx] .confirm-rows dt{ color:var(--cf-muted); }
+@CF[data-cfx] .confirm-rows dd{ color:var(--cf-title); }
+@CF[data-cfx] .confirm-rows .is-key{ background:var(--cf-panel-key); }
+@CF[data-cfx] .confirm-modal-icon{ --tile-bg:transparent; --tile-edge:var(--cf-ico-edge); --tile-fg:var(--cf-ico-fg); position:relative; color:var(--cf-ico-fg);
+  background:var(--cf-ico-bg); border:1px solid var(--cf-ico-edge); border-radius:var(--cf-ico-r); box-shadow:var(--cf-ico-sh); }
+@CF[data-cfx] .confirm-modal-icon.is-danger{ --tile-fg:var(--cf-ico-fg-d); color:var(--cf-ico-fg-d); }
+@CF[data-cfx] .modal-actions > .btn{ position:relative; overflow:hidden; isolation:isolate; min-height:50px; border-radius:var(--cf-btn-r); font-weight:800; text-shadow:none;
+  -webkit-tap-highlight-color:transparent; transition:transform .16s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, filter .22s ease; }
+@CF[data-cfx] .modal-actions > .btn.btn-primary{ color:var(--cf-ok-fg); background:var(--cf-ok-bg); border:1px solid var(--cf-ok-edge); box-shadow:var(--cf-ok-sh); }
+@CF[data-cfx] .modal-actions > .btn.btn-destructive{ color:var(--cf-dg-fg); background:var(--cf-dg-bg); border:1px solid var(--cf-dg-edge); box-shadow:var(--cf-dg-sh); }
+@CF[data-cfx] .modal-actions > .btn.btn-secondary{ color:var(--cf-no-fg); background:var(--cf-no-bg); border:1px solid var(--cf-no-edge); box-shadow:var(--cf-no-sh); }
+@CF[data-cfx] .modal-actions > .btn:active:not(:disabled){ transform:translateY(1px) scale(.985); }
+@CF[data-cfx] .modal-actions > .btn:focus-visible{ outline:2px solid var(--cf-focus); outline-offset:3px; }
+@CF[data-cfx] .modal-actions > .btn::after{ content:''; position:absolute; z-index:-1; inset:0; pointer-events:none; opacity:0; border-radius:inherit; }
+@media (hover:hover){ @CF[data-cfx] .modal-actions > .btn:hover:not(:disabled){ filter:brightness(1.06) saturate(1.04); } }
+/* المصغّرة بالمتجر/بحوزتك ترث نفس النافذة المضغوطة (الصيغة المدمجة لشراء البكج) */
+@CF[data-cfx] .confirm-modal.is-compact .modal-actions .btn-secondary{ min-height:44px; }
+
+/* ---------- 3) الترابي: حجر رملي + شريط طبقات جيولوجية + حصاة + أزرار تنضغط كالحجر ---------- */
+@CF[data-cfx="earthConfirm"] .confirm-modal{ --cf-decor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 30' preserveAspectRatio='none'%3E%3Cpath d='M0 0H400V9C340 13 290 6 230 10S120 14 60 9 10 8 0 10Z' fill='%235A3B24'/%3E%3Cpath d='M0 10C10 8 30 9 60 9S170 14 230 10 340 13 400 9V15C330 19 280 12 210 16S90 19 40 15 8 14 0 16Z' fill='%23855A36'/%3E%3Cpath d='M0 16C8 14 20 14 40 15S150 19 210 16 330 19 400 15V20C320 24 270 18 200 21S80 24 30 20 6 19 0 21Z' fill='%23A97D52' fill-opacity='.85'/%3E%3Cpath d='M0 21C6 19 14 19 30 20S130 24 200 21 320 24 400 20V24C330 27 260 22 190 25S70 27 20 24 4 23 0 25Z' fill='%23C9A274' fill-opacity='.6'/%3E%3C/svg%3E") 0 0 / 100% 26px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 40' preserveAspectRatio='none'%3E%3Cpath d='M0 40V30C70 24 120 33 200 28S330 22 400 29V40Z' fill='%23A97D52' fill-opacity='.16'/%3E%3Cpath d='M0 40V35C90 31 150 38 230 34S350 31 400 35V40Z' fill='%235A3B24' fill-opacity='.14'/%3E%3C/svg%3E") 0 100% / 100% 34px no-repeat; }
+@CF[data-cfx="earthConfirm"] .confirm-modal::before{ width:42px; height:6px; box-shadow:0 1px 0 rgb(60 35 15 / .45), inset 0 1px 0 #FFFFFF; }
+@CF[data-cfx="earthConfirm"] .confirm-modal h3{ letter-spacing:.01em; text-shadow:0 1px 0 rgb(255 250 240 / .7); }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn:active:not(:disabled){ transform:translateY(2px); }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn.btn-primary:active:not(:disabled){ box-shadow:inset 0 2px 4px rgb(30 15 5 / .45), 0 1px 0 #3E2716; }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn.btn-destructive:active:not(:disabled){ box-shadow:inset 0 2px 4px rgb(40 10 0 / .45), 0 1px 0 #4C1A0B; }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn.btn-secondary:active:not(:disabled){ box-shadow:inset 0 2px 3px rgb(120 84 50 / .3), 0 0 0 rgb(0 0 0 / 0); }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn::after{ background:radial-gradient(circle at var(--cf-x, 50%) var(--cf-y, 50%), var(--cf-hit), rgb(255 236 200 / 0) 62%); }
+@CF[data-cfx="earthConfirm"] .modal-actions > .btn.cf-hit::after{ animation:cfEarthDust .62s ease-out both; }
+@CF[data-cfx="earthConfirm"] .confirm-modal-icon{ animation:cfEarthSettle .55s cubic-bezier(.3,1.4,.5,1) both; }
+@keyframes cfEarthSettle{ 0%{ transform:translateY(-10px) scale(.86) rotate(-6deg); opacity:0; } 70%{ transform:translateY(1px) scale(1.01) rotate(1deg); opacity:1; } 100%{ transform:none; opacity:1; } }
+@keyframes cfEarthDust{ 0%{ opacity:0; transform:scale(.6); } 30%{ opacity:1; } 100%{ opacity:0; transform:scale(1.25); } }
+@CF[data-cfx="earthConfirm"] .confirm-modal::after{ animation:cfEarthIn .7s ease-out both; }
+@keyframes cfEarthIn{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:none; } }
+
+/* ---------- 4) المائي: شفافية + تموجات + قطرات + أيقونة قطرة تنداح + موجة عند الضغط ---------- */
+@CF[data-cfx="waterConfirm"] .confirm-modal{ --cf-decor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 90' preserveAspectRatio='none'%3E%3Cpath d='M0 34C40 24 80 44 120 34S200 24 240 34 320 44 360 34 440 24 480 34' fill='none' stroke='%23FFFFFF' stroke-opacity='.85' stroke-width='1.6'/%3E%3Cpath d='M0 48C40 40 80 56 120 48S200 40 240 48 320 56 360 48 440 40 480 48' fill='none' stroke='%2346B6D8' stroke-opacity='.28' stroke-width='1.2'/%3E%3Cpath d='M0 60C50 54 90 66 140 60S230 54 280 60 380 66 480 58' fill='none' stroke='%23FFFFFF' stroke-opacity='.5' stroke-width='1'/%3E%3C/svg%3E") 0 0 / 100% 78px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 40'%3E%3Ccircle cx='12' cy='14' r='5.2' fill='%23BFE9F5' fill-opacity='.8' stroke='%23FFFFFF' stroke-width='.9'/%3E%3Ccircle cx='10.4' cy='12.2' r='1.5' fill='%23FFFFFF'/%3E%3Ccircle cx='30' cy='26' r='3.2' fill='%23BFE9F5' fill-opacity='.7' stroke='%23FFFFFF' stroke-width='.7'/%3E%3Ccircle cx='29' cy='25' r='.9' fill='%23FFFFFF'/%3E%3Ccircle cx='46' cy='10' r='2.2' fill='%23BFE9F5' fill-opacity='.65' stroke='%23FFFFFF' stroke-width='.6'/%3E%3C/svg%3E") calc(100% - 58px) 22px / 60px 40px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 60' preserveAspectRatio='none'%3E%3Cpath d='M0 60V30C60 18 120 40 180 30S300 18 360 30 440 40 480 28V60Z' fill='%2340B0D4' fill-opacity='.12'/%3E%3Cpath d='M0 60V42C70 34 140 50 210 42S350 34 480 42V60Z' fill='%23137BA8' fill-opacity='.08'/%3E%3C/svg%3E") 0 100% / 100% 54px no-repeat; }
+@CF[data-cfx="waterConfirm"] .confirm-modal::after{ animation:cfWaterDrift 2.4s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes cfWaterDrift{ from{ opacity:0; transform:translateX(30px); } 40%{ opacity:1; } to{ opacity:1; transform:none; } }
+@CF[data-cfx="waterConfirm"] .confirm-modal-icon{ animation:cfWaterIn .5s cubic-bezier(.2,.9,.3,1.2) both; }
+@CF[data-cfx="waterConfirm"] .confirm-modal-icon::after{ content:''; position:absolute; inset:-3px; border-radius:50%; border:2px solid rgb(58 170 210 / .55); pointer-events:none; opacity:0; animation:cfWaterRing 1.25s ease-out .2s both; }
+@keyframes cfWaterIn{ 0%{ transform:scale(.6); opacity:0; } 100%{ transform:none; opacity:1; } }
+@keyframes cfWaterRing{ 0%{ opacity:.9; transform:scale(.9); } 100%{ opacity:0; transform:scale(1.8); } }
+@CF[data-cfx="waterConfirm"] .modal-actions > .btn::after{ inset:auto; left:var(--cf-x, 50%); top:var(--cf-y, 50%); width:240px; height:240px; margin:-120px 0 0 -120px; border-radius:50%;
+  background:radial-gradient(circle, rgb(255 255 255 / 0) 30%, var(--cf-hit) 44%, rgb(255 255 255 / .18) 52%, rgb(255 255 255 / 0) 64%); }
+@CF[data-cfx="waterConfirm"] .modal-actions > .btn.btn-secondary::after{ background:radial-gradient(circle, rgb(60 170 210 / 0) 30%, rgb(60 170 210 / .35) 44%, rgb(60 170 210 / .1) 52%, rgb(60 170 210 / 0) 64%); }
+@CF[data-cfx="waterConfirm"] .modal-actions > .btn.cf-hit::after{ animation:cfWaterRipple .7s cubic-bezier(.2,.7,.3,1) both; }
+@keyframes cfWaterRipple{ 0%{ opacity:1; transform:scale(.08); } 100%{ opacity:0; transform:scale(1); } }
+
+/* ---------- 5) الناري: فحم + حافة معدن متوهج + جمرة + شرارات قليلة عند الضغط ---------- */
+@CF[data-cfx="fireConfirm"] .confirm-modal{ border-color:transparent;
+  background:var(--cf-sheet) padding-box, linear-gradient(90deg, rgb(110 30 10 / .7) 0%, #FF7A2A 28%, #FFD08A 50%, #FF7A2A 72%, rgb(110 30 10 / .7) 100%) border-box;
+  --cf-decor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 80'%3E%3Ccircle cx='40' cy='62' r='1.4' fill='%23FFB04A' fill-opacity='.7'/%3E%3Ccircle cx='92' cy='44' r='1' fill='%23FFD08A' fill-opacity='.55'/%3E%3Ccircle cx='150' cy='70' r='1.2' fill='%23FF7A2A' fill-opacity='.6'/%3E%3Ccircle cx='250' cy='56' r='1' fill='%23FFB04A' fill-opacity='.5'/%3E%3Ccircle cx='318' cy='68' r='1.5' fill='%23FF8A3A' fill-opacity='.65'/%3E%3Ccircle cx='366' cy='40' r='.9' fill='%23FFD08A' fill-opacity='.5'/%3E%3C/svg%3E") 50% 100% / 100% 80px no-repeat,
+    radial-gradient(40% 7px at 50% 0%, rgb(255 190 110 / .55), rgb(255 190 110 / 0)) 0 0 / 100% 14px no-repeat; }
+@CF[data-cfx="fireConfirm"] .confirm-modal::after{ animation:cfFireIgnite .9s ease-out both; }
+@keyframes cfFireIgnite{ 0%{ opacity:0; } 35%{ opacity:.85; } 55%{ opacity:.45; } 100%{ opacity:1; } }
+@CF[data-cfx="fireConfirm"] .confirm-modal h3{ letter-spacing:.01em; text-shadow:0 0 18px rgb(255 120 40 / .35); }
+@CF[data-cfx="fireConfirm"] .confirm-modal-icon{ animation:cfFireIn .6s cubic-bezier(.2,.9,.3,1.1) both; }
+@CF[data-cfx="fireConfirm"] .confirm-modal-icon::after{ content:''; position:absolute; inset:-8px; border-radius:18px; pointer-events:none; background:radial-gradient(closest-side, rgb(255 110 30 / .45), rgb(255 110 30 / 0)); opacity:0; animation:cfFireGlow 1.1s ease-out .1s both; }
+@keyframes cfFireIn{ 0%{ transform:scale(.7); opacity:0; } 100%{ transform:none; opacity:1; } }
+@keyframes cfFireGlow{ 0%{ opacity:0; } 30%{ opacity:1; } 100%{ opacity:.35; } }
+@media (hover:hover){
+  @CF[data-cfx="fireConfirm"] .modal-actions > .btn.btn-destructive:hover:not(:disabled){ box-shadow:inset 0 1px 0 rgb(255 200 150 / .5), 0 0 0 1px rgb(0 0 0 / .6), 0 0 26px -4px rgb(255 90 20 / .75); }
+  @CF[data-cfx="fireConfirm"] .modal-actions > .btn.btn-primary:hover:not(:disabled){ box-shadow:inset 0 1px 0 rgb(255 240 210 / .8), 0 0 0 1px rgb(0 0 0 / .55), 0 0 26px -4px rgb(255 150 40 / .75); }
+  @CF[data-cfx="fireConfirm"] .modal-actions > .btn.btn-secondary:hover:not(:disabled){ border-color:rgb(255 170 110 / .5); }
+}
+@CF[data-cfx="fireConfirm"] .modal-actions > .btn::after{ inset:auto 0 0 0; height:100%; border-radius:inherit;
+  background:radial-gradient(1.6px 1.6px at 18% 80%, #FFE2A8, rgb(255 226 168 / 0)), radial-gradient(1.3px 1.3px at 34% 92%, var(--cf-hit), rgb(255 176 74 / 0)),
+    radial-gradient(1.8px 1.8px at 52% 84%, #FFD08A, rgb(255 208 138 / 0)), radial-gradient(1.2px 1.2px at 68% 90%, var(--cf-hit), rgb(255 176 74 / 0)),
+    radial-gradient(1.5px 1.5px at 83% 82%, #FFE2A8, rgb(255 226 168 / 0)); }
+@CF[data-cfx="fireConfirm"] .modal-actions > .btn.cf-hit::after{ animation:cfFireSparks .65s cubic-bezier(.2,.6,.3,1) both; }
+@keyframes cfFireSparks{ 0%{ opacity:0; transform:translateY(4px); } 20%{ opacity:1; } 100%{ opacity:0; transform:translateY(-26px); } }
+
+/* ---------- 6) الرياحي: لؤلؤي خفيف + خطوط نسيم تنساب مرة + دوّامة + لمعة هواء ---------- */
+@CF[data-cfx="windConfirm"] .confirm-modal{ --cf-decor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 120' preserveAspectRatio='none'%3E%3Cpath d='M-10 40C80 18 150 58 250 36S400 12 490 30' fill='none' stroke='%239CC2E4' stroke-opacity='.5' stroke-width='1.2' stroke-linecap='round'/%3E%3Cpath d='M30 58C120 42 200 72 300 52S420 36 470 46' fill='none' stroke='%23C3D3E4' stroke-opacity='.8' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M180 22C260 10 330 30 420 16' fill='none' stroke='%23B6D3EE' stroke-opacity='.6' stroke-width='.9' stroke-linecap='round'/%3E%3Cpath d='M410 70C440 64 458 72 462 82C465 92 452 96 446 88' fill='none' stroke='%239CC2E4' stroke-opacity='.45' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 0 6px / 100% 110px no-repeat,
+  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 50' preserveAspectRatio='none'%3E%3Cpath d='M-10 30C90 14 170 44 280 26S420 14 490 22' fill='none' stroke='%23C3D3E4' stroke-opacity='.7' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 0 100% / 100% 44px no-repeat; }
+@CF[data-cfx="windConfirm"] .confirm-modal::after{ animation:cfWindDrift 1.6s cubic-bezier(.16,.8,.25,1) both; }
+@keyframes cfWindDrift{ from{ opacity:0; transform:translateX(36px); } to{ opacity:1; transform:none; } }
+@CF[data-cfx="windConfirm"] .confirm-modal h3{ font-weight:700; letter-spacing:.01em; }
+@CF[data-cfx="windConfirm"] .confirm-modal-icon{ animation:cfWindIn .7s cubic-bezier(.2,.8,.3,1) both; }
+@CF[data-cfx="windConfirm"] .confirm-modal-icon::after{ content:''; position:absolute; inset:-6px; border-radius:50%; pointer-events:none; border:1.5px solid transparent; border-top-color:rgb(120 170 220 / .7); border-inline-start-color:rgb(120 170 220 / .35);
+  animation:cfWindSwirl 1.2s cubic-bezier(.2,.8,.3,1) both; }
+@keyframes cfWindIn{ 0%{ transform:translateX(12px) rotate(-14deg) scale(.85); opacity:0; } 100%{ transform:none; opacity:1; } }
+@keyframes cfWindSwirl{ 0%{ transform:rotate(-160deg); opacity:0; } 60%{ opacity:1; } 100%{ transform:rotate(0deg); opacity:1; } }
+@CF[data-cfx="windConfirm"] .modal-actions > .btn::after{ background:linear-gradient(100deg, rgb(255 255 255 / 0) 30%, var(--cf-hit) 50%, rgb(255 255 255 / 0) 70%); }
+@CF[data-cfx="windConfirm"] .modal-actions > .btn.btn-secondary::after{ background:linear-gradient(100deg, rgb(160 196 230 / 0) 30%, rgb(160 196 230 / .5) 50%, rgb(160 196 230 / 0) 70%); }
+@CF[data-cfx="windConfirm"] .modal-actions > .btn.cf-hit::after{ animation:cfWindSheen .6s cubic-bezier(.3,.6,.3,1) both; }
+@keyframes cfWindSheen{ 0%{ opacity:1; transform:translateX(110%); } 100%{ opacity:1; transform:translateX(-110%); } }
+@CF[data-cfx="windConfirm"] .modal-actions > .btn:active:not(:disabled){ transform:scale(.975); }
+
+/* ---------- 7) تقليل الحركة / sx-calm: كل شيء ثابت بحالته النهائية ---------- */
+@media (prefers-reduced-motion:reduce){
+  @CF[data-cfx] .confirm-modal::after, @CF[data-cfx] .confirm-modal-icon, @CF[data-cfx] .confirm-modal-icon::after, @CF[data-cfx] .modal-actions > .btn, @CF[data-cfx] .modal-actions > .btn::after{ animation:none !important; transition:none !important; }
+  @CF[data-cfx] .modal-actions > .btn::after{ opacity:0 !important; }
+}
+html.sx-calm @CF[data-cfx] .confirm-modal::after, html.sx-calm @CF[data-cfx] .confirm-modal-icon, html.sx-calm @CF[data-cfx] .confirm-modal-icon::after, html.sx-calm @CF[data-cfx] .modal-actions > .btn::after{ animation:none !important; }
+html.sx-calm @CF[data-cfx] .modal-actions > .btn::after{ opacity:0 !important; }
+
+/* ---------- 8) المعاينة داخل نافذة التفاصيل (نفس قواعد النافذة؛ هنا الإطار فقط) ---------- */
+.cf-tone{ display:flex; gap:6px; }
+.cf-tone-b{ flex:1 1 0; min-height:36px; padding:0 10px; border:0; border-radius:10px; font:inherit; font-size:12.5px; font-weight:800; color:#CDB8A3; background:rgb(255 236 214 / .05); box-shadow:inset 0 0 0 1px rgb(217 194 160 / .22); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+.cf-tone-b.is-on{ color:#FFE7CC; background:rgb(255 236 214 / .12); box-shadow:inset 0 0 0 1.5px rgb(255 181 101 / .7); }
+.cf-tone-b:focus-visible{ outline:2px solid #FFB565; outline-offset:2px; }
+.cf-stage{ position:relative; border-radius:18px; overflow:hidden; }
+.cfx-pv{ position:relative; display:flex; align-items:flex-end; justify-content:center; padding:44px 10px 0; border-radius:18px; overflow:hidden;
+  background:linear-gradient(180deg, #E9E3DA, #CFC6B9); }
+.cfx-pv-scrim{ position:absolute; inset:0; background:var(--cf-scrim); pointer-events:none; }
+.cfx-pv .modal.confirm-modal{ position:relative; width:100%; max-width:380px; max-height:none; overflow:hidden; padding:10px 18px 18px; }
+.cfx-pv .modal.confirm-modal .cfx-pv-msg{ text-align:center; margin:0; font-size:14px; line-height:1.85; overflow-wrap:anywhere; }
+.cfx-pv .modal-actions{ flex-direction:column; gap:8px; margin-top:16px; }
+.cfx-pv .modal-actions > .btn{ width:100%; flex:none; cursor:default; }
+@media (min-width:420px){ .cfx-pv .modal-actions{ flex-direction:row; } .cfx-pv .modal-actions > .btn{ flex:1 1 0; width:auto; } }
+.cf-ov .pt-ov-name b{ font-size:22px; } .cf-ov .pt-ov-name span{ font-size:13px; }
+
+/* ---------- 9) بطاقات المتجر وبحوزتك: شبكة 2×2 + مصغّرة النافذة من الرموز نفسها ---------- */
+#eco-store-body .pt-grid.cf-grid{ grid-template-columns:repeat(2, minmax(0, 1fr)); }
+#eco-store-body .cf-tile .pt-mname{ flex-direction:column; gap:1px; min-height:2.9em; }
+#eco-store-body .cf-tile .pt-mname small{ font-size:.78em; font-weight:700; opacity:.7; letter-spacing:.02em; }
+#eco-store-body .st-tile.pt-mtile.cf-tile.is-on{ box-shadow:0 0 0 2px var(--sx-gold-hi, #C9954E), 0 0 0 4px rgb(var(--sx-gold-rgb, 201 149 78) / .2), inset 0 1px 0 rgb(var(--sx-hi) / .6), 0 10px 18px -10px rgb(var(--sx-sh) / .8); }
+#eco-store-body .cf-tile .pt-mbadge.is-on{ color:var(--sx-text); background:var(--sx-surface-hi); box-shadow:0 0 0 1.5px var(--sx-gold-hi, #C9954E); }
+#eco-store-body .cf-tile .pt-mbadge.is-on::before{ background:var(--sx-gold-hi, #C9954E); }
+#eco-store-body .cf-mini{ position:relative; display:flex; align-items:flex-end; justify-content:center; aspect-ratio:5 / 4; padding:16% 9% 0; border-radius:11px; overflow:hidden; background:linear-gradient(180deg, #E4DED4, #CBC1B3); transition:transform .12s ease; }
+#eco-store-body .cf-mini::before{ content:''; position:absolute; inset:0; background:var(--cf-scrim); }
+#eco-store-body .pt-mbtn:active .cf-mini{ transform:scale(.97); }
+.cf-mini-sh{ position:relative; display:flex; flex-direction:column; align-items:center; gap:5%; width:100%; height:100%; padding:7% 9% 0; background:var(--cf-sheet); border:1px solid var(--cf-edge); border-bottom:0;
+  border-radius:calc(var(--cf-r) * .5) calc(var(--cf-r) * .5) 0 0; box-shadow:var(--cf-shadow); }
+.cf-mini[data-cfx="fireConfirm"] .cf-mini-sh{ border-color:#FF8A3A; border-top-color:#FFD08A; }
+.cf-mini-sh > i, .cf-mini-acts > i{ display:block; flex:none; }
+.cf-mini-ic{ width:clamp(14px, 4.4vw, 22px); height:clamp(14px, 4.4vw, 22px); background:var(--cf-ico-bg); border:1px solid var(--cf-ico-edge); border-radius:var(--cf-ico-r); box-shadow:0 3px 6px -3px rgb(0 0 0 / .4); }
+.cf-mini-t{ width:46%; height:6px; border-radius:3px; background:var(--cf-title); opacity:.85; }
+.cf-mini-l{ width:72%; height:3px; border-radius:2px; background:var(--cf-text); opacity:.45; }
+.cf-mini-l.is-s{ width:50%; }
+.cf-mini-acts{ display:flex; gap:6%; width:100%; margin-top:auto; padding-bottom:9%; }
+.cf-mini-acts > i{ flex:1 1 0; height:13px; border-radius:min(var(--cf-btn-r), 7px); }
+.cf-mini-ok{ background:var(--cf-dg-bg); border:1px solid var(--cf-dg-edge); }
+.cf-mini-no{ background:var(--cf-no-bg); border:1px solid var(--cf-no-edge); }
