@@ -1,0 +1,86 @@
+/* ---- (1) القسيمة: كوبون فاتح بزوايا مقصوصة + كعب مثقّب بسهمي استبدال + ختم نجمة + نقاط المستوى — بلا أي صندوق. SVG مضمَّن بلا فلاتر ---- */
+.vch-art{ position:relative; display:block; width:100%; aspect-ratio:8 / 5; --vt:#9A5A28; --vp:#FBF1E4; }
+.vch-art[data-tone="b"]{ --vt:#56626F; --vp:#F1F4F7; }
+.vch-art[data-tone="a"]{ --vt:#2A6FA3; --vp:#EAF3FB; }
+.vch-art[data-tone="s"]{ --vt:#94680F; --vp:#FBF4DC; }
+.vch-art[data-tone="ss"]{ --vt:#7B2F9E; --vp:#F5ECFA; }
+.vch-cp{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.vch-cp .vc-sh{ fill:rgb(0 0 0 / .16); }
+html[data-theme="dark"] .vch-cp .vc-sh{ fill:rgb(0 0 0 / .5); }
+.vch-cp .vc-bg{ fill:var(--vp); stroke:var(--vt); stroke-width:2.6; }
+.vch-cp .vc-in{ fill:none; stroke:var(--vt); stroke-width:1.1; stroke-dasharray:3 2.5; opacity:.55; }
+.vch-cp .vc-stub{ fill:var(--vt); }
+.vch-cp .vc-holes circle{ fill:var(--vt); opacity:.6; }
+.vch-cp .vc-arw{ fill:none; stroke:var(--vp); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; }
+.vch-cp .vc-seal{ fill:var(--vt); fill-opacity:.13; stroke:var(--vt); stroke-width:2.2; }
+.vch-cp .vc-seal2{ fill:none; stroke:var(--vt); stroke-width:1.1; stroke-dasharray:1.6 2.2; }
+.vch-cp .vc-star{ fill:var(--vt); }
+.vch-cp .vc-pip{ fill:var(--vt); opacity:.22; }
+.vch-cp .vc-pip.on{ opacity:1; }
+.vch-cp .vc-ln{ fill:none; stroke:var(--vt); stroke-width:2.4; stroke-linecap:round; opacity:.35; }
+.vch-cp .vc-mk{ transform-box:view-box; transform-origin:52px 46px; }
+.vch-art.is-big{ width:min(76vw, 300px); margin:0 auto; }
+/* الأيقونة المصغّرة (مكافآت التقدم وغيرها): الشكل والكعب والختم فقط بخطوط أعرض */
+.vch-art.is-mini{ display:inline-block; flex:none; width:31px; height:20px; aspect-ratio:auto; vertical-align:middle; }
+.vch-art.is-mini .vc-fine, .vch-art.is-mini .vc-arw, .vch-art.is-mini .vc-sh{ display:none; }
+.vch-art.is-mini .vc-bg{ stroke-width:7; }
+.vch-art.is-mini .vc-seal{ stroke-width:6; fill-opacity:.22; }
+.vch-art.is-mini .vc-mk{ transform:scale(1.3); }
+
+/* ---- (2) الصندوق المغلق المملوك = هوية القسيمة السابقة (تذكرة ملوّنة + مصغّر صندوق المستوى + معيّنات المستوى) ---- */
+.obx-art{ position:relative; display:block; width:100%; aspect-ratio:8 / 5; --vt:#9A5A28; color:#fff; }
+.obx-art[data-tone="b"]{ --vt:#66717D; }
+.obx-art[data-tone="a"]{ --vt:#2A6FA3; }
+.obx-art[data-tone="s"]{ --vt:#9A6C12; }
+.obx-art[data-tone="ss"]{ --vt:#7B2F9E; }
+.obx-tk{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+.obx-tk .obx-bg{ fill:var(--vt); stroke:rgb(0 0 0 / .22); stroke-width:1.2; }
+.obx-tk .obx-perf{ stroke:rgb(255 255 255 / .75); stroke-width:1.6; stroke-dasharray:3 4; fill:none; }
+.obx-tk .obx-gl{ stroke:rgb(255 255 255 / .35); stroke-width:3; stroke-linecap:round; fill:none; }
+.obx-box{ position:absolute; top:10%; bottom:10%; left:33%; right:7%; display:flex; align-items:center; justify-content:center; }
+.obx-box .bxa{ display:block; width:auto; height:100%; aspect-ratio:120 / 112; margin:0; }
+.obx-box .bxa-img{ width:100%; height:100%; object-fit:contain; }
+.obx-stub{ position:absolute; top:0; bottom:0; left:0; width:30%; display:flex; align-items:center; justify-content:center; }
+.obx-lv{ display:flex; flex-direction:column-reverse; gap:2px; width:40%; }
+.obx-lv i{ display:block; width:100%; height:auto; aspect-ratio:3 / 1; border-radius:2px; background:rgb(255 255 255 / .28); }
+.obx-lv i.on{ background:#fff; }
+.obx-art.is-big{ width:min(76vw, 300px); margin:0 auto; }
+.obx-art.is-mini{ display:inline-block; flex:none; width:32px; height:20px; aspect-ratio:auto; vertical-align:middle; }
+.obx-art.is-mini .obx-gl{ display:none; }
+.obx-art.is-mini .obx-perf{ stroke-width:5; }
+.obx-art.is-mini .obx-box{ left:30%; right:4%; top:5%; bottom:5%; }
+.obx-art.is-mini .bxa{ filter:none; }
+
+/* ---- (3) «بحوزتك» ← العناصر: مجموعات بلا عناوين — مسافة + خط هادئ جداً بين المجموعات ---- */
+#eco-store-body .own-kinds{ display:flex; flex-direction:column; }
+#eco-store-body .own-kinds > .own-part + .own-part{ margin-top:16px; padding-top:16px; border-top:1px solid var(--sx-line, rgb(0 0 0 / .08)); }
+#eco-store-body .own-bx-grid{ display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px 10px; }
+@media (min-width:600px){ #eco-store-body .own-bx-grid{ grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+#eco-store-body .own-bx{ display:flex; flex-direction:column; gap:8px; min-width:0; padding:10px; border-radius:14px; background:var(--sx-surface, var(--glass)); border:1px solid var(--sx-line-hi, var(--glass-border)); }
+#eco-store-body .own-bx-art{ position:relative; }
+#eco-store-body .own-bx-n{ position:absolute; z-index:2; top:-7px; inset-inline-start:-5px; min-width:28px; height:22px; padding:0 7px; display:grid; place-items:center; border-radius:999px; font-size:12px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums;
+  color:var(--sx-text, var(--text)); background:var(--bg); border:1px solid var(--sx-line-hi, rgb(0 0 0 / .16)); box-shadow:0 2px 6px rgb(0 0 0 / .18); }
+#eco-store-body .own-bx-cap{ display:flex; justify-content:center; min-width:0; text-align:center; }
+#eco-store-body .own-bx .shop-acts{ margin-top:auto; }
+#eco-store-body .own-bx-use{ width:100%; min-height:38px; font-weight:900; }
+/* زر الدمج ونص التقدّم بالشاشات الضيقة: يلتف بدل أن يُقصّ، والكسر «4 / 10» لا ينقسم */
+#eco-store-body .vch-merge{ white-space:normal; line-height:1.25; padding:4px 6px; font-size:clamp(11.5px, 3.4vw, 13px); }
+#eco-store-body .vch-merge span{ min-width:0; overflow-wrap:anywhere; }
+#eco-store-body .vch-prog b{ white-space:nowrap; }
+
+/* ---- (4) المتجر: أيقونة الصندوق بجانب الجواهر + تحديد بطاقة المستوى القادم من «استخدام» ---- */
+#eco-store-body .eco-gem-line .eco-bx-own{ display:inline-flex; align-items:center; justify-content:center; flex:none; min-width:36px; min-height:30px; margin:-5px 0; margin-inline-start:2px; padding:0 2px; border:0; border-radius:8px; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+#eco-store-body .eco-gem-line .eco-bx-own:focus-visible{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:1px; }
+#eco-store-body .eco-gem-line .eco-bx-own:active{ transform:scale(.94); }
+#eco-store-body .eco-gem-line .eco-bx-own .obx-art{ width:29px; height:18px; }
+#eco-store-body .bx-card.is-picked .bx-art{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:3px; }
+#eco-store-body .bx-card.is-picked .bx-buy{ animation:codisPickPulse 1.1s ease-in-out 3; }
+@keyframes codisPickPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+@media (prefers-reduced-motion:reduce){ #eco-store-body .bx-card.is-picked .bx-buy{ animation:none; } }
+html.sx-calm #eco-store-body .bx-card.is-picked .bx-buy{ animation:none; }
+.bxc-v .obx-art.is-mini{ width:34px; height:21px; }
+
+/* ---- (5) مكافآت التقدم: القسيمة والصندوق بنفس شكل الجواهر (أيقونة المستوى + الرقم) ---- */
+#progress-root .pg-rw .eco-itm{ gap:6px; }
+#progress-root .pg-rw .eco-itm .vch-art.is-mini, #progress-root .pg-rw .eco-itm .obx-art.is-mini{ width:29px; height:18px; }
+#progress-root .pg-fly-i .vch-art.is-mini, #progress-root .pg-fly-i .obx-art.is-mini{ width:35px; height:22px; }
