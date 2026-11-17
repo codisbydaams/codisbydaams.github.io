@@ -60,7 +60,7 @@ for (let ri = 0; ri < RUNS.length; ri++) {
   ok(T + 'A4 bronze + crystal owned ⇒ exactly those two tiers', a4.join() === 'bx1,bx3', a4);
   await give(p, 'bx1', 7, 'c'); await p.evaluate(() => { window.codisVchMergeAt = 0; document.querySelector('#own-vouchers .vch-mg[data-tier="bx1"] .vch-merge').click(); }); await p.waitForTimeout(600);
   const a5 = await p.evaluate(() => { const T = econOwnTotals(), tab = document.querySelector('#own-tab-items .own-tab-n');
-    return { tiers:[...document.querySelectorAll('#own-vouchers .vch-mg')].map(r => r.dataset.tier), bx1:CodisVouchers.count('bx1'), first:(document.querySelector('#own-panel-items .own-kinds > .own-part') || {}).id, tiles:[...document.querySelectorAll('#own-boxes .own-bx')].map(t => t.dataset.tier + ':' + t.querySelector('.own-bx-n').textContent + ':' + !!t.querySelector('.obx-art .bxa') + ':' + t.querySelector('.own-bx-use').textContent),
+    return { tiers:[...document.querySelectorAll('#own-vouchers .vch-mg')].map(r => r.dataset.tier), bx1:CodisVouchers.count('bx1'), first:(document.querySelector('#own-panel-items .own-kinds > .own-part') || {}).id, tiles:[...document.querySelectorAll('#own-boxes .own-bx')].map(t => t.dataset.tier + ':' + t.querySelector('.own-bx-n').textContent + ':' + !!t.querySelector('.obx-art .obx-img') + ':' + t.querySelector('.own-bx-use').textContent),
       el:T.elements, tab:tab && tab.textContent, total:T.total, sum:T.cards + T.elements + T.cosmetics + T.themes, title:(document.querySelector('.own-title-n') || {}).textContent, boxes:T.boxes, v:CodisVouchers.total() }; });
   ok(T + 'A5 all bronze vouchers consumed by merge ⇒ bronze tile disappears', a5.tiers.join() === 'bx3' && a5.bx1 === 0, a5);
   ok(T + 'A6 merged closed box shows inside «العناصر» first, with ×count and «استخدام»', a5.first === 'own-boxes' && a5.tiles.length === 1 && a5.tiles[0] === 'bx1:×1:true:استخدام', a5);
@@ -73,7 +73,7 @@ for (let ri = 0; ri < RUNS.length; ri++) {
     (document.getElementById('eco-store-body') || document.body).appendChild(box);
     const v = [...box.querySelectorAll('.vch-art')], b = [...box.querySelectorAll('.obx-art')];
     const vt = v.slice(0, 5).map(e => getComputedStyle(e).getPropertyValue('--vt').trim()), bt = b.slice(0, 5).map(e => getComputedStyle(e).getPropertyValue('--vt').trim());
-    return { vBox:v.some(e => e.querySelector('.bxa, img, .obx-box')), bBox:b.every(e => !!e.querySelector('.bxa-img')), vt:new Set(vt).size, bt:new Set(bt).size, notch:v.every(e => !!e.querySelector('.vc-stub') && !!e.querySelector('.vc-star')),
+    return { vBox:v.some(e => e.querySelector('.bxa, img, .obx-box')), bBox:b.every(e => !!e.querySelector('.obx-img')), vt:new Set(vt).size, bt:new Set(bt).size, notch:v.every(e => !!e.querySelector('.vc-stub') && !!e.querySelector('.vc-star')),
       pips:v.slice(0, 5).map(e => e.querySelectorAll('.vc-pip.on').length).join(), mini:[...box.querySelectorAll('.is-mini')].map(e => { const r = e.getBoundingClientRect(); return Math.round(r.width) + 'x' + Math.round(r.height); }).slice(0, 2), vh:Math.round(v[0].getBoundingClientRect().height) }; });
   ok(T + 'I1 voucher art contains no box at all; owned box art carries the box image', !id1.vBox && id1.bBox, id1);
   ok(T + 'I2 five distinct colours for each identity + level pips 1..5 on vouchers', id1.vt === 5 && id1.bt === 5 && id1.pips === '1,2,3,4,5' && id1.notch, id1);
@@ -234,7 +234,7 @@ for (let ri = 0; ri < RUNS.length; ri++) {
     await p.evaluate(() => { openSettingsCategory('progress'); codisProgressRender(); }); await p.waitForTimeout(700);
     const ui = await p.evaluate(() => { const card = id => document.querySelector('#progress-root .pg-card[data-ach="' + id + '"]'), rw = id => card(id).querySelector('.pg-rw-v');
       return { d1:{ ico:!!rw('days_1').querySelector('.vch-art.is-mini'), txt:rw('days_1').textContent.trim(), aria:rw('days_1').querySelector('[role="img"]').getAttribute('aria-label') },
-        d20:{ ico:!!rw('days_20').querySelector('.obx-art.is-mini .bxa'), txt:rw('days_20').textContent.trim() }, fm:{ ico:!!rw('first_month').querySelector('.obx-art.is-mini'), txt:rw('first_month').textContent.trim() },
+        d20:{ ico:!!rw('days_20').querySelector('.obx-art.is-mini .obx-img'), txt:rw('days_20').textContent.trim() }, fm:{ ico:!!rw('first_month').querySelector('.obx-art.is-mini'), txt:rw('first_month').textContent.trim() },
         gem:!!rw('weeks_10').querySelector('.eco-gem'), legacy:rw('first_week').textContent.trim(), ready:[...document.querySelectorAll('#progress-root .pg-claim')].map(b => b.closest('.pg-card').dataset.ach),
         words:/قسيمة|قسائم|صناديق|بكج/.test([...document.querySelectorAll('#progress-root .pg-rw-v')].map(e => e.textContent).join(' ')), h:[...document.querySelectorAll('#progress-root .pg-rw-v .is-mini')].map(e => Math.round(e.getBoundingClientRect().height)) }; });
     ok(T + 'P11 rewards drawn as icon + number (voucher/box per level), names only for screen readers', ui.d1.ico && ui.d1.txt === '5' && /قسيمة برونزية/.test(ui.d1.aria) && ui.d20.ico && ui.d20.txt === '5' && ui.fm.ico && ui.fm.txt === '5' && ui.gem && !ui.words, ui);

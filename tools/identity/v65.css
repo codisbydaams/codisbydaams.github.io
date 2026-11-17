@@ -1,0 +1,122 @@
+/* ============ CODIS-V65 (3.52.0) · (أ) رسمة الصندوق المغلق المملوك بنظام إحداثيات واحد · (ب) مكافآت التقدم المدمجة ============ */
+
+/* ---- (أ) الصندوق المغلق المملوك (econOwnedBoxArt) ----
+   الرسمة كلها داخل SVG واحد (viewBox 160×100): التذكرة + التثقيب + اللمعة + معيّنات المستوى + صورة الصندوق + ظلها.
+   ⇒ أي حجم = التكوين نفسه بالنسب نفسها (التصغير/التكبير مقياس واحد)، ولا قاعدة خارجية على .bxa تصل للصندوق الداخلي.
+   الحجم: عرض فقط (النسبة 8:5 ثابتة). المصغّرة: --obx-s = العرض بالبكسل (رقم) ⇒ الخطوط الشعرية لا تنزل تحت ~0.7–0.9px (--obx-f)،
+   والهندسة (المواضع والأبعاد) لا تتغير. الكبيرة: --obx-s غير معرّف ⇒ --obx-f = 1 (الأصل حرفياً). */
+.obx-art{ position:relative; display:block; width:100%; height:auto; aspect-ratio:8 / 5; --vt:#9A5A28; color:#fff; --obx-f:max(1, calc(90 / var(--obx-s, 90))); }
+.obx-art[data-tone="b"]{ --vt:#66717D; }
+.obx-art[data-tone="a"]{ --vt:#2A6FA3; }
+.obx-art[data-tone="s"]{ --vt:#9A6C12; }
+.obx-art[data-tone="ss"]{ --vt:#7B2F9E; }
+.obx-tk{ position:absolute; inset:0; display:block; width:100%; height:100%; overflow:visible; }
+.obx-tk .obx-bg{ fill:var(--vt); stroke:rgb(0 0 0 / .22); stroke-width:calc(1.2 * var(--obx-f)); }
+.obx-tk .obx-perf{ fill:none; stroke:rgb(255 255 255 / .75); stroke-width:calc(1.6 * var(--obx-f)); stroke-dasharray:calc(3 * var(--obx-f)) calc(4 * var(--obx-f)); }
+.obx-tk .obx-gl{ fill:none; stroke:rgb(255 255 255 / .35); stroke-width:calc(3 * min(var(--obx-f), 2)); stroke-linecap:round; }
+.obx-tk .obx-lv rect{ fill:rgb(255 255 255 / .28); }
+.obx-tk .obx-lv rect.on{ fill:#fff; }
+.obx-art.is-big{ width:min(76vw, 300px); margin:0 auto; }
+.obx-art.is-mini{ --obx-s:32; display:inline-block; flex:none; width:calc(var(--obx-s) * 1px); height:auto; aspect-ratio:8 / 5; vertical-align:middle; }
+/* ظل الصندوق: فلتر SVG واحد مشترك (#codis-obx-sh) بوحدات الرسمة ⇒ يتناسب مع الحجم (WebKit لا يطبّق filter من CSS على عناصر SVG الداخلية).
+   القيم = drop-shadow(0 6px 8px) الأصلية عند عرض 72px (بطاقة «بحوزتك»). اللون من --lo-rgb ⇒ يتبع المظهر */
+#codis-obx-defs{ position:absolute; width:0; height:0; overflow:hidden; pointer-events:none; }
+#codis-obx-defs feDropShadow{ flood-color:rgb(var(--lo-rgb, 60 40 20)); flood-opacity:.45; }
+/* المقاسات حسب الموضع (العرض فقط) */
+#eco-store-body .bx-buys .bx-buy-v .obx-art.is-mini{ --obx-s:24; }
+.bxc-v .obx-art.is-mini{ --obx-s:34; }
+
+/* ---- (ب) مكافآت التقدم (#progress-root) ----
+   ملخص مدمج (الأرقام أولاً) + قائمة بطاقات مدمجة: رأس (أيقونة · الاسم · الحالة / الوصف) ← شريط التقدم والرقم ← المكافآت وزر الاستلام.
+   الشبكة تتكيف مع عرض الحاوية نفسها: عمود واحد حتى ~650px ثم عمودان (لا عمودين على الهاتف). */
+#progress-root{ --pg-in:40px; display:flex; flex-direction:column; gap:10px; padding-bottom:24px; }
+
+/* الملخص */
+#progress-root .pg-sum{ display:grid; grid-template-columns:auto minmax(0, 1fr) minmax(0, 1fr); align-items:center; gap:6px 10px; padding:9px 12px; border-radius:14px; background:var(--glass); border:1px solid var(--glass-border); color:var(--text); }
+#progress-root .pg-sum.has-ready{ border-color:rgb(var(--gold-rgb) / .5); }
+#progress-root .pg-sum-ico{ width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--gold); background:rgb(var(--gold-rgb) / .14); }
+#progress-root .pg-sum-ico svg{ width:18px; height:18px; }
+#progress-root .pg-sum-st{ display:flex; flex-direction:column; gap:1px; min-width:0; padding-inline-start:10px; border-inline-start:1px solid rgb(var(--ink-rgb, 120 120 120) / .14); }
+#progress-root .pg-sum-st b{ font-size:17px; font-weight:900; line-height:1.15; font-variant-numeric:tabular-nums; }
+#progress-root .pg-sum-st b small{ font-size:12px; font-weight:800; color:var(--text-2); }
+#progress-root .pg-sum-st > span{ font-size:11px; font-weight:800; line-height:1.3; color:var(--text-2); }
+#progress-root .pg-sum-r{ color:var(--gold-text, var(--text)); }
+#progress-root .pg-sum-st.is-zero b{ color:var(--text-2); }
+#progress-root .pg-sum-x{ grid-column:1 / -1; font-size:11px; line-height:1.55; color:var(--text-2); }
+
+/* القائمة */
+#progress-root .pg-list{ display:grid; grid-template-columns:repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap:8px; align-items:stretch; }
+#progress-root .pg-card{ position:relative; display:flex; flex-direction:column; gap:8px; min-width:0; padding:11px 12px 10px; padding-inline-start:14px; border-radius:14px; background:var(--glass); border:1px solid var(--glass-border); color:var(--text); overflow:hidden; }
+#progress-root .pg-card::before{ content:''; position:absolute; inset-block:0; inset-inline-start:0; width:3px; background:rgb(var(--ink-rgb, 120 120 120) / .2); }
+#progress-root .pg-card.is-ready::before{ background:var(--gold); }
+#progress-root .pg-card.is-claimed::before{ background:var(--success); }
+#progress-root .pg-card.is-ready{ border-color:rgb(var(--gold-rgb) / .55); background:linear-gradient(160deg, rgb(var(--gold-rgb) / .11), rgb(var(--gold-rgb) / .02) 60%), var(--glass); box-shadow:0 0 0 1px rgb(var(--gold-rgb) / .16), 0 6px 16px -12px rgb(var(--gold-rgb) / .6); }
+#progress-root .pg-card.is-claimed{ border-color:rgb(var(--success-rgb) / .35); background:linear-gradient(180deg, rgb(var(--success-rgb) / .06), rgb(var(--success-rgb) / 0)), var(--glass); }
+
+/* الرأس: أيقونة | الاسم | الحالة — والوصف تحت الاسم بعرض العمودين */
+#progress-root .pg-top{ display:grid; grid-template-columns:30px minmax(0, 1fr) auto; column-gap:10px; row-gap:2px; align-items:start; }
+#progress-root .pg-id{ display:contents; }
+#progress-root .pg-ico{ grid-column:1; grid-row:1 / span 2; width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
+#progress-root .is-ready .pg-ico{ color:var(--gold); background:rgb(var(--gold-rgb) / .16); }
+#progress-root .is-claimed .pg-ico{ color:var(--success); background:rgb(var(--success-rgb) / .14); }
+#progress-root .pg-ico svg{ width:16px; height:16px; }
+#progress-root .pg-name{ grid-column:2; grid-row:1; display:flex; align-items:center; min-height:30px; margin:0; font-size:14px; font-weight:900; line-height:1.4; }
+#progress-root .pg-desc{ grid-column:2 / 4; grid-row:2; margin:0; font-size:12px; line-height:1.55; color:var(--text-2); }
+#progress-root .pg-st{ grid-column:3; grid-row:1; align-self:start; justify-self:end; display:inline-flex; align-items:center; gap:3px; height:20px; margin:5px 0 0; padding:0 8px; border-radius:999px; font-size:10.5px; font-weight:800; line-height:1; white-space:nowrap; color:var(--text-2); background:rgb(var(--ink-rgb, 120 120 120) / .08); }
+#progress-root .pg-st svg{ flex:none; width:12px; height:12px; }
+#progress-root .pg-st.is-ready{ color:var(--gold-text, var(--text)); background:rgb(var(--gold-rgb) / .18); }
+#progress-root .pg-st.is-claimed{ color:var(--success-ink, var(--success)); background:rgb(var(--success-rgb) / .16); }
+/* «تم الاستلام»: الختم يأخذ خانة شارة الحالة نفسها (الشارة تحجز المكان) ⇒ لا تداخل مع الاسم أو الوصف */
+#progress-root .pg-card.is-claimed .pg-top .pg-st{ visibility:hidden; }
+#progress-root .pg-stamp{ position:absolute; z-index:1; top:16px; inset-inline-end:12px; display:inline-flex; align-items:center; gap:3px; height:20px; padding:0 7px; border-radius:6px; border:1.5px solid rgb(var(--success-rgb) / .7); color:var(--success-ink, var(--success)); background:rgb(var(--success-rgb) / .08); font-size:10.5px; font-weight:900; line-height:1; white-space:nowrap; transform:rotate(-6deg); }
+#progress-root .pg-stamp svg{ flex:none; width:12px; height:12px; }
+
+/* التقدم: شريط رفيع + الرقم بصف واحد، محاذاة مع عمود النص */
+#progress-root .pg-prog{ display:flex; align-items:center; gap:8px; margin-inline-start:var(--pg-in); }
+#progress-root .pg-bar{ flex:1; min-width:0; height:6px; border-radius:999px; background:rgb(var(--ink-rgb, 120 120 120) / .12); overflow:hidden; }
+#progress-root .pg-bar > i{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg, rgb(var(--gold-rgb)), rgb(var(--gold-rgb) / .75)); transform-origin:right; }
+#progress-root .pg-card.is-ready .pg-bar > i{ background:linear-gradient(90deg, rgb(var(--gold-rgb)), rgb(var(--gold-rgb) / .8)); }
+#progress-root .is-claimed .pg-bar > i{ background:linear-gradient(90deg, rgb(var(--success-rgb)), rgb(var(--success-rgb) / .75)); }
+#progress-root .pg-num{ flex:none; font-size:11.5px; font-weight:900; line-height:1; font-variant-numeric:tabular-nums; color:var(--text-2); }
+#progress-root .is-ready .pg-num, #progress-root .is-claimed .pg-num{ color:var(--text); }
+
+/* المكافآت: رقائق صغيرة متساوية الارتفاع + زر الاستلام بنهاية الصف (ينزل لسطره وحده عند الضيق) */
+#progress-root .pg-rw{ display:flex; align-items:center; flex-wrap:wrap; gap:6px 8px; margin-top:auto; margin-inline-start:var(--pg-in); padding-top:8px; border-top:1px solid rgb(var(--ink-rgb, 120 120 120) / .1); }
+#progress-root .pg-rw-l{ font-size:11px; font-weight:800; color:var(--text-2); }
+#progress-root .pg-rw-l{ flex:none; align-self:flex-start; line-height:24px; }
+/* الرقائق تبقى بجانب «المكافأة» دائماً (أساس 0، أدناه = أعرض رقاقة)؛ زر الاستلام بالسطر نفسه ما دام يتسع، وإلا ينزل لسطره.
+   أكثر من مكافأة ⇒ الزر بسطر مستقل (فاصل ::after) حتى لا تنضغط الرقائق */
+#progress-root .pg-rw-v{ flex:1 1 0; display:flex; align-items:center; flex-wrap:wrap; gap:5px; min-width:min-content; }
+#progress-root .pg-rw:has(.pg-claim):has(.pg-rw-v > :nth-child(2))::after{ content:''; order:1; flex-basis:100%; height:0; }
+#progress-root .pg-rw:has(.pg-rw-v > :nth-child(2)) .pg-claim{ order:2; }
+#progress-root .pg-rw-v > .eco-coin{ display:inline-flex; align-items:center; gap:4px; height:24px; padding:0 8px; border-radius:999px; background:rgb(var(--ink-rgb, 120 120 120) / .06); border:1px solid rgb(var(--ink-rgb, 120 120 120) / .1); font-size:12.5px; font-weight:900; line-height:1; white-space:nowrap; }
+#progress-root .pg-rw-v > .eco-itm{ padding-inline-start:4px; }
+#progress-root .pg-rw .eco-coin svg{ width:14px; height:14px; }
+#progress-root .pg-rw .eco-gem-ico{ width:14px; height:14px; }
+#progress-root .pg-rw .eco-itm .vch-art.is-mini{ width:29px; height:18px; }
+#progress-root .pg-rw .eco-itm .obx-art.is-mini{ --obx-s:29; }
+#progress-root .pg-claim{ position:relative; overflow:hidden; margin-inline-start:auto; min-height:36px; padding:0 12px; display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:900; }
+#progress-root .pg-claim svg{ width:15px; height:15px; flex:none; }
+#progress-root .pg-claim::after{ content:''; position:absolute; top:0; bottom:0; width:40%; inset-inline-start:0; background:linear-gradient(90deg, rgb(255 255 255 / 0), rgb(255 255 255 / .35), rgb(255 255 255 / 0)); transform:translateX(-160%) skewX(-18deg); pointer-events:none; }
+#progress-root .pg-claim:disabled{ opacity:.6; }
+
+/* الحركات (نفسها: مرة واحدة؛ transform/opacity فقط؛ تتوقف مع تقليل الحركة و html.sx-calm) */
+@keyframes pgReadyIn{ 0%{ transform:scale(.97); opacity:.6; } 60%{ transform:scale(1.012); opacity:1; } 100%{ transform:none; } }
+@keyframes pgSheen{ 0%, 55%{ transform:translateX(-160%) skewX(-18deg); } 100%{ transform:translateX(330%) skewX(-18deg); } }
+@keyframes pgFly{ 0%{ transform:translateY(0) scale(.6); opacity:0; } 25%{ transform:translateY(-14px) scale(1.15); opacity:1; } 100%{ transform:translateY(-58px) scale(1); opacity:0; } }
+@keyframes pgStampIn{ 0%{ transform:rotate(-6deg) scale(1.8); opacity:0; } 70%{ transform:rotate(-6deg) scale(.94); opacity:1; } 100%{ transform:rotate(-6deg) scale(1); } }
+@keyframes pgClaimOut{ to{ transform:scale(.9); opacity:0; } }
+html:not(.sx-calm) #progress-root .pg-card.is-ready{ animation:pgReadyIn .6s cubic-bezier(.2,.8,.2,1) both; }
+html:not(.sx-calm) #progress-root .pg-card.is-ready .pg-claim::after{ animation:pgSheen 3.2s ease-in-out 1s 3; }
+#progress-root .pg-fly{ position:absolute; inset-inline-end:18px; bottom:12px; display:flex; flex-direction:column; align-items:center; gap:4px; pointer-events:none; z-index:2; }
+#progress-root .pg-fly-i{ display:inline-flex; align-items:center; gap:4px; font-size:15px; font-weight:900; color:var(--gold-text, var(--text)); animation:pgFly 1.15s cubic-bezier(.2,.8,.2,1) both; }
+#progress-root .pg-fly-i .eco-gem-ico{ width:18px; height:18px; }
+#progress-root .pg-fly-i .vch-art.is-mini{ width:35px; height:22px; }
+#progress-root .pg-fly-i .obx-art.is-mini{ --obx-s:35; }
+#progress-root .pg-card.is-claiming .pg-claim{ animation:pgClaimOut .35s ease-in both; }
+html:not(.sx-calm) #progress-root .pg-card.is-claimed.is-just .pg-stamp{ animation:pgStampIn .45s cubic-bezier(.2,.8,.2,1) both; }
+@media (prefers-reduced-motion:reduce){ #progress-root .pg-card, #progress-root .pg-card *, #progress-root .pg-claim::after{ animation:none !important; } }
+html.sx-calm #progress-root .pg-claim::after{ animation:none; }
+
+/* هاتف ضيق جداً: إزاحة أصغر لعمود النص */
+@media (max-width:340px){ #progress-root{ --pg-in:0px; } #progress-root .pg-sum-st b{ font-size:16px; } }
