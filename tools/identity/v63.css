@@ -68,11 +68,9 @@ html[data-theme="dark"] .vch-cp .vc-sh{ fill:rgb(0 0 0 / .5); }
 #eco-store-body .vch-merge span{ min-width:0; overflow-wrap:anywhere; }
 #eco-store-body .vch-prog b{ white-space:nowrap; }
 
-/* ---- (4) المتجر: أيقونة الصندوق بجانب الجواهر + تحديد بطاقة المستوى القادم من «استخدام» ---- */
-#eco-store-body .eco-gem-line .eco-bx-own{ display:inline-flex; align-items:center; justify-content:center; flex:none; min-width:36px; min-height:30px; margin:-5px 0; margin-inline-start:2px; padding:0 2px; border:0; border-radius:8px; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-#eco-store-body .eco-gem-line .eco-bx-own:focus-visible{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:1px; }
-#eco-store-body .eco-gem-line .eco-bx-own:active{ transform:scale(.94); }
-#eco-store-body .eco-gem-line .eco-bx-own .obx-art{ width:29px; height:18px; }
+/* ---- (4) المتجر: أيقونة الصندوق بصف سعر «شراء 1» + تحديد بطاقة المستوى القادم من «استخدام» ---- */
+#eco-store-body .bx-buys .bx-buy-v{ display:inline-flex; align-items:center; gap:4px; min-width:0; }
+#eco-store-body .bx-buys .bx-buy-v .obx-art.is-mini{ width:24px; height:15px; }
 #eco-store-body .bx-card.is-picked .bx-art{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:3px; }
 #eco-store-body .bx-card.is-picked .bx-buy{ animation:codisPickPulse 1.1s ease-in-out 3; }
 @keyframes codisPickPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }

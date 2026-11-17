@@ -11,8 +11,6 @@ function econOwnTotals(){
 function econItemGroupHtml(key, name, n, body){
   return '<section class="own-part own-kind" id="own-' + key + '" data-kind="' + key + '" aria-label="' + escapeHtml(name) + '">' + body + '</section>';
 }
-/* CODIS-V63: «سطر الجواهر» + (بالمتجر فقط) أيقونة صندوق واحدة بلا رقم إن وُجد صندوق مغلق */
-function econGemLine(box){ let b = 0; try{ b = CodisWallet.gemBalance(); }catch(e){} let ic = ''; if(box){ try{ ic = econOwnBoxIconHtml(); }catch(e){ ic = ''; } } return '<span class="eco-silver-line eco-gem-line"><span class="eco-lab">' + econGemsCfg().short + '</span>' + econGem(b) + ic + '</span>'; }
 /* CODIS-V63: رسم القسيمة — كوبون بزوايا مقصوصة وحافة مزدوجة وكعب مثقّب بسهمي استبدال وختم نجمة ونقاط المستوى (لونه وتفاصيله لكل مستوى). لا صندوق إطلاقاً.
    o.big للنتائج · o.mini أيقونة صغيرة (مكافآت التقدم) · o.label=false حين يحمل الأب الوصف */
 function econVoucherArt(tier, o){

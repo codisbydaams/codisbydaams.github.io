@@ -41,7 +41,7 @@ while i < len(lines):
     elif ln.startswith('/*') and i > 0: buf.append(ln)
     else: buf = []
     i += 1
-assert len(FN) == 9, sorted(FN)
+assert len(FN) == 8, sorted(FN)
 
 # ===================== 1) الصندوق المجاني: جائزة واحدة =====================
 fb = rd('identity', 'v63_freebox.js')
@@ -120,8 +120,9 @@ s = s[:a] + s[b + len("  const nOwn = CodisBoxes.owned().length;\n"):]
 rep("""id="bx-h">البكجات' + (nOwn ? '<span class="bx-tag">' + econFmt(nOwn) + ' مغلق</span>' : '') + '</h4>'""", """id="bx-h">البكجات</h4>'""")
 rep("""    (nOwn ? '<div class="bx-own" role="group" aria-label="بكجاتك المغلقة">' + ownedChips + '</div>' : '') +\n""", "")
 rep("        econBoxMineHtml(t) +   /* CODIS-V62 */\n", "")
-replfn('econGemLine', FN['econGemLine'])
-rep("econCoin(bal) + econSilverLine() + econGemLine() + '</span>'", "econCoin(bal) + econSilverLine() + econGemLine(1) + '</span>'")
+# «شراء 1»: أيقونة الصندوق المملوك بصف السعر (لا شيء بشريط الرصيد)
+rep(r"""(n ? '' : ' — ' + label)) + '" onclick="econBuyBox(\'' + t.id + '\')"><span class="bx-buy-l">شراء 1</span>' + (n ? econGem(t.gems) : """,
+    r"""(n ? '' : ' — ' + label) + (econBoxChoiceNeeded(t.id) ? ' — لديك صندوق مغلق من هذا المستوى' : '')) + '" onclick="econBuyBox(\'' + t.id + '\')"><span class="bx-buy-l">شراء 1</span>' + (n ? econBoxBuyPriceHtml(t) : """)
 rep("""'<span class="bxc-v"><em>لديك</em><b dir="ltr">×' + econFmt(own)""", """'<span class="bxc-v">' + econOwnedBoxArt(tierId, { mini:true, label:false }) + '<b dir="ltr">×' + econFmt(own)""")
 
 # ===================== 6) الواجهة الجديدة =====================
@@ -196,7 +197,7 @@ s = s[:j] + '\n<style id="codis-v63-css">\n/* CODIS-V63 */\n' + css + '</style>'
 # حراس نهائية: لا اعتماد على العناصر المحذوفة ولا تعريف مكرر
 for gone in ('econBoxMineHtml', 'bx-mine', "own-tab-boxes", "own-panel-boxes", "key:'boxes', name:'الصناديق', icon", '«بحوزتك» ← الصناديق\'','econOwnBoxesHtml', 'econOwnOpenBox'):
     assert gone not in s, ('left-over', gone, s[max(0, s.find(gone) - 160):s.find(gone) + 60].encode('unicode_escape')[:600])
-for name in ('econOwnedBoxArt', 'econVoucherArt', 'econOwnClosedHtml', 'econOwnUseBox', 'econBoxPickSync', 'econGemLine', 'econOwnTotals', 'econItemGroupHtml', 'codisFreeBoxOpen', 'codisProgressRewardHtml', 'econVouchersMergeHtml', 'codisProgressDaysDone'):
+for name in ('econOwnedBoxArt', 'econVoucherArt', 'econOwnClosedHtml', 'econOwnUseBox', 'econBoxPickSync', 'econOwnTotals', 'econItemGroupHtml', 'econBoxBuyPriceHtml', 'codisFreeBoxOpen', 'codisProgressRewardHtml', 'econVouchersMergeHtml', 'codisProgressDaysDone'):
     assert s.count('\nfunction ' + name + '(') == 1, ('function count', name, s.count('\nfunction ' + name + '('))
 open(dst, 'w', encoding='utf-8', newline='').write(s)
 print('v63 applied')

@@ -13714,11 +13714,9 @@ html[data-theme="dark"] .vch-cp .vc-sh{ fill:rgb(0 0 0 / .5); }
 #eco-store-body .vch-merge span{ min-width:0; overflow-wrap:anywhere; }
 #eco-store-body .vch-prog b{ white-space:nowrap; }
 
-/* ---- (4) المتجر: أيقونة الصندوق بجانب الجواهر + تحديد بطاقة المستوى القادم من «استخدام» ---- */
-#eco-store-body .eco-gem-line .eco-bx-own{ display:inline-flex; align-items:center; justify-content:center; flex:none; min-width:36px; min-height:30px; margin:-5px 0; margin-inline-start:2px; padding:0 2px; border:0; border-radius:8px; background:none; cursor:pointer; -webkit-tap-highlight-color:transparent; }
-#eco-store-body .eco-gem-line .eco-bx-own:focus-visible{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:1px; }
-#eco-store-body .eco-gem-line .eco-bx-own:active{ transform:scale(.94); }
-#eco-store-body .eco-gem-line .eco-bx-own .obx-art{ width:29px; height:18px; }
+/* ---- (4) المتجر: أيقونة الصندوق بصف سعر «شراء 1» + تحديد بطاقة المستوى القادم من «استخدام» ---- */
+#eco-store-body .bx-buys .bx-buy-v{ display:inline-flex; align-items:center; gap:4px; min-width:0; }
+#eco-store-body .bx-buys .bx-buy-v .obx-art.is-mini{ width:24px; height:15px; }
 #eco-store-body .bx-card.is-picked .bx-art{ outline:2px solid rgb(var(--sx-gold-rgb, 196 154 60)); outline-offset:3px; }
 #eco-store-body .bx-card.is-picked .bx-buy{ animation:codisPickPulse 1.1s ease-in-out 3; }
 @keyframes codisPickPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
@@ -20342,8 +20340,7 @@ function econGemSvg(){   /* جوهرة ألماسية بأوجه + لمعة (ر�
   return '<img class="ico eco-gem-ico" src="' + econGemSvg.u + '" width="18" height="18" alt="" aria-hidden="true" draggable="false" decoding="async">';
 }
 function econGem(n){ return '<span class="eco-coin eco-gem" aria-label="' + econFmt(n) + ' ' + econGemsCfg().unit + '">' + econGemSvg() + '<b>' + econFmt(n) + '</b></span>'; }
-/* CODIS-V63: «سطر الجواهر» + (بالمتجر فقط) أيقونة صندوق واحدة بلا رقم إن وُجد صندوق مغلق */
-function econGemLine(box){ let b = 0; try{ b = CodisWallet.gemBalance(); }catch(e){} let ic = ''; if(box){ try{ ic = econOwnBoxIconHtml(); }catch(e){ ic = ''; } } return '<span class="eco-silver-line eco-gem-line"><span class="eco-lab">' + econGemsCfg().short + '</span>' + econGem(b) + ic + '</span>'; }
+function econGemLine(){ let b = 0; try{ b = CodisWallet.gemBalance(); }catch(e){} return '<span class="eco-silver-line eco-gem-line"><span class="eco-lab">' + econGemsCfg().short + '</span>' + econGem(b) + '</span>'; }
 function econBoxPrice(id){
   const p = Number((econModel().boxPrices || {})[id]);
   return (isFinite(p) && p >= 1) ? Math.max(1, Math.round(CodisLimits.num('box.price.' + id, Math.round(p)))) : 0;   /* CODIS-POWER: سعر يحدده المطوّر */
@@ -34652,7 +34649,7 @@ function econRenderStore(){
   econLastBal = bal;
   const vlt = document.getElementById('eco-vault'), vwrap = document.querySelector('#settings-page-eco-store .vault-wrap');
   const cosSeq0 = codisCosSeq, ptUid0 = codisPtUid; codisCosSeq = 500000; codisPtUid = 500000;   /* CODIS-V61: معرّفات SVG المظاهر داخل المتجر بنطاق ثابت لكل رسم ⇒ الناتج نفسه يبقى مطابقاً حرفياً (المعرّفات فريدة داخل الرسم، وخارجه العدّاد العام لا يصل هذا النطاق) */
-  let hNew; try{ hNew = CodisArt.html(()=>'<div class="settings-card eco-balance' + (tick ? ' is-tick' : '') + '"><span class="eco-balance-main"><span class="eco-lab">رصيدك</span>' + econCoin(bal) + econSilverLine() + econGemLine(1) + '</span>' +
+  let hNew; try{ hNew = CodisArt.html(()=>'<div class="settings-card eco-balance' + (tick ? ' is-tick' : '') + '"><span class="eco-balance-main"><span class="eco-lab">رصيدك</span>' + econCoin(bal) + econSilverLine() + econGemLine() + '</span>' +
     '<button type="button" class="eco-hist-btn" aria-expanded="' + (econClosedOpen ? 'true' : 'false') + '" aria-controls="eco-closed-sheet" title="المباعة والمستخدمة" onclick="econToggleClosed()">' + econStoreIconHtml('archive', 26).replace('ico-hero', 'ico-lg') + '<span class="sr">المباعة والمستخدمة</span>' + (nClosed ? '<span class="eco-hist-n" aria-hidden="true">' + econFmt(nClosed) + '</span>' : '') + '</button></div>' +
     '<div class="st-shell">' + econStoreNavHtml() + econStoreStageHtml() + '</div>' + econOwnSheetHtml() + econClosedSheetHtml()); } finally { codisCosSeq = cosSeq0; codisPtUid = ptUid0; }   /* CODIS-V49 */
   /* CODIS-V61: الناتج نفسه حرفياً (نفس البيانات ونفس حالة الواجهة) ⇒ DOM الحالي يبقى: لا تحليل HTML ولا فك صور ولا ملاءمة من جديد.
@@ -35514,7 +35511,7 @@ function econBoxesHtml(){
         '<div class="bx-cap" aria-hidden="true">' + escapeHtml(t.name) + '</div>' +
         '<div class="bx-lv" aria-hidden="true">' + [1, 2, 3, 4, 5].map(i=>'<i' + (i <= t.index ? ' class="on"' : '') + '></i>').join('') + '</div>' +
         '<div class="bx-buys" role="group" aria-label="' + escapeHtml(t.name + ' — خيارات الشراء') + '">' +
-        '<button type="button" class="btn ' + (n ? 'btn-primary' : 'btn-secondary') + ' bx-buy" ' + (n && !econStoreBusy ? '' : 'disabled aria-disabled="true"') + ' aria-label="' + escapeHtml(t.name + ' — شراء 1 — ' + econFmt(t.gems) + ' ' + econGemsCfg().unit + (n ? '' : ' — ' + label)) + '" onclick="econBuyBox(\'' + t.id + '\')"><span class="bx-buy-l">شراء 1</span>' + (n ? econGem(t.gems) : '<span class="bx-buy-s">' + label + '</span>') + '</button>' +
+        '<button type="button" class="btn ' + (n ? 'btn-primary' : 'btn-secondary') + ' bx-buy" ' + (n && !econStoreBusy ? '' : 'disabled aria-disabled="true"') + ' aria-label="' + escapeHtml(t.name + ' — شراء 1 — ' + econFmt(t.gems) + ' ' + econGemsCfg().unit + (n ? '' : ' — ' + label) + (econBoxChoiceNeeded(t.id) ? ' — لديك صندوق مغلق من هذا المستوى' : '')) + '" onclick="econBuyBox(\'' + t.id + '\')"><span class="bx-buy-l">شراء 1</span>' + (n ? econBoxBuyPriceHtml(t) : '<span class="bx-buy-s">' + label + '</span>') + '</button>' +
         '<button type="button" class="btn ' + (n ? 'btn-achievement' : 'btn-secondary') + ' bx-buy10" ' + (n && !econStoreBusy ? '' : 'disabled aria-disabled="true"') + ' aria-label="' + escapeHtml(t.name + ' — شراء ' + econFmt(CodisBoxes.BULK) + ' بكجات — الإجمالي ' + econFmt(total) + ' ' + econGemsCfg().unit + ' (' + econFmt(t.gems) + ' للبكج)' + (n ? '' : ' — ' + label10)) + '" onclick="econBuyBox10(\'' + t.id + '\')"><span class="bx-buy-l">شراء ' + econFmt(CodisBoxes.BULK) + '</span>' + (n ? econGem(total) : '<span class="bx-buy-s">' + label10 + '</span>') + '</button></div></div>';
     }).join('') + '</div></section>';
 }
@@ -36865,7 +36862,7 @@ function econBoxChoiceOwn(){ const id = econPackId; econPackClose(); if(id) econ
    (1) هوية الصندوق المغلق المملوك = رسمة القسيمة السابقة (تذكرة بحافة مثقّبة + مصغّر صندوق مستواها) ⇒ econOwnedBoxArt (المصدر الوحيد).
        القسيمة صار لها تصميم كوبون مستقل بلا أي صندوق (econVoucherArt).
    (2) «بحوزتك»: لا قسم «الصناديق» — الصناديق المغلقة مجموعة أولى داخل «العناصر» (ECON_ITEM_KINDS key:'boxes')، وعدّادها ضمن elements فقط.
-   (3) المتجر: لا صف صناديق فوق البكجات ولا «لديك ×N – فتح» بالبطاقة؛ أيقونة صندوق واحدة (بلا رقم) بجانب سطر الجواهر حين يملك صندوقاً مغلقاً.
+   (3) المتجر: لا صف صناديق فوق البكجات ولا «لديك ×N – فتح» بالبطاقة؛ أيقونة صندوق واحدة (بلا رقم) بصف سعر «شراء 1» للمستوى الذي يملك منه صندوقاً مغلقاً.
        «استخدام» من «بحوزتك» ⇒ البكجات + تحديد المستوى + نافذة الخيارين (لا فتح تلقائي). */
 
 /* ---------- (1) رسمة الصندوق المغلق المملوك ---------- */
@@ -36919,21 +36916,12 @@ function econBoxPickSync(focus){
   }
 }
 
-/* ---------- (3) أيقونة الصندوق بجانب رصيد الجواهر: واحدة دائماً بلا رقم، أعلى مستوى مملوك ---------- */
-function econOwnBoxIconHtml(){
-  const L = CodisBoxes.owned(); if(!L.length) return '';
-  let top = null; CodisBoxes.tiers().forEach(t=>{ if(L.some(b=>b && b.tier === t.id)) top = t; });
-  if(!top) return '';
-  return '<button type="button" class="eco-bx-own" onclick="econGoOwnBoxes()" aria-label="لديك صناديق مغلقة — اعرضها في «بحوزتك» ← العناصر" title="صناديقك المغلقة">' + econOwnedBoxArt(top.id, { mini:true, label:false }) + '</button>';
-}
-/* يفتح «بحوزتك» على «العناصر» (الصناديق أول مجموعة فيها) */
-function econGoOwnBoxes(){
-  if(econStoreBusy || econVaultBusy) return;
-  if(!CodisBoxes.owned().length){ econRenderStore(); return; }
-  econOwnScroll.items = 0;
-  if(econOwnOpen){ econOwnSetPart('items', { force:true }); const st = document.getElementById('eco-own-stage'); if(st) st.scrollTop = 0; return; }
-  econOwnPart = 'items';
-  econOpenVault();
+/* ---------- (3) زر «شراء 1» بالبكج: إن كان يملك صندوقاً مغلقاً من المستوى نفسه ⇒ أيقونة الصندوق (واحدة، بلا رقم) بصف السعر:
+   «شراء 1» · أيقونة الصندوق · أيقونة الجواهر · السعر. وحدة واحدة فيبقى الترتيب بالصف (العرض الواسع) وبالعمود (تحت 380px). بلا صندوق ⇒ السعر كما كان حرفياً ---------- */
+function econBoxBuyPriceHtml(t){
+  let own = false; try{ own = econBoxChoiceNeeded(t.id); }catch(e){ own = false; }
+  if(!own) return econGem(t.gems);
+  return '<span class="bx-buy-v">' + econOwnedBoxArt(t.id, { mini:true, label:false }) + econGem(t.gems) + '</span>';
 }
 
 /* ---------- (4) مكافآت التقدم المستلمة: تعرض ما استُلم فعلاً (مكافأة «أول أسبوع ناجح» القديمة 5 تبقى 5) ---------- */

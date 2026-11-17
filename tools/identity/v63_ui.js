@@ -2,7 +2,7 @@
    (1) هوية الصندوق المغلق المملوك = رسمة القسيمة السابقة (تذكرة بحافة مثقّبة + مصغّر صندوق مستواها) ⇒ econOwnedBoxArt (المصدر الوحيد).
        القسيمة صار لها تصميم كوبون مستقل بلا أي صندوق (econVoucherArt).
    (2) «بحوزتك»: لا قسم «الصناديق» — الصناديق المغلقة مجموعة أولى داخل «العناصر» (ECON_ITEM_KINDS key:'boxes')، وعدّادها ضمن elements فقط.
-   (3) المتجر: لا صف صناديق فوق البكجات ولا «لديك ×N – فتح» بالبطاقة؛ أيقونة صندوق واحدة (بلا رقم) بجانب سطر الجواهر حين يملك صندوقاً مغلقاً.
+   (3) المتجر: لا صف صناديق فوق البكجات ولا «لديك ×N – فتح» بالبطاقة؛ أيقونة صندوق واحدة (بلا رقم) بصف سعر «شراء 1» للمستوى الذي يملك منه صندوقاً مغلقاً.
        «استخدام» من «بحوزتك» ⇒ البكجات + تحديد المستوى + نافذة الخيارين (لا فتح تلقائي). */
 
 /* ---------- (1) رسمة الصندوق المغلق المملوك ---------- */
@@ -56,21 +56,12 @@ function econBoxPickSync(focus){
   }
 }
 
-/* ---------- (3) أيقونة الصندوق بجانب رصيد الجواهر: واحدة دائماً بلا رقم، أعلى مستوى مملوك ---------- */
-function econOwnBoxIconHtml(){
-  const L = CodisBoxes.owned(); if(!L.length) return '';
-  let top = null; CodisBoxes.tiers().forEach(t=>{ if(L.some(b=>b && b.tier === t.id)) top = t; });
-  if(!top) return '';
-  return '<button type="button" class="eco-bx-own" onclick="econGoOwnBoxes()" aria-label="لديك صناديق مغلقة — اعرضها في «بحوزتك» ← العناصر" title="صناديقك المغلقة">' + econOwnedBoxArt(top.id, { mini:true, label:false }) + '</button>';
-}
-/* يفتح «بحوزتك» على «العناصر» (الصناديق أول مجموعة فيها) */
-function econGoOwnBoxes(){
-  if(econStoreBusy || econVaultBusy) return;
-  if(!CodisBoxes.owned().length){ econRenderStore(); return; }
-  econOwnScroll.items = 0;
-  if(econOwnOpen){ econOwnSetPart('items', { force:true }); const st = document.getElementById('eco-own-stage'); if(st) st.scrollTop = 0; return; }
-  econOwnPart = 'items';
-  econOpenVault();
+/* ---------- (3) زر «شراء 1» بالبكج: إن كان يملك صندوقاً مغلقاً من المستوى نفسه ⇒ أيقونة الصندوق (واحدة، بلا رقم) بصف السعر:
+   «شراء 1» · أيقونة الصندوق · أيقونة الجواهر · السعر. وحدة واحدة فيبقى الترتيب بالصف (العرض الواسع) وبالعمود (تحت 380px). بلا صندوق ⇒ السعر كما كان حرفياً ---------- */
+function econBoxBuyPriceHtml(t){
+  let own = false; try{ own = econBoxChoiceNeeded(t.id); }catch(e){ own = false; }
+  if(!own) return econGem(t.gems);
+  return '<span class="bx-buy-v">' + econOwnedBoxArt(t.id, { mini:true, label:false }) + econGem(t.gems) + '</span>';
 }
 
 /* ---------- (4) مكافآت التقدم المستلمة: تعرض ما استُلم فعلاً (مكافأة «أول أسبوع ناجح» القديمة 5 تبقى 5) ---------- */

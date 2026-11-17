@@ -82,17 +82,24 @@ for (let ri = 0; ri < RUNS.length; ri++) {
 
   // ================= (3) المتجر =================
   await storeBoxes(p);
-  const s1 = await p.evaluate(() => ({ own:document.querySelectorAll('#eco-boxes .bx-own, #eco-boxes .bx-own-chip, #eco-boxes .bx-tag, #eco-boxes .bx-mine, .bx-mine-open').length, title:document.getElementById('bx-h').textContent, icon:document.querySelectorAll('.eco-gem-line .eco-bx-own').length, iconTxt:(document.querySelector('.eco-gem-line .eco-bx-own') || {}).textContent, art:!!document.querySelector('.eco-gem-line .eco-bx-own .obx-art.is-mini .bxa') }));
-  ok(T + 'S1 no owned-box strip, no «N مغلق» tag, no «لديك ×1 – فتح» row', s1.own === 0 && s1.title === 'البكجات', s1);
-  ok(T + 'S2 one box ⇒ one icon beside the gems, no number, new box art', s1.icon === 1 && s1.iconTxt === '' && s1.art, s1);
-  await shot(p, tag + '_balance', '.eco-balance');
+  /* صف «شراء 1» لكل مستوى: هل فيه أيقونة صندوق، وترتيبها: «شراء 1» ← الصندوق ← الجواهر ← السعر (RTL؛ بالعمود تحت 380px: «شراء 1» فوق الصف) */
+  const BUY = () => [...document.querySelectorAll('#eco-boxes .bx-card')].map(c => { const b = c.querySelector('.bx-buy'), v = b.querySelector('.bx-buy-v'), r = e => e.getBoundingClientRect();
+    if (!v) return { t:c.dataset.tier, icon:0, b10:c.querySelectorAll('.bx-buy10 .obx-art').length };
+    const l = r(b.querySelector('.bx-buy-l')), bx = r(v.querySelector('.obx-art')), gi = r(v.querySelector('.eco-gem svg, .eco-gem .eco-gem-ico')), num = r(v.querySelector('.eco-gem b'));
+    return { t:c.dataset.tier, icon:v.querySelectorAll('.obx-art').length, tone:v.querySelector('.obx-art').dataset.tone, digits:/\d/.test(v.querySelector('.obx-art').textContent), price:v.querySelector('.eco-gem b').textContent, want:econFmt(CodisBoxes.tier(c.dataset.tier).gems), b10:c.querySelectorAll('.bx-buy10 .obx-art').length,
+      order:(l.left >= r(v).right - 1 || l.bottom <= r(v).top + 1) && bx.left >= gi.right - 1 && gi.left >= num.right - 1, inBtn:r(v).left >= r(b).left - 1 && r(v).right <= r(b).right + 1, h:Math.round(bx.height) + '/' + Math.round(gi.height), aria:/لديك صندوق مغلق/.test(b.getAttribute('aria-label')) }; });
+  const s1 = await p.evaluate(BUY0 => ({ own:document.querySelectorAll('#eco-boxes .bx-own, #eco-boxes .bx-own-chip, #eco-boxes .bx-tag, #eco-boxes .bx-mine, .bx-mine-open').length, title:document.getElementById('bx-h').textContent, bal:document.querySelectorAll('.eco-balance .obx-art, .eco-bx-own').length, rows:(0, eval)('(' + BUY0 + ')')() }), BUY.toString());
+  ok(T + 'S1 no owned-box strip, no «N مغلق» tag, no «لديك ×1 – فتح» row, nothing added to the balance bar', s1.own === 0 && s1.title === 'البكجات' && s1.bal === 0, s1);
+  const r1 = s1.rows.find(x => x.t === 'bx1');
+  ok(T + 'S2 own a bronze box ⇒ bronze «شراء 1»: شراء 1 · box icon · gem icon · price (one icon, no number, price unchanged)', r1.icon === 1 && r1.tone === 'c' && !r1.digits && r1.price === r1.want && r1.order && r1.inBtn && r1.aria && r1.b10 === 0 && s1.rows.filter(x => x.t !== 'bx1').every(x => !x.icon), s1.rows);
+  await shot(p, tag + '_buy_icon', '#eco-boxes .bx-card[data-tier="bx1"]');
   await boxes(p, 'bx2', 9, 'ten'); await p.evaluate(() => econRenderAll()); await p.waitForTimeout(500);
-  const s2 = await p.evaluate(() => ({ n:CodisBoxes.owned().length, icon:document.querySelectorAll('.eco-gem-line .eco-bx-own').length, digits:/\d/.test(document.querySelector('.eco-gem-line .eco-bx-own').textContent), tone:document.querySelector('.eco-gem-line .eco-bx-own .obx-art').dataset.tone }));
-  ok(T + 'S3 ten boxes ⇒ still a single icon, no ×10 (highest tier shown)', s2.n === 10 && s2.icon === 1 && !s2.digits && s2.tone === 'b', s2);
+  const s2 = await p.evaluate(BUY0 => ({ n:CodisBoxes.owned().length, rows:(0, eval)('(' + BUY0 + ')')() }), BUY.toString());
+  ok(T + 'S3 nine silver boxes ⇒ silver button still shows ONE icon, no ×9; tiers without boxes show none', s2.n === 10 && s2.rows.find(x => x.t === 'bx2').icon === 1 && !s2.rows.find(x => x.t === 'bx2').digits && s2.rows.find(x => x.t === 'bx2').tone === 'b' && s2.rows.filter(x => x.t > 'bx2').every(x => !x.icon), s2.rows);
   if (full) {
-    await p.click('.eco-gem-line .eco-bx-own'); await p.waitForTimeout(1300);
+    await storeOwnItems(p);
     const s3 = await p.evaluate(() => ({ open:econOwnOpen, part:econOwnPart, first:(document.querySelector('#own-panel-items .own-kinds > .own-part') || {}).id }));
-    ok(T + 'S4 tapping the icon opens «بحوزتك» ← العناصر (boxes first)', s3.open && s3.part === 'items' && s3.first === 'own-boxes', s3);
+    ok(T + 'S4 «بحوزتك» ← العناصر lists the closed boxes first', s3.open && s3.part === 'items' && s3.first === 'own-boxes', s3);
     // «استخدام» من «بحوزتك» ⇒ البكجات + تحديد + نافذة الخيارين (بلا فتح)
     const g0 = await p.evaluate(() => CodisWallet.gemBalance());
     await p.click('#own-boxes .own-bx[data-tier="bx2"] .own-bx-use'); await p.waitForTimeout(1300);
@@ -118,7 +125,7 @@ for (let ri = 0; ri < RUNS.length; ri++) {
     const u5 = await p.evaluate(() => { const b = CodisBoxes.owned('bx2')[0].uid; const r1 = CodisBoxes.open(b); const r2 = CodisBoxes.open(b); return { a:r1.ok, b:r2.reason }; });
     ok(T + 'U5 no double opening of the same box', u5.a && u5.b === 'opened', u5);
     await reset(p); await p.evaluate(() => econRenderAll()); await p.waitForTimeout(400);
-    ok(T + 'S5 no closed boxes ⇒ icon disappears', await p.evaluate(() => document.querySelectorAll('.eco-gem-line .eco-bx-own').length === 0));
+    ok(T + 'S5 no closed boxes ⇒ no box icon on any buy button', await p.evaluate(() => document.querySelectorAll('#eco-boxes .bx-buy-v, #eco-boxes .bx-buys .obx-art').length === 0));
   }
 
   // ================= (4) الصندوق المجاني =================
