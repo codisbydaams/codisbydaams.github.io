@@ -1,0 +1,1 @@
+{"name":"codis-char3d-build","private":true,"version":"1.0.0","type":"module","dependencies":{"@gltf-transform/core":"^4.1.1","@gltf-transform/extensions":"^4.1.1","@gltf-transform/functions":"^4.1.1"}}

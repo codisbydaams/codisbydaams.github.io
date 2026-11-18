@@ -64,4 +64,10 @@ for (const [n, h, a, l, pr] of [
   ['v62: habits garbage', { build:[null, 5, { id:'x', type:'E', log:'bad', createdAt:{} }], quit:[{ id:'y', type:'H', monthlyMilestones:'x', lastOccurrence:5 }, { id:'z', type:'E', abstain:true, log:{ 'bad':true, '2026-11-10':true }, failLog:5 }] }, [{ kind:'habit', habitKind:'quit', habitType:'H', habit:{ monthlyMilestones:{ 'c2026-01-01:1':{} } } }, { kind:'habit', habit:null }, 7], { 'monthly|2026-10':{ scope:'monthly', kind:'neutral', tier:5, status:{} }, x:null }, { v:1, claims:[], unlocked:[{ id:'first_month', at:'bad' }, { id:'habit_month_clean' }, null] }],
   ['v62: habits missing', 'x', { a:1 }, [1, 2], { unlocked:'x', claims:{} }]])
   await boot(n, v62(h, a, l, pr));
+/* CODIS-V71: data.profile.character مشوّه (نصوص/قوائم/جسم مجهول/معرّفات خطرة/حقول مستقبلية) — الإقلاع وصفحة «شخصيتي» لا تنكسر */
+const v71 = (prof) => `(K)=>{ const d = JSON.parse(localStorage.getItem(K) || '{}'); d.profile = ${JSON.stringify(prof)}; localStorage.setItem(K, JSON.stringify(d)); }`;
+for (const [n, pr] of [['v71: character string', { name:'x', age:20, completedAt:1, character:'x' }], ['v71: character array', { character:[1, 2] }],
+  ['v71: unknown body', { character:{ body:'alien', face:'m1' } }], ['v71: hostile ids + future fields', { character:{ body:'male', face:'<img src=x onerror=alert(1)>', hair:'zzz', color:12, future:{ a:1 }, createdAt:'abc' }, charOfferedAt:'bad' }],
+  ['v71: profile array', [1, 2]], ['v71: character null', { name:'y', age:30, character:null }]])
+  await boot(n, v71(pr));
 await b.close(); console.log(bad ? bad + ' FAILED' : 'ALL BOOTS OK'); process.exit(bad ? 1 : 0);

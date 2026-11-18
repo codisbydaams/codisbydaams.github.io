@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CODIS char3d dev</title>
+<style>
+body{margin:0;background:#efe7d8;font:14px system-ui;color:#222}
+#v{width:100vw;height:78vh;position:relative;touch-action:none}
+#v canvas{display:block}
+#bar{padding:8px;display:flex;flex-wrap:wrap;gap:6px}
+button{padding:6px 10px}
+#thumbs img{width:90px;height:90px;border:1px solid #999;background:#fff}
+</style></head><body>
+<div id="v"></div>
+<div id="bar"></div>
+<div id="thumbs"></div>
+<script src="dist/b3d.min.js"></script>
+<script>
+/* صفحة تطوير فقط (لا تُضمَّن بالتطبيق): الأصول من tools/char3d/dist عبر fetch */
+const P = new URLSearchParams(location.search);
+const asset = n => fetch('../char3d/dist/' + (n === 'hair' ? 'char_hair' : 'char_' + n.replace('body_', '')) + '.glb').then(r => r.arrayBuffer());
+const FACES = {
+  male: [{ id: 'm1', p: {} }, { id: 'm2', p: { jaw: .26, chinW: .2, chinLen: .006, brow: .006, chinFwd: .004 } }, { id: 'm3', p: { jaw: -.16, cheek: .011, full: -.008, chinLen: .016, chinW: -.2, faceLen: .09, noseZ: .004 } }, { id: 'm4', p: { jaw: .1, full: .012, chinLen: -.009, chinW: .22, faceLen: -.08, cheek: -.003, lips: .003 } }],
+  female: [{ id: 'f1', p: {} }, { id: 'f2', p: { cheek: .011, chinW: -.28, jaw: -.2, chinLen: .009, full: -.005, faceLen: .03 } }, { id: 'f3', p: { full: .012, jaw: .11, chinLen: -.009, chinW: .2, faceLen: -.08, lips: .003 } }, { id: 'f4', p: { jaw: .21, chinW: .12, brow: .005, cheek: .005, chinFwd: .005, noseZ: .003 } }],
+};
+const HAIRS = {
+  male: [{ id: 'parted', mesh: 'Hair_SimpleParted' }, { id: 'buzz', mesh: 'Hair_Buzzed' }, { id: 'long', mesh: 'Hair_Long', native: { Hair_Long: 'female' } }, { id: 'parted_beard', mesh: 'Hair_SimpleParted', beard: true }, { id: 'buzz_beard', mesh: 'Hair_Buzzed', beard: true }],
+  female: [{ id: 'long', mesh: 'Hair_Long', native: { Hair_Long: 'female' } }, { id: 'buns', mesh: 'Hair_Buns', native: { Hair_Buns: 'female' } }, { id: 'buzzf', mesh: 'Hair_BuzzedFemale', native: { Hair_BuzzedFemale: 'female' } }, { id: 'parted', mesh: 'Hair_SimpleParted', native: { Hair_SimpleParted: 'male' } }],
+};
+const COLORS = ['#1b1512', '#3a2418', '#5b3a24', '#7a4a2a', '#8f3a1f', '#b88a55', '#d7b878', '#8a8580'];
+let st = { body: P.get('b') || 'male', face: 0, hair: 0, color: 1 };
+const cfg = () => ({ body: st.body, face: FACES[st.body][st.face], hair: HAIRS[st.body][st.hair], color: COLORS[st.color] });
+const v = CodisB3D.char.create(document.getElementById('v'), { asset, onState: (s, x) => console.log('state', s, x || '') });
+window.V = v;
+v.setConfig(cfg()).then(() => { window.READY = true; if (P.get('z')) v.setZoom(+P.get('z')); if (P.get('yaw')) { v.yaw = +P.get('yaw'); v.kick(); } });
+const bar = document.getElementById('bar'), btn = (t, f) => { const b = document.createElement('button'); b.textContent = t; b.onclick = f; bar.appendChild(b); };
+btn('ذكر', () => { st.body = 'male'; st.face = st.hair = 0; v.setConfig(cfg()); });
+btn('أنثى', () => { st.body = 'female'; st.face = st.hair = 0; v.setConfig(cfg()); });
+btn('وجه+', () => { st.face = (st.face + 1) % 4; v.setConfig(cfg()); });
+btn('شعر+', () => { st.hair = (st.hair + 1) % HAIRS[st.body].length; v.setConfig(cfg()); });
+btn('لون+', () => { st.color = (st.color + 1) % COLORS.length; v.setConfig(cfg()); });
+btn('زوم', () => v.setZoom(v.zoomT > .5 ? 0 : 1));
+btn('صور', async () => { const t = document.getElementById('thumbs'); t.innerHTML = ''; for (let i = 0; i < 4; i++) { const u = await v.snapshot({ ...cfg(), face: FACES[st.body][i] }, { z: 1 }); const im = new Image(); im.src = u; t.appendChild(im); } });
+btn('dispose', () => v.dispose());
+window.SET = (o) => { Object.assign(st, o); return v.setConfig(cfg()); };
+</script></body></html>
