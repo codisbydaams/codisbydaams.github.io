@@ -1,3 +1,4 @@
+/* HISTORICAL (CODIS-V70 3.57.0): tests the removed value-band model (solve/RHO/DUD_CAP). Superseded by tests/v70_engine_browser.js — expected to fail. */
 /* CODIS-BOXES-V4 — probability model test (evaluate in the page; fresh origin, guest). Statistical + edge cases + single-source checks.
    Returns {passed, failed, results, table}. Sampling uses the REAL CodisBoxes.roll (no reimplementation). */
 (async function(){

@@ -17,7 +17,8 @@
     T('box ' + t.id + ' available', rows.length > 0);
     T('box ' + t.id + ' sums to 1000‰', pm.reduce((a,b)=>a + b, 0) === 1000, pm.join(','));
     T('box ' + t.id + ' no invalid probability', pm.every(x=>Number.isInteger(x) && x >= 1));
-    const st = CodisBoxes.stats(t); T('box ' + t.id + ' sell-back EV below price (no guaranteed profit)', st.ev * sellK < t.price, (st.ev * sellK / t.price).toFixed(3));
+    /* CODIS-V70: قاعدة «عائد البيع المتوقع < السعر» كانت جزءاً من نموذج فئات القيمة الذي ألغاه المالك؛ الاحتمالات الآن ثابتة 50/25/13/7/4/1 */
+    T('box ' + t.id + ' fixed odds 50/25/13/7/4/1 (CODIS-V70)', JSON.stringify(rows.map(r=>r.pct)) === '[50,25,13,7,4,1]', rows.map(r=>r.pct).join(','));
     const n = 12000, cnt = rows.map(()=>0); for(let i = 0; i < n; i++) cnt[rows.indexOf(CodisRewardEngine.pick(rows, x=>x.pm))]++;
     T('box ' + t.id + ' sampled top-class frequency matches displayed', Math.abs(cnt[0] / n * 1000 - pm[0]) < 25, (cnt[0] / n * 1000).toFixed(0) + ' vs ' + pm[0]);
   });
