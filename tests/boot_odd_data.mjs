@@ -76,4 +76,21 @@ for (const [n, pr] of [['v72: adv hostile + huge', { character:{ v:2, body:'fema
   ['v72: v1 with v2 fields', { character:{ v:1, body:'male', face:'m4', hair:'buzz_beard', build:'athl', skin:'s9' } }],
   ['v72: v99 future', { character:{ v:99, body:'male', face:'m20', hair:'mohawk', newThing:'x' } }]])
   await boot(n, v71(pr));
+/* CODIS-V73: حقول V73 مشوّهة (advb طويل/عدائي، under غريب، معرّفات V72 قديمة، أنواع مختلطة) — الإقلاع لا ينكسر، والتصحيح/المواصفة/الأسماء لا ترمي */
+async function bootChar(name, prof){
+  const ctx = await b.newContext({ ...devices['iPhone 12'] }); const p = await ctx.newPage(); const errs = [];
+  p.on('pageerror', e => errs.push(e.message));
+  await p.goto(url); await p.waitForTimeout(2500);
+  await p.evaluate(`(${v71(prof)})(${JSON.stringify(K)})`); errs.length = 0; await p.reload(); await p.waitForTimeout(3000);
+  const r = await p.evaluate(() => { try{ const c = data.profile && data.profile.character; const f = CodisChar.fix(c || {}); const sp = CodisChar.spec(f); const n = CodisChar.names(f);
+    return { ok: !!CodisLimits && f.v === 3 && !!sp.sex && Array.isArray(sp.hair) && typeof n.hair === 'string' && f.advb.length <= 800 && f.adv.length <= 800, v: f.v, hair: f.hair, advb: f.advb }; }catch(e){ return { ok:false, why:e.message }; } });
+  const ok = r.ok && !errs.length; if(!ok) bad++;
+  console.log((ok ? 'PASS ' : 'FAIL ') + name + ' ' + JSON.stringify(r).slice(0, 160) + (errs.length ? ' errs ' + JSON.stringify(errs.slice(0, 2)) : ''));
+  await ctx.close();
+}
+for (const [n, pr] of [['v73: advb hostile + huge', { character:{ v:3, body:'male', advb:'y'.repeat(5000), adv:'fw:20', under:{}, build:'musc', brows:'brow_99', hair:'quiff', beard:'strap' } }],
+  ['v73: advb malformed + male-only slider on female', { character:{ v:3, body:'female', advb:'pc:50,bp:abc,sd:-999,,<i>:2', under:'w', build:'curvy', hair:'braid' } }],
+  ['v73: saved v2 legacy ids (V72 user)', { character:{ v:2, body:'male', build:'broad', brows:'eyebrow006', eyes:'bluegreen', skin:'s9', hair:'short04', adv:'sh:30,be:-20,fw:10', createdAt:5, updatedAt:6 } }],
+  ['v73: mixed types', { character:{ v:'3', body:'female', face:5, hair:['x'], hairColor:null, advb:7, under:null, sym:'false' } }]])
+  await bootChar(n, pr);
 await b.close(); console.log(bad ? bad + ' FAILED' : 'ALL BOOTS OK'); process.exit(bad ? 1 : 0);

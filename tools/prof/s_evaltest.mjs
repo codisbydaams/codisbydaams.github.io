@@ -10,7 +10,7 @@ export default async function(c){
   const r = await c.evaluate(src);
   const v = typeof r === 'string' ? r : JSON.stringify(r);
   let o = null; try{ o = typeof r === 'string' ? JSON.parse(r) : r; }catch(e){}
-  if(o && Array.isArray(o.results)){
+  if(o && Array.isArray(o.results)){ if(process.env.VERBOSE) o.results.forEach(x=>console.log('  ' + (x.ok ? 'PASS ' : 'FAIL ') + x.name));
     const bad = o.results.filter(x=>!x.ok);
     console.log('RESULT ' + process.env.TEST + ': passed=' + (o.passed !== undefined ? o.passed : o.results.length - bad.length) + ' failed=' + (o.failed !== undefined ? o.failed : bad.length));
     bad.forEach(x=>console.log('  FAIL ' + x.name + ' — ' + x.info));

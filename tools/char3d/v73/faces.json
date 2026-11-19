@@ -1,0 +1,573 @@
+{
+ "_": "CODIS-V73 — الوجوه الجاهزة (16 لكل جنس): أوزان أهداف MakeHuman الأصلية (CC0). e = مزيج الأعراق [caucasian, african, asian] (مجموعه 1)، t = أهداف إضافية؛ «*» = الجانبان. m1–m10/f1–f10 من V72 بالمعرّفات نفسها (ترحيل بلا تغيير).",
+ "male": [
+  {
+   "id": "m1",
+   "name": "بيضاوي متوازن",
+   "e": [
+    0.5,
+    0.25,
+    0.25
+   ],
+   "t": {
+    "head-oval": 0.6
+   }
+  },
+  {
+   "id": "m2",
+   "name": "فكّ عريض مربّع",
+   "e": [
+    0.6,
+    0.2,
+    0.2
+   ],
+   "t": {
+    "head-square": 0.75,
+    "chin-width-incr": 0.45,
+    "chin-bones-incr": 0.55,
+    "chin-prominent-incr": 0.25,
+    "neck-scale-horiz-incr": 0.3,
+    "eyebrows-trans-forward": 0.3
+   }
+  },
+  {
+   "id": "m3",
+   "name": "دائري ناعم",
+   "e": [
+    0.3,
+    0.2,
+    0.5
+   ],
+   "t": {
+    "head-round": 0.75,
+    "head-fat-incr": 0.45,
+    "*cheek-volume-incr": 0.45,
+    "chin-height-decr": 0.35,
+    "chin-prominent-decr": 0.25,
+    "nose-point-width-incr": 0.3
+   }
+  },
+  {
+   "id": "m4",
+   "name": "طويل نحيف",
+   "e": [
+    0.65,
+    0.25,
+    0.1
+   ],
+   "t": {
+    "head-rectangular": 0.55,
+    "head-scale-vert-incr": 0.35,
+    "head-scale-horiz-decr": 0.3,
+    "nose-scale-vert-incr": 0.45,
+    "chin-height-incr": 0.45,
+    "*cheek-volume-decr": 0.45
+   }
+  },
+  {
+   "id": "m5",
+   "name": "ماسي بوجنتين بارزتين",
+   "e": [
+    0.3,
+    0.15,
+    0.55
+   ],
+   "t": {
+    "head-diamond": 0.75,
+    "*cheek-bones-incr": 0.65,
+    "chin-width-decr": 0.35,
+    "forehead-temple-decr": 0.4,
+    "*eye-epicanthus-in": 0.3
+   }
+  },
+  {
+   "id": "m6",
+   "name": "مثلث مقلوب",
+   "e": [
+    0.55,
+    0.1,
+    0.35
+   ],
+   "t": {
+    "head-invertedtriangular": 0.9,
+    "chin-width-decr": 0.7,
+    "forehead-scale-vert-incr": 0.4,
+    "forehead-temple-incr": 0.4,
+    "chin-prominent-incr": 0.3,
+    "*cheek-inner-decr": 0.35,
+    "*cheek-bones-incr": 0.3
+   }
+  },
+  {
+   "id": "m7",
+   "name": "عريض بملامح ممتلئة",
+   "e": [
+    0.15,
+    0.7,
+    0.15
+   ],
+   "t": {
+    "head-scale-horiz-incr": 0.35,
+    "nose-scale-horiz-incr": 0.5,
+    "nose-flaring-incr": 0.45,
+    "mouth-lowerlip-volume-incr": 0.5,
+    "mouth-upperlip-volume-incr": 0.4,
+    "chin-width-incr": 0.3,
+    "forehead-nubian-incr": 0.3
+   }
+  },
+  {
+   "id": "m8",
+   "name": "حادّ الملامح",
+   "e": [
+    0.75,
+    0.15,
+    0.1
+   ],
+   "t": {
+    "chin-prominent-incr": 0.55,
+    "nose-hump-incr": 0.6,
+    "nose-point-down": 0.3,
+    "*cheek-bones-incr": 0.45,
+    "*cheek-volume-decr": 0.6,
+    "head-triangular": 0.3,
+    "eyebrows-trans-forward": 0.45,
+    "mouth-upperlip-volume-decr": 0.3
+   }
+  },
+  {
+   "id": "m9",
+   "name": "ناضج قوي",
+   "e": [
+    0.35,
+    0.45,
+    0.2
+   ],
+   "t": {
+    "head-age-incr": 0.7,
+    "head-square": 0.35,
+    "chin-bones-incr": 0.45,
+    "nose-scale-depth-incr": 0.35,
+    "nose-volume-incr": 0.5,
+    "mouth-lowerlip-volume-incr": 0.3,
+    "*eye-bag-incr": 0.4,
+    "mouth-angles-down": 0.2,
+    "neck-scale-horiz-incr": 0.35
+   }
+  },
+  {
+   "id": "m10",
+   "name": "شبابي ناعم",
+   "e": [
+    0.6,
+    0.15,
+    0.25
+   ],
+   "t": {
+    "head-age-decr": 0.6,
+    "head-oval": 0.5,
+    "chin-height-incr": 0.3,
+    "nose-scale-horiz-decr": 0.35,
+    "nose-scale-vert-decr": 0.3,
+    "nose-point-up": 0.4,
+    "mouth-scale-horiz-decr": 0.25,
+    "*eye-scale-incr": 0.25,
+    "chin-prominent-decr": 0.3,
+    "*cheek-volume-incr": 0.25
+   }
+  },
+  {
+   "id": "m11",
+   "name": "أنف روماني وفك قوي",
+   "e": [
+    0.7,
+    0.15,
+    0.15
+   ],
+   "t": {
+    "head-rectangular": 0.55,
+    "head-scale-horiz-decr": 0.25,
+    "nose-hump-incr": 0.95,
+    "nose-scale-depth-incr": 0.4,
+    "nose-point-down": 0.35,
+    "chin-prominent-incr": 0.45,
+    "*cheek-volume-decr": 0.4,
+    "forehead-trans-backward": 0.3
+   }
+  },
+  {
+   "id": "m12",
+   "name": "ملامح شرق آسيوية",
+   "e": [
+    0.1,
+    0.05,
+    0.85
+   ],
+   "t": {
+    "head-round": 0.4,
+    "nose-scale-depth-decr": 0.35,
+    "nose-hump-decr": 0.4,
+    "*cheek-bones-incr": 0.35,
+    "chin-prominent-decr": 0.2,
+    "*eye-epicanthus-in": 0.35
+   }
+  },
+  {
+   "id": "m13",
+   "name": "ملامح شامية",
+   "e": [
+    0.55,
+    0.3,
+    0.15
+   ],
+   "t": {
+    "head-diamond": 0.45,
+    "nose-hump-incr": 0.45,
+    "nose-point-down": 0.4,
+    "nose-scale-vert-incr": 0.35,
+    "mouth-scale-horiz-decr": 0.25,
+    "eyebrows-trans-forward": 0.5,
+    "chin-height-incr": 0.35,
+    "*cheek-volume-decr": 0.35
+   }
+  },
+  {
+   "id": "m14",
+   "name": "ممتلئ بفك عريض",
+   "e": [
+    0.4,
+    0.4,
+    0.2
+   ],
+   "t": {
+    "head-fat-incr": 0.85,
+    "head-square": 0.4,
+    "chin-width-incr": 0.55,
+    "neck-double-incr": 0.45,
+    "*cheek-volume-incr": 0.65,
+    "nose-volume-incr": 0.35,
+    "chin-height-decr": 0.2
+   }
+  },
+  {
+   "id": "m15",
+   "name": "ملامح أفريقية حادة",
+   "e": [
+    0.1,
+    0.8,
+    0.1
+   ],
+   "t": {
+    "head-rectangular": 0.35,
+    "nose-scale-horiz-incr": 0.35,
+    "nose-flaring-incr": 0.5,
+    "nose-point-width-incr": 0.3,
+    "*cheek-bones-incr": 0.55,
+    "chin-prominent-incr": 0.3,
+    "mouth-upperlip-volume-incr": 0.45,
+    "mouth-lowerlip-volume-incr": 0.5,
+    "*cheek-volume-decr": 0.3
+   }
+  },
+  {
+   "id": "m16",
+   "name": "طويل بوجنتين غائرتين",
+   "e": [
+    0.6,
+    0.2,
+    0.2
+   ],
+   "t": {
+    "head-scale-vert-incr": 0.6,
+    "head-scale-horiz-decr": 0.3,
+    "*cheek-volume-decr": 0.95,
+    "*cheek-bones-incr": 0.6,
+    "chin-height-incr": 0.4,
+    "chin-prominent-incr": 0.45,
+    "nose-scale-horiz-decr": 0.35,
+    "forehead-temple-decr": 0.45
+   }
+  }
+ ],
+ "female": [
+  {
+   "id": "f1",
+   "name": "بيضاوي متوازن",
+   "e": [
+    0.5,
+    0.25,
+    0.25
+   ],
+   "t": {
+    "head-oval": 0.65
+   }
+  },
+  {
+   "id": "f2",
+   "name": "قلبي",
+   "e": [
+    0.6,
+    0.3,
+    0.1
+   ],
+   "t": {
+    "head-invertedtriangular": 0.8,
+    "chin-width-decr": 0.55,
+    "*cheek-bones-incr": 0.65,
+    "forehead-temple-incr": 0.4,
+    "forehead-scale-vert-incr": 0.2,
+    "chin-height-incr": 0.25,
+    "mouth-upperlip-volume-incr": 0.3
+   }
+  },
+  {
+   "id": "f3",
+   "name": "دائري",
+   "e": [
+    0.3,
+    0.2,
+    0.5
+   ],
+   "t": {
+    "head-round": 0.75,
+    "head-fat-incr": 0.35,
+    "*cheek-volume-incr": 0.5,
+    "chin-height-decr": 0.35,
+    "nose-scale-vert-decr": 0.25,
+    "*eye-scale-incr": 0.15
+   }
+  },
+  {
+   "id": "f4",
+   "name": "طويل ناعم",
+   "e": [
+    0.65,
+    0.2,
+    0.15
+   ],
+   "t": {
+    "head-rectangular": 0.4,
+    "head-scale-vert-incr": 0.35,
+    "head-scale-horiz-decr": 0.3,
+    "chin-height-incr": 0.4,
+    "nose-scale-vert-incr": 0.35,
+    "*cheek-volume-decr": 0.3
+   }
+  },
+  {
+   "id": "f5",
+   "name": "ماسي",
+   "e": [
+    0.3,
+    0.15,
+    0.55
+   ],
+   "t": {
+    "head-diamond": 0.75,
+    "*cheek-bones-incr": 0.6,
+    "chin-width-decr": 0.4,
+    "forehead-temple-decr": 0.4,
+    "*eye-epicanthus-in": 0.35
+   }
+  },
+  {
+   "id": "f6",
+   "name": "مربّع ناعم",
+   "e": [
+    0.55,
+    0.25,
+    0.2
+   ],
+   "t": {
+    "head-square": 0.6,
+    "chin-width-incr": 0.35,
+    "chin-bones-incr": 0.35,
+    "mouth-scale-horiz-incr": 0.25,
+    "*cheek-bones-incr": 0.2
+   }
+  },
+  {
+   "id": "f7",
+   "name": "ملامح ممتلئة",
+   "e": [
+    0.15,
+    0.7,
+    0.15
+   ],
+   "t": {
+    "mouth-lowerlip-volume-incr": 0.6,
+    "mouth-upperlip-volume-incr": 0.55,
+    "nose-scale-horiz-incr": 0.4,
+    "nose-flaring-incr": 0.35,
+    "head-scale-horiz-incr": 0.2,
+    "*cheek-volume-incr": 0.3,
+    "forehead-nubian-incr": 0.3
+   }
+  },
+  {
+   "id": "f8",
+   "name": "حادّ أنيق",
+   "e": [
+    0.75,
+    0.15,
+    0.1
+   ],
+   "t": {
+    "head-triangular": 0.35,
+    "chin-prominent-incr": 0.4,
+    "nose-scale-horiz-decr": 0.4,
+    "nose-point-width-decr": 0.4,
+    "nose-hump-incr": 0.3,
+    "*cheek-volume-decr": 0.55,
+    "*cheek-bones-incr": 0.45,
+    "mouth-upperlip-volume-incr": 0.2
+   }
+  },
+  {
+   "id": "f9",
+   "name": "رقيق الملامح",
+   "e": [
+    0.7,
+    0.1,
+    0.2
+   ],
+   "t": {
+    "head-scale-horiz-decr": 0.25,
+    "nose-scale-horiz-decr": 0.5,
+    "nose-scale-vert-decr": 0.35,
+    "nose-point-up": 0.4,
+    "mouth-scale-horiz-decr": 0.35,
+    "chin-width-decr": 0.35,
+    "*eye-scale-incr": 0.3,
+    "head-oval": 0.5,
+    "forehead-scale-vert-incr": 0.25
+   }
+  },
+  {
+   "id": "f10",
+   "name": "ناضج",
+   "e": [
+    0.3,
+    0.45,
+    0.25
+   ],
+   "t": {
+    "head-age-incr": 0.75,
+    "*cheek-volume-decr": 0.5,
+    "nose-scale-depth-incr": 0.35,
+    "nose-volume-incr": 0.35,
+    "*eye-bag-incr": 0.45,
+    "mouth-angles-down": 0.25,
+    "chin-bones-incr": 0.3,
+    "forehead-scale-vert-incr": 0.25
+   }
+  },
+  {
+   "id": "f11",
+   "name": "ملامح شرق آسيوية",
+   "e": [
+    0.1,
+    0.05,
+    0.85
+   ],
+   "t": {
+    "head-round": 0.45,
+    "nose-scale-depth-decr": 0.35,
+    "nose-hump-decr": 0.35,
+    "nose-scale-horiz-decr": 0.2,
+    "*cheek-bones-incr": 0.3,
+    "chin-prominent-decr": 0.2,
+    "mouth-scale-horiz-decr": 0.15
+   }
+  },
+  {
+   "id": "f12",
+   "name": "أنف بارز ملامح متوسطية",
+   "e": [
+    0.6,
+    0.25,
+    0.15
+   ],
+   "t": {
+    "head-round": 0.4,
+    "nose-hump-incr": 0.7,
+    "nose-scale-depth-incr": 0.3,
+    "mouth-scale-horiz-incr": 0.35,
+    "chin-width-incr": 0.3,
+    "*cheek-volume-incr": 0.25,
+    "mouth-lowerlip-volume-incr": 0.25
+   }
+  },
+  {
+   "id": "f13",
+   "name": "قلبي بوجنتين عاليتين",
+   "e": [
+    0.5,
+    0.2,
+    0.3
+   ],
+   "t": {
+    "head-invertedtriangular": 0.85,
+    "*cheek-bones-incr": 0.9,
+    "*cheek-trans-up": 0.35,
+    "chin-width-decr": 0.6,
+    "chin-prominent-incr": 0.25,
+    "*eye-scale-incr": 0.2,
+    "mouth-upperlip-volume-incr": 0.35,
+    "forehead-scale-vert-incr": 0.3
+   }
+  },
+  {
+   "id": "f14",
+   "name": "ملامح أفريقية ناعمة",
+   "e": [
+    0.1,
+    0.8,
+    0.1
+   ],
+   "t": {
+    "head-round": 0.35,
+    "nose-scale-horiz-incr": 0.35,
+    "nose-flaring-incr": 0.4,
+    "nose-point-width-incr": 0.25,
+    "mouth-upperlip-volume-incr": 0.55,
+    "mouth-lowerlip-volume-incr": 0.6,
+    "*cheek-volume-incr": 0.3
+   }
+  },
+  {
+   "id": "f15",
+   "name": "فك مربّع وجبهة عالية",
+   "e": [
+    0.55,
+    0.2,
+    0.25
+   ],
+   "t": {
+    "head-square": 0.75,
+    "chin-bones-incr": 0.6,
+    "forehead-scale-vert-incr": 0.55,
+    "chin-width-incr": 0.35,
+    "nose-scale-horiz-incr": 0.2,
+    "*cheek-volume-decr": 0.3
+   }
+  },
+  {
+   "id": "f16",
+   "name": "دائري ممتلئ",
+   "e": [
+    0.4,
+    0.35,
+    0.25
+   ],
+   "t": {
+    "head-fat-incr": 0.55,
+    "head-round": 0.5,
+    "*cheek-volume-incr": 0.6,
+    "chin-height-decr": 0.3,
+    "nose-volume-incr": 0.2,
+    "neck-double-incr": 0.25
+   }
+  }
+ ]
+}

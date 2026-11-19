@@ -5,7 +5,7 @@ import { makeCard } from './card.js';
 import { playSingle as _ps, sceneSeconds } from './single.js';
 import { REG } from './runner.js';
 import { playBulk as _pb, bulkSeconds } from './bulk.js';
-import { create as charCreate } from './char.js';   /* CODIS-V71: عارض الشخصية — نفس نسخة Three */
+import { create as charCreate } from './char.js';   /* CODIS-V71→V73: عارض الشخصية — نفس نسخة Three */
 const guard = fn => o => { const before = REG.last; try { return fn(o); } catch (e) { if (REG.last && REG.last !== before) { try { REG.last.abort(); } catch (x) {} } throw e; } };
 const playSingle = guard(_ps), playBulk = guard(_pb);
 
@@ -30,4 +30,4 @@ function preview(host, o) {
   return { st, m, lib, dispose() { st.dispose(); lib.disposeAll(); } };
 }
 
-export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '2', char: { create: charCreate, version: '2' } };
+export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '2', char: { create: charCreate, version: '3' } };

@@ -2,7 +2,12 @@
 import sys, os
 from PIL import Image, ImageDraw
 out, cols, cw = sys.argv[1], int(sys.argv[2]), int(sys.argv[3]); fs = sys.argv[4:]
-ims = [Image.open(f).convert('RGB') for f in fs]
+def load(f):
+    im = Image.open(f)
+    if im.mode == 'RGBA':   # لقطات العارض شفافة الخلفية ⇒ فوق لون ورق التطبيق
+        bg = Image.new('RGB', im.size, (236, 230, 220)); bg.paste(im, mask=im.split()[3]); return bg
+    return im.convert('RGB')
+ims = [load(f) for f in fs]
 ch = int(cw * ims[0].height / ims[0].width); lab = 18
 rows = (len(ims) + cols - 1) // cols
 S = Image.new('RGB', (cols * cw, rows * (ch + lab)), (245, 242, 236)); d = ImageDraw.Draw(S)

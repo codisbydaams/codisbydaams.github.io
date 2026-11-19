@@ -1,11 +1,11 @@
-<!doctype html><html><head><meta charset="utf-8"><title>char lab</title>
+<!doctype html><html><head><meta charset="utf-8"><title>char lab v73</title>
 <style>html,body{margin:0;background:#e9e4da}#h{width:600px;height:900px;position:relative}</style></head>
 <body><div id="h"></div>
 <script src="../../box3d/dist/b3d.min.js"></script>
 <script>
-/* مختبر بصري للشخصية: يحمّل GLB من dist/ مباشرة ويعرض بأي زاوية (لا يدخل التطبيق) */
-const files = { char:'../dist/codis_char.bin' };
-window.asset = n => fetch(files[n] || files.char).then(r => { if (!r.ok) throw new Error('404 ' + n); return r.arrayBuffer(); });
-window.V = CodisB3D.char.create(document.getElementById('h'), { asset, idle:false, yaw:0 });
+/* مختبر بصري للشخصية (V73): يحمّل الأصل من dist/ مباشرة ويعرض أي مواصفة بأي زاوية/تقريب/جودة (لا يدخل التطبيق). */
+const Q = new URLSearchParams(location.search);
+window.asset = () => fetch('../dist/codis_char_v73.bin').then(r => { if (!r.ok) throw new Error('404'); return r.arrayBuffer(); });
+window.V = CodisB3D.char.create(document.getElementById('h'), { asset, idle: false, yaw: 0, quality: Q.get('q') || 'hi' });
 window.shot = async (cfg, yaw, z, focus) => { V.focus = focus || 'body'; await V.setConfig(cfg); V.yaw = yaw; V.vyaw = 0; V.zoom = V.zoomT = z; V.render(); return true; };
 </script></body></html>
