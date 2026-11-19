@@ -1,26 +1,71 @@
 # أصول الشخصية ثلاثية الأبعاد — المصدر والترخيص
 
+## V72 (3.59.0) — الأصل الحالي: MakeHuman (CC0 1.0)
+
 | البند | القيمة |
 |---|---|
-| الحزمة | **Universal Base Characters [Standard]** — Quaternius |
-| الرابط | https://quaternius.itch.io/universal-base-characters · https://quaternius.com/packs/universalbasecharacters.html |
-| الترخيص | **CC0 1.0 Universal (Public Domain Dedication)** — نص الترخيص الأصلي: `source/License_Standard.txt` |
-| تاريخ التنزيل | 2026-11-18 (`Universal Base Characters[Standard].zip`، 128,968,391 بايت، النسخة المجانية) |
-| ما استُعمل | `Superhero_Male_FullBody` · `Superhero_Female_FullBody` (glTF، هيكل UE بـ65 عظمة) + تسريحات «Origin at 0»: `Hair_SimpleParted` · `Hair_Buzzed` · `Hair_Long` · `Hair_Buns` · `Hair_BuzzedFemale` · `Hair_Beard` + خاماتها |
+| المصدر 1 | مستودع MakeHuman الرسمي — `https://github.com/makehumancommunity/makehuman` (فرع master، تنزيل 2026-11-18، `makehuman-master.zip` 45,101,009 بايت) |
+| ما استُعمل منه | `makehuman/data/3dobjs/base.obj` (الجسم الأساسي hm08: 19,158 رأساً) · `data/targets/**` (238 هدفاً متفرقاً + أهداف الماكرو) · `data/rigs/default.mhskel` + `default_weights.mhw` |
+| ترخيصه | `LICENSE.ASSETS.md` بالمستودع: **CC0 1.0** للأصول (الجسم الأساسي/الأهداف/القطع/الهياكل — التوضيح الرسمي 2020). كود MakeHuman نفسه AGPL ولم يُستعمل منه أي سطر |
+| المصدر 2 | `makehuman_system_assets_cc0.zip` من `https://files.makehumancommunity.org/asset_packs/makehuman_system_assets/` (280,737,770 بايت، 2026-11-18) |
+| ما استُعمل منه | الشعر 10 (`short01–04, afro01, bob01, bob02, braid01, long01, ponytail01`) · الحواجب 12 · الرموش 2 · العينان high-poly + 7 قزحيات · الجلد (شاب: فاتح/حنطي/داكن لكل جنس) · `male_casualsuit06` · `female_casualsuit01` · `shoes02/06` |
+| ترخيصه | ملفات `packs/*.json` داخل الحزمة: كل العناصر الـ94 `"license": "CC0"` |
 
-CC0 يسمح بالاستخدام والتعديل والتوزيع التجاري بلا شرط نسب؛ نذكر المصدر هنا للتوثيق فقط.
+CC0 يسمح بالاستخدام والتعديل والتوزيع التجاري بلا شرط نسب؛ نذكر المصدر للتوثيق. **لا أصل مجهول الترخيص ولا أصول ألعاب تجارية.**
 
-## ما تغيّر عن الأصل
-- `build_assets.mjs`: حذف السمات غير المستعملة (TEXCOORD_1..4, COLOR_*)، تصغير الخامات إلى JPEG (`work/`، الجلد 2048، الخريطة العمودية 1024، الشعر 512)،
-  حذف خامة الخشونة المحزومة (قيمة ثابتة)، دمج التسريحات في ملف واحد. **الهندسة والهيكل والأوزان كما هي.**
-- وقت العرض (`tools/box3d/src/char.js`): وضعية الوقوف (دوران عظام الذراعين)، الوجوه = Morph Targets محسوبة من معاملات،
-  الملابس = قناع مناطق تحليلي + إزاحة وتنعيم على الجسم نفسه، لون الشعر = لون المادة.
+### ما تغيّر عن الأصل (كله آلياً في `mh_build.py` / `mh_parts.py` / `mh_shells.py` / `gen_textures.py`)
+- **البنيات الأربع** (نحيف/متوازن/رياضي/عريض لكل جنس): أوزان ماكرو MakeHuman الأصلية (الجنس × العرق 1/3 × العمر 25 × العضل × الوزن × التناسب × الصدر) + أهداف تشريحية أصلية بأوزان معتدلة (V-shape، عضلات الذراع/الفخذ، البطن، الحوض…) مدموجة كمواضع كاملة. لا تكبير/تصغير.
+- **الوجوه** 10 لكل جنس = أوزان أهداف أصلية (`faces.json`) + «فروق الأعراق» المشتقة (الهدف − متوسط الثلاثة، على الرأس فقط بتلاشٍ عند الرقبة وبلا الإزاحة الصلبة).
+- **الهيكل** 74 عظمة من 163 (عظام الوجه/اللسان/أصابع القدم ⇒ أقرب أب محفوظ؛ الأوزان تُجمع ثم أعلى 4).
+- **القطع** بصيغة mhclo الأصلية (3 رؤوس مرجعية + إزاحة مقيسة) ⇒ تتبع أي شكل وقت العرض. العين: مثلثات القرنية (البقعة الشفافة بالخامة) فُصلت لمادة شفافة لامعة. الحذاء: حُذف ما فوق 10.5سم (الجوارب تخترق حاشية البنطال).
+- **الخامات**: الشعر/الحواجب ⇒ رمادي + شفافية (WebP) فيُلوَّن باللون المختار؛ الجلد JPEG 1536 مع **إزالة الشعر المرسوم على الفروة/أعلى الجبهة** (بقعة بنية تظهر مع أي تسريحة منبتها أعلى) بلون جبهة الخامة نفسها مع تفاصيلها؛ القمصان بلا شعار MakeHuman (`work/gen/*_diffuse.png`).
+- **مولّد (ليس من MakeHuman)**: خريطة مسام الجلد الدقيقة، خامة الشعيرات، **اللحية 6 أنماط والحلاقة القصيرة 3 أنماط** = قشور من سطح الجلد نفسه بأقنعة هندسية من معالم الهيكل (العينان/الفم/الذقن/الأذنان).
 
-## إعادة البناء
+### إعادة البناء
 ```
-cd tools/char3d && npm i        # @gltf-transform/core|functions|extensions 4.1.1
-py -3 make_textures.py          # الخامات المصغّرة ← work/*.jpg
-node build_assets.mjs           # ← dist/char_male.glb · char_female.glb · char_hair.glb
+# المصدران (غير مرفوعين للمستودع، ~330MB) في tools/char3d/source/mh/repo/makehuman-master و source/mh/sys
+cd tools/char3d && py -3 gen_textures.py && py -3 mh_build.py   # ⇒ dist/codis_char.bin
+# أو كل شيء: sh tools/rebuild_v72.sh  (ينسخ إلى assets/char/codis_char_v72.bin)
 ```
 
-> المستودع على GitHub لا يضم `source/` الخام (53MB). نزّل الحزمة من الرابط أعلاه وضع ملفاتها في `tools/char3d/source/` (body/ و hair/ كما في build_assets.mjs) قبل إعادة البناء. الناتج المضمَّن `dist/*.glb` والخامات `work/*.jpg` موجودة بالمستودع.
+### تقرير القطع داخل `codis_char_v72.bin`
+الجسم: 14,517 رأس عرض (19,158 أصلي) · 26,756 مثلثاً · 74 عظمة · 238 هدفاً (int8 بمقياس لكل هدف) · 8 بنيات + 4 فروق طول (int16، دقة 0.04مم).
+
+| النوع | المعرّف | الرؤوس | المثلثات | الهندسة KB | الخامة KB |
+|---|---|---|---|---|---|
+| eyes | `eyes` | 1076 | 2040 | 48 | 0 |
+| brows | `eyebrow001` | 126 | 192 | 5 | 13 |
+| brows | `eyebrow002` | 126 | 192 | 5 | 15 |
+| brows | `eyebrow003` | 126 | 192 | 5 | 15 |
+| brows | `eyebrow004` | 126 | 192 | 5 | 15 |
+| brows | `eyebrow005` | 126 | 192 | 5 | 12 |
+| brows | `eyebrow006` | 126 | 192 | 5 | 4 |
+| brows | `eyebrow007` | 126 | 192 | 5 | 4 |
+| brows | `eyebrow008` | 126 | 192 | 5 | 15 |
+| brows | `eyebrow009` | 126 | 192 | 5 | 28 |
+| brows | `eyebrow010` | 126 | 192 | 5 | 13 |
+| brows | `eyebrow011` | 126 | 192 | 5 | 7 |
+| brows | `eyebrow012` | 126 | 192 | 5 | 17 |
+| lashes | `eyelashes01` | 250 | 368 | 10 | 27 |
+| lashes | `eyelashes02` | 250 | 368 | 10 | 30 |
+| hair | `short01` | 3177 | 3678 | 127 | 475 |
+| hair | `short02` | 2061 | 3344 | 88 | 179 |
+| hair | `short03` | 1071 | 1922 | 47 | 110 |
+| hair | `short04` | 991 | 1050 | 39 | 288 |
+| hair | `afro01` | 2276 | 2192 | 88 | 692 |
+| hair | `bob01` | 5961 | 8474 | 248 | 213 |
+| hair | `bob02` | 1759 | 2248 | 72 | 147 |
+| hair | `braid01` | 4771 | 5518 | 191 | 102 |
+| hair | `long01` | 3314 | 4108 | 134 | 147 |
+| hair | `ponytail01` | 4049 | 5352 | 166 | 270 |
+| cloth | `male_casualsuit06` | 4035 | 7168 | 186 | 127 |
+| cloth | `female_casualsuit01` | 2406 | 4236 | 115 | 149 |
+| cloth | `shoes06` | 1744 | 2848 | 81 | 45 |
+| cloth | `shoes02` | 1744 | 2848 | 81 | 38 |
+القشور المولّدة: اللحية 1,229 رأساً/2,026 مثلثاً × حتى 7 طبقات · فروة الرأس 314/526 × حتى 3 طبقات.
+
+---
+
+## V71 (3.58.0) — الأصل السابق: Quaternius «Universal Base Characters [Standard]» (CC0)
+لم يعد مستعملاً بالتطبيق منذ 3.59.0 (حُذفت ملفاته المدفونة من الصفحة). الأدوات (`build_assets.mjs`، `dist/char_*.glb`) تبقى لأن سلسلة البناء تمرّ بـpatch_v71 قبل v72.
+الرابط: https://quaternius.itch.io/universal-base-characters — الترخيص CC0: `source/License_Standard.txt`.

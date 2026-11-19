@@ -30,4 +30,4 @@ function preview(host, o) {
   return { st, m, lib, dispose() { st.dispose(); lib.disposeAll(); } };
 }
 
-export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '2', char: { create: charCreate, version: '1' } };
+export default { supported, playSingle, playBulk, preview, TINT, sceneSeconds, bulkSeconds, version: '2', char: { create: charCreate, version: '2' } };

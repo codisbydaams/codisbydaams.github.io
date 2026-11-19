@@ -70,4 +70,10 @@ for (const [n, pr] of [['v71: character string', { name:'x', age:20, completedAt
   ['v71: unknown body', { character:{ body:'alien', face:'m1' } }], ['v71: hostile ids + future fields', { character:{ body:'male', face:'<img src=x onerror=alert(1)>', hair:'zzz', color:12, future:{ a:1 }, createdAt:'abc' }, charOfferedAt:'bad' }],
   ['v71: profile array', [1, 2]], ['v71: character null', { name:'y', age:30, character:null }]])
   await boot(n, v71(pr));
+/* CODIS-V72: حقول الشخصية الجديدة مشوّهة (adv طويل/عدائي، أنواع غريبة، v مختلط) — الإقلاع لا ينكسر والتصحيح لا يرمي */
+for (const [n, pr] of [['v72: adv hostile + huge', { character:{ v:2, body:'female', adv:'x'.repeat(5000), build:{}, height:'tall', skin:[1], eyes:null, sym:'no' } }],
+  ['v72: adv malformed', { character:{ v:2, body:'male', adv:'fw:abc,zz:9,,ed:-999,<b>:1', beard:'full', beardColor:7 } }],
+  ['v72: v1 with v2 fields', { character:{ v:1, body:'male', face:'m4', hair:'buzz_beard', build:'athl', skin:'s9' } }],
+  ['v72: v99 future', { character:{ v:99, body:'male', face:'m20', hair:'mohawk', newThing:'x' } }]])
+  await boot(n, v71(pr));
 await b.close(); console.log(bad ? bad + ' FAILED' : 'ALL BOOTS OK'); process.exit(bad ? 1 : 0);
